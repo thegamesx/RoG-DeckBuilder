@@ -1,0 +1,14 @@
+.row {
+    display: flex;
+}
+  
+.column-left {
+    flex: 70%;
+    background-color: aqua;
+}
+
+.column-right {
+    float: right;
+    flex: 30%;
+    background-color: beige;
+}

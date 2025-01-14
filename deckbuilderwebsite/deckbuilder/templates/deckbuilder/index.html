@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Constructor de mazos</title>
+  </head>
+  <body>
+    <!-- Acá va el constructor de mazos en si, la parte visual y mucha de la logica. -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
+    
+    <div class="row">
+        <div class="column-left" >
+          <div class="row">
+            Filtros
+          </div>
+          {% for card in cardlist %}
+            <li>{{ card }}</li>
+          {% endfor %}
+        </div>
+        <div class="column-right">
+            <p>Cartas en el mazo</p>
+        </div>
+    </div>
+  </body>
+</html>
