@@ -9,6 +9,12 @@ body{
     width: 1000px;
 }
 
+.card-info{
+    padding-top: 40px;
+    margin: 0px auto 0px auto;
+    width: 1000px;
+}
+
 .search-result img{
     width: 245px;
     height: auto;
@@ -19,7 +25,7 @@ body{
     position: absolute;
     top: 0;
     left: 0;
-    background-color: cyan;
+    background-color: rgb(116, 22, 153);
     width: 100%;
 }
 
@@ -77,7 +83,7 @@ body{
 }
 
 /* Acomodamos los botones de control de pagina */
-.bottom-control-row button{
+.bottom-control-row a{
     padding: 5px;
     border-radius: 5%;
     border: beige;
@@ -88,14 +94,24 @@ body{
     font-size: 16px;
 }
 
-.bottom-control-row button:disabled{
+.bottom-control-row a:disabled{
     background-color: gray;
 }
 
-.bottom-control-row button:hover:not([disabled]){
+.bottom-control-row a:hover:not([disabled]){
     background-color: blue;
 }
 
 .control-right-side{
     float: right;
+}
+
+.card-illustration img{
+    float: left;
+    width: 480px;
+}
+
+.card-set button{
+    width: 480px;
+    background-color: aqua;
 }

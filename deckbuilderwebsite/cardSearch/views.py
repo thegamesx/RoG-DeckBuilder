@@ -2,16 +2,8 @@ from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.http import Http404
 from django.core.paginator import Paginator
 from django.views.generic import ListView
+from django.db.models import Q
 from RoGDB.models import Card,CardVersion
-
-# Esto se hace en otro lado. Por ahora está acá para testear
-"""
-class Card:
-        def __init__(self, id, name, image):
-            self.id = id
-            self.name = name
-            self.image = "cardSearch/" + image
-"""
 
 
 def card_list_test():
@@ -19,6 +11,7 @@ def card_list_test():
     for i in range(100):
         cardlist.append(Card.objects.create(card_name=f"Numero {i}", faction="Neptuno", card_type="Sello"))
     return cardlist
+
 
 def index(request):
     card_list = card_list_test()
@@ -32,36 +25,56 @@ def index(request):
     }
     return render(request, "cardSearch/search.html", context)
 
-def card_info(request, set_id, card_id):
-    queryset = CardVersion.objects.filter(serial_number=card_id)#, set_id__set_code=set_id)
+
+def specific_card_info(request, set_id, card_id):
+    queryset = CardVersion.objects.filter(serial_number=card_id, set_id_id__set_code=set_id)
     card = get_object_or_404(queryset)
     context = { 'requestedcard': card }
     return render (request, "cardSearch/card.html", context)
 
+
+def generic_card_info(request, db_card_id):
+    """
+    queryset = CardVersion.objects.filter(card_id=db_card_id)
+    card = get_object_or_404(queryset)
+    """
+    try:
+        card = CardVersion.get_last_version(db_card_id)
+        context = { 'requestedcard': card }
+        return render (request, "cardSearch/card.html", context)
+    except CardVersion.DoesNotExist:
+        raise Http404 ("Card not found")
+    
+
+
 class SearchResult(ListView):
     model = CardVersion
-    paginate_by = 60
+    paginate_by = 12
     template_name = "cardSearch/search.html"
     context_object_name = "card_list"
 
+    ordering = ['card_id__card_name']
 
     """
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["query"] = Card.objects.filter(self.query)
         return context
-    """
+    
+    
+    def get_queryset(self, *args, **kwargs):
+        qs = super(CardVersion, self).get_queryset(*args, **kwargs)
+        return qs
 
-    def get_queryset(self):
         self.query = list(CardVersion.objects.prefetch_related("card_id"))
-        """
         if self.kwargs["input"]:
             self.query = list(Card.objects.filter(card_name=self.kwargs["input"]))
             if not self.query:
                 raise Http404("No se encontró la carta.") # Cambiar vista
         else:
             self.query = list(Card.objects.all())
-        """
+    """
+        
     
 
     
