@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'homepage.apps.HomepageConfig',
     'RoGDB.apps.RogdbConfig',
     'cardSearch.apps.CardsearchConfig',
     'deckbuilder.apps.DeckbuilderConfig',

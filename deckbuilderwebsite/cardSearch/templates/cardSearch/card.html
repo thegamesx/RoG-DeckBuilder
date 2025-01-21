@@ -35,6 +35,7 @@
         </div>
         <div class="related-cards">
           {% if requestedcard.card_id.related_cards %}
+            <h3>Cartas relacionadas</h3><br>
             {% for related_card in requestedcard.card_id.related_cards.all %}
               <a href="/card/{{ related_card.pk }}">{{ related_card.card_name }}</a>
             {% endfor %}

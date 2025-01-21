@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class CardviewConfig(AppConfig):
+class HomepageConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'cardView'
+    name = 'homepage'

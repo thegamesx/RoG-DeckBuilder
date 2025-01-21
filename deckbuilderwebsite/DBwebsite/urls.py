@@ -21,8 +21,9 @@ from django.conf.urls.static import static
 from cardSearch.views import SearchResult
 
 urlpatterns = [
+    path('', include("homepage.urls")),
     path('admin/', admin.site.urls),
     path('builder/', include("deckbuilder.urls")),
     path('search/', SearchResult.as_view()),
-    path('', include("cardSearch.urls"))
+    path('search/<str:user_query>', SearchResult.as_view(), name='search-cards-view'),
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
