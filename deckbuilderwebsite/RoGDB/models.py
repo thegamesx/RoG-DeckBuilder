@@ -1,4 +1,5 @@
 from django.db import models
+import re
 
 # Pensar bien que va a pasar al borrar con las FK
 
@@ -14,6 +15,13 @@ class CardSet(models.Model):
 
     def __str__(self):
         return self.set_name
+    
+    def get_list_of_sets():
+        set_list = CardSet.objects.all().order_by('-released_date')
+        return_list = []
+        for card_set in set_list:
+            return_list.append((card_set.set_code,card_set.set_name))
+        return return_list
 
 
 # Ver para crear una funcion que devuelva la ultima version de una carta
@@ -70,16 +78,81 @@ class CardVersion(models.Model):
     flavor_text = models.TextField(blank=True, default="")
     label = models.CharField(blank=True, max_length=200, default="")
     legality = models.ManyToManyField(Format, blank=True)
+    last_print = models.BooleanField(default=True)
 
     class Meta:
         get_latest_by = "-pk"
 
+    # Esto revisa si la carta que se está subiendo es más actual que el resto.
+    # De ser así, pone esa carta como la reprensentativa de la carta. En caso contrario deja la que estaba antes.
+    def save(self, **kwargs):
+        other_versions = CardVersion.objects.filter(card_id=self.card_id)
+        for version in other_versions:
+            if version.set_id.released_date > self.set_id.released_date:
+                self.last_print = False
+                break
+            else:
+                version.last_print = False
+        super().save(**kwargs)
+
     def __str__(self):
         return self.set_id.set_code  + " - " + self.card_id.card_name
     
-    def get_last_version(card_db_id):
-        last_card = CardVersion.objects.filter(card_id=card_db_id).latest()
-        return last_card
+    # Hacer diferentes querys para la busqueda. Ver como pasar esos parametros.
+    # Creo que deberia tener una funcion general que revise el string y va llamando lo que necesita
+
+    def get_last_version(user_query):
+        # Crear una funcion para reparar la db en caso de error
+        try:
+            return CardVersion.objects.get(card_id=user_query, last_print=True)
+        except CardVersion.MultipleObjectsReturned:
+            pass
+    
+    def get_all_cards_from_set_code(user_query):
+        return CardVersion.objects.filter(set_id__set_code=user_query)
+    
+    def get_all_versions_of_a_card(user_query):
+        return CardVersion.objects.filter(card_id=user_query)
+    
+    def get_card_by_name(user_query, get=True):
+        if get:
+            return CardVersion.objects.get(card_id__card_name__icontains=user_query, last_print=True)
+        else:
+            return CardVersion.objects.filter(card_id__card_name__icontains=user_query, last_print=True)
+
+    
+    def get_specific_card(user_query_card, user_query_set, get=True):
+        return CardVersion.objects.get(serial_number=user_query_card, set_id_id__set_code=user_query_set)
+    
+    def evaluate_string(user_query):
+        valid_expressions=[
+            ("type", ":|="),
+            ("set", [":","="]),
+            ("artist", [":","="]),
+            ("t", [":","="]), # Textbox
+            ("legal", [":","="]),
+            ("banned", [":","="]),
+            ("rarity", [":","="]),
+            ("faction", "f", [":","=","!=",">=","<="]),
+            ("attack", [":","=",">","<","!=",">=","<="]),
+            ("health", [":","=",">","<","!=",">=","<="]),
+            ("cost", [":","=",">","<","!=",">=","<="]),
+            ("cc", [":","=",">","<","!=",">=","<="]), #Converted Cost
+            ("flavor", [":","="]),
+            ("label", [":","="]),
+            ("date", [":","=",">","<","!=",">=","<="]),
+            ("year", [":","=",">","<","!=",">=","<="]),
+            # "serial", Ver si incluir esto
+        ]
+        
+        for expression in valid_expressions:
+            regex_exp = rf'{expression[0]}[{expression[1]}]'
+            result = re.findall(regex_exp, user_query.data)
+            pass
+
+
+
+   
 
 class OtherLanguageCard(models.Model):
 

@@ -35,16 +35,17 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'homepage.apps.HomepageConfig',
-    'RoGDB.apps.RogdbConfig',
-    'cardSearch.apps.CardsearchConfig',
-    'deckbuilder.apps.DeckbuilderConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users.apps.UsersConfig',
+    'homepage.apps.HomepageConfig',
+    'RoGDB.apps.RogdbConfig',
+    'cardSearch.apps.CardsearchConfig',
+    'deckbuilder.apps.DeckbuilderConfig',
 ]
 
 MIDDLEWARE = [
@@ -62,7 +63,7 @@ ROOT_URLCONF = 'DBwebsite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -133,3 +134,7 @@ MEDIA_URL = 'media/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = '/' # Ver si usar esto
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # Borrar luego, es para testear emails

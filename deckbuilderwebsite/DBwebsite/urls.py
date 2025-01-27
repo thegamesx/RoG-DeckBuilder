@@ -22,6 +22,8 @@ from cardSearch.views import SearchResult
 
 urlpatterns = [
     path('', include("homepage.urls")),
+    path('', include("cardSearch.urls")),
+    path('user/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
     path('builder/', include("deckbuilder.urls")),
     path('search/', SearchResult.as_view()),

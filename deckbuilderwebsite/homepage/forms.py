@@ -9,4 +9,4 @@ class SearchForm(forms.Form):
     ]
 
     search_category = forms.ChoiceField(label="Categoria", choices=CATEGORIES)
-    search_query = forms.CharField(label="Buscar", max_length=1000)
+    search_query = forms.CharField(label="", max_length=1000)

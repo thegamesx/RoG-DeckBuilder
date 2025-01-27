@@ -1,4 +1,5 @@
 from django import forms
+from .models import CardSet
 
 class AdvancerSearchForm(forms.Form):
 
@@ -33,7 +34,8 @@ class AdvancerSearchForm(forms.Form):
     card_type = forms.ChoiceField(label="Tipo", choices=TYPE, required=False)
     faction = forms.ChoiceField(label="Facción", choices=FACTION, required=False)
     cost = forms.CharField(label="Coste", max_length=20, required=False)
+    converted_cost = forms.IntegerField(label="Costo total", required=False)
     attack = forms.IntegerField(label="Ataque", required=False)
     health = forms.IntegerField(label="Vida", required=False)
     rarity = forms.ChoiceField(label="Rareza", choices=RARITY, required=False)
-    
+    set_dropdown = forms.ChoiceField(label="Expansion", choices=CardSet.get_list_of_sets(), required=False)

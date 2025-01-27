@@ -6,7 +6,6 @@ def homepage(request):
     if request.method == 'POST':
         search_form = SearchForm(request.POST)
         if search_form.is_valid():
-            print(search_form.cleaned_data)
             return HttpResponseRedirect(f"/{search_form.cleaned_data['search_category']}/{search_form.cleaned_data['search_query']}")
     else:
         search_form = SearchForm()

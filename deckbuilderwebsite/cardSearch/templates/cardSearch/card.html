@@ -8,9 +8,9 @@
     {% load static %}
     <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
     <div class="banner">
-        <a href="#home">Inicio</a>
+        <a class="active" href="/">Inicio</a>
         <a href="#about">Mazos</a>
-        <a class="active" href="#contact">Cartas</a>
+        <a href="/search">Cartas</a>
         <input type="text" placeholder="Buscar cartas...">
     </div>
     <div class="card-info">
@@ -33,14 +33,14 @@
             #{{ requestedcard.serial_number }}
           </button>
         </div>
-        <div class="related-cards">
-          {% if requestedcard.card_id.related_cards %}
+        {% if requestedcard.card_id.related_cards.all %}
+          <div class="related-cards">
             <h3>Cartas relacionadas</h3><br>
             {% for related_card in requestedcard.card_id.related_cards.all %}
               <a href="/card/{{ related_card.pk }}">{{ related_card.card_name }}</a>
             {% endfor %}
-          {% endif %}
-        </div>
+          </div>
+        {% endif %}
     </div>
   </body>
 </html>
