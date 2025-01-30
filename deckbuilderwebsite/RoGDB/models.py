@@ -31,6 +31,7 @@ class Card(models.Model):
     card_type = models.CharField(max_length=200)
     cost = models.CharField(default="", max_length=30)
     converted_cost = models.IntegerField(default=0)
+    rarity = models.CharField(max_length=200) #Cambiar a un choice
     attack = models.IntegerField(blank=True, null=True)
     health = models.IntegerField(blank=True, null=True)
     text_box = models.TextField(blank=True, default="")
@@ -72,7 +73,6 @@ class CardVersion(models.Model):
     card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
     set_id = models.ForeignKey(CardSet, on_delete=models.RESTRICT)
     serial_number = models.IntegerField()
-    rarity = models.CharField(max_length=200) #Cambiar a un choice
     card_art = models.ImageField(blank=True, upload_to="media/card_art")
     artist = models.CharField(max_length=200)
     flavor_text = models.TextField(blank=True, default="")
@@ -124,31 +124,130 @@ class CardVersion(models.Model):
     def get_specific_card(user_query_card, user_query_set, get=True):
         return CardVersion.objects.get(serial_number=user_query_card, set_id_id__set_code=user_query_set)
     
-    def evaluate_string(user_query):
-        valid_expressions=[
-            ("type", ":|="),
-            ("set", [":","="]),
-            ("artist", [":","="]),
-            ("t", [":","="]), # Textbox
-            ("legal", [":","="]),
-            ("banned", [":","="]),
-            ("rarity", [":","="]),
-            ("faction", "f", [":","=","!=",">=","<="]),
-            ("attack", [":","=",">","<","!=",">=","<="]),
-            ("health", [":","=",">","<","!=",">=","<="]),
-            ("cost", [":","=",">","<","!=",">=","<="]),
-            ("cc", [":","=",">","<","!=",">=","<="]), #Converted Cost
-            ("flavor", [":","="]),
-            ("label", [":","="]),
-            ("date", [":","=",">","<","!=",">=","<="]),
-            ("year", [":","=",">","<","!=",">=","<="]),
-            # "serial", Ver si incluir esto
-        ]
-        
-        for expression in valid_expressions:
-            regex_exp = rf'{expression[0]}[{expression[1]}]'
-            result = re.findall(regex_exp, user_query.data)
-            pass
+    def get_all_cards():
+        return CardVersion.objects.filter(last_print=True)
+    
+    def evaluate_string(user_query, only_last_print=True):
+
+        splited_query = user_query.split()
+        query_set = CardVersion.objects.all()
+        for query in splited_query:
+            splited_terms = re.split(":|!=|>=|<=|<|>|=", query)
+            if len(splited_terms) > 1:
+                for operator in [":","!=",">=","<=","=",">","<"]:
+                    if operator in query:
+                        used_operator = operator
+                        break
+                else:
+                    used_operator = None
+                search_query = {
+                    'keyword': splited_terms[0].lower(),
+                    'query': splited_terms[1].lower(),
+                    'operator': used_operator
+                }
+                if search_query['operator']:
+                    match search_query['keyword']:
+                        case "type":
+                            if search_query['operator'] == "!=":
+                                query_set = query_set.exclude(card_id__card_type__iexact=search_query['query'])
+                            elif search_query['operator'] in [":","="]:
+                                query_set = query_set.filter(card_id__card_type__iexact=search_query['query'], last_print=only_last_print)
+                            else:
+                                query_set = query_set.filter(set_id__set_code__icontains=query, last_print=only_last_print)
+                        case "set":
+                            if search_query['operator'] in [":","="]:
+                                query_set = query_set.filter(card_id__card_name__iexact=search_query['query'], last_print=only_last_print)
+                            else:
+                                query_set = query_set.filter(card_id__card_name__iexact=query, last_print=only_last_print)
+                        case "artist":
+                            if search_query['operator'] in [":","="]:
+                                query_set = query_set.filter(artist__icontains=search_query['query'], last_print=only_last_print)
+                            else:
+                                query_set = query_set.filter(card_id__card_name__icontains=query, last_print=only_last_print)
+                        case "t":
+                            if search_query['operator'] in "!=":
+                                query_set = query_set.exclude(card_id__text_box__iexact=search_query['query'])
+                            elif search_query['operator'] in [":","="]:
+                                query_set = query_set.filter(card_id__text_box__icontains=search_query['query'], last_print=only_last_print)
+                            else:
+                                query_set = query_set.filter(card_id__card_name__icontains=query, last_print=only_last_print)
+                        case "legal":
+                            if search_query['operator'] in [":","="]:
+                                pass
+                            else:
+                                query_set = query_set.filter(card_id__card_name__icontains=query, last_print=only_last_print)
+                        case "banned":
+                            if search_query['operator'] in [":","="]:
+                                pass
+                            else:
+                                query_set = query_set.filter(card_id__card_name__icontains=query, last_print=only_last_print)
+                        case "rarity":
+                            pass
+                        case "faction" | "f":
+                            pass
+                        case "attack":
+                            match search_query["operator"]:
+                                case "="|":":
+                                    query_set = query_set.filter(card_id__attack__exact=search_query['query'], last_print=only_last_print)
+                                case ">":
+                                    query_set = query_set.filter(card_id__attack__gt=search_query['query'], last_print=only_last_print)
+                                case ">=":
+                                    query_set = query_set.filter(card_id__attack__gte=search_query['query'], last_print=only_last_print)
+                                case "<":
+                                    query_set = query_set.filter(card_id__attack__lt=search_query['query'], last_print=only_last_print)
+                                case "<=":
+                                    query_set = query_set.filter(card_id__attack__lte=search_query['query'], last_print=only_last_print)
+                                case "!=":
+                                    query_set = query_set.exclude(card_id__attack__exact=search_query['query'])
+                        case "health":
+                            match search_query["operator"]:
+                                case "="|":":
+                                    query_set = query_set.filter(card_id__health__exact=search_query['query'], last_print=only_last_print)
+                                case ">":
+                                    query_set = query_set.filter(card_id__health__gt=search_query['query'], last_print=only_last_print)
+                                case ">=":
+                                    query_set = query_set.filter(card_id__health__gte=search_query['query'], last_print=only_last_print)
+                                case "<":
+                                    query_set = query_set.filter(card_id__health__lt=search_query['query'], last_print=only_last_print)
+                                case "<=":
+                                    query_set = query_set.filter(card_id__health__lte=search_query['query'], last_print=only_last_print)
+                                case "!=":
+                                    query_set = query_set.exclude(card_id__health__exact=search_query['query'])
+                        case "cost":
+                            pass
+                        case "cc":
+                            match search_query["operator"]:
+                                case "="|":":
+                                    query_set = query_set.filter(card_id__converted_cost__exact=search_query['query'], last_print=only_last_print)
+                                case ">":
+                                    query_set = query_set.filter(card_id__converted_cost__gt=search_query['query'], last_print=only_last_print)
+                                case ">=":
+                                    query_set = query_set.filter(card_id__converted_cost__gte=search_query['query'], last_print=only_last_print)
+                                case "<":
+                                    query_set = query_set.filter(card_id__converted_cost__lt=search_query['query'], last_print=only_last_print)
+                                case "<=":
+                                    query_set = query_set.filter(card_id__converted_cost__lte=search_query['query'], last_print=only_last_print)
+                                case "!=":
+                                    query_set = query_set.exclude(card_id__converted_cost__exact=search_query['query'])
+                        case "flavor":
+                            if search_query['operator'] in [":","="]:
+                                query_set = query_set.filter(flavor_text__icontains=search_query['query'], last_print=only_last_print)
+                            else:
+                                query_set = query_set.filter(card_id__card_name__icontains=query, last_print=only_last_print)
+                        case "label":
+                            if search_query['operator'] in [":","="]:
+                                pass
+                            else:
+                                query_set = query_set.filter(card_id__card_name__icontains=query, last_print=only_last_print)
+                        case "date":
+                            pass
+                        case "year":
+                            pass
+                        case _:
+                            query_set = query_set.filter(card_id__card_name__icontains=query, last_print=only_last_print)
+            else:
+                query_set = query_set.filter(card_id__card_name__icontains=query, last_print=only_last_print)
+        return query_set
 
 
 

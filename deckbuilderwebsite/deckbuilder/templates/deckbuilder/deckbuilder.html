@@ -8,15 +8,22 @@
     <!-- Acá va el constructor de mazos en si, la parte visual y mucha de la logica. -->
     {% load static %}
     <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
-    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
     <div class="row">
         <div class="column-left" >
           <div class="row">
-            Filtros
+            Filtrar
+            <form>
+              <input type="text" id="filter_search">
+              <input type="submit" value="Buscar">
+            </form>
           </div>
-          {% for card in cardlist %}
-            <li>{{ card }}</li>
-          {% endfor %}
+          <div class="available-cards">
+            {% for card in cardlist %}
+              <img src="{{ card.card_art.url }}"></img>
+            {% endfor %}
+          </div>
         </div>
         <div class="column-right">
             <p>Cartas en el mazo</p>

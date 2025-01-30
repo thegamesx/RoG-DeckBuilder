@@ -1,3 +1,7 @@
+body{
+    background-color: black;
+}
+
 .row {
     display: flex;
 }
@@ -11,4 +15,9 @@
     float: right;
     flex: 30%;
     background-color: beige;
+}
+
+.available-cards img{
+    width: 190px;
+    height: auto;
 }

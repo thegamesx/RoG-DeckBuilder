@@ -48,7 +48,7 @@ class SearchResult(ListView):
             user_query = self.kwargs['user_query']
         except:
             return CardVersion.objects.filter(last_print=True)
-        queryset = CardVersion.objects.filter(card_id__card_name__icontains=user_query, last_print=True)
+        queryset = CardVersion.evaluate_string(user_query)
         card_list = get_list_or_404(queryset)
         return card_list
     
