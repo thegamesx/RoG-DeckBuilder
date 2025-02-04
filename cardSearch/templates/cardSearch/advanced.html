@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Buscar cartas</title>
+  </head>
+  <body>
+    {% load static %}
+    <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
+    <div class="banner">
+        <a class="active" href="/">Inicio</a>
+        <a href="#about">Mazos</a>
+        <a href="/search">Cartas</a>
+    </div>
+    <div class="advanced-search-body">
+        <div class="center">
+            <form method="POST" role="search">
+                {% csrf_token %}
+                {{ form }}
+                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </form>
+        </div>
+    </div>
+  </body>
+</html>

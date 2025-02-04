@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Buscar cartas</title>
+  </head>
+  <body>
+    {% load static %}
+    <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
+    <div class="banner">
+        <a class="active" href="/">Inicio</a>
+        <a href="#about">Mazos</a>
+        <a href="/search">Cartas</a>
+        <input type="text" placeholder="Buscar cartas...">
+    </div>
+    <div class="card-info">
+        <!-- Cuerpo de la informacion de una carta-->
+
+        <div class="row">
+          <div class="card-illustration">
+            <img src="{{ requestedcard.card_art.url }}">
+          </div>
+          <div class="card-info">
+            <h1><b>{{ requestedcard.card_id.card_name }}</b></h1>
+            <p>Rareza: {{ requestedcard.rarity }}</p><br>
+            <p>Texto: {{requestedcard.card_id.text_box}}</p>
+            <p>Artista: {{ requestedcard.artist }} </p>
+          </div>
+        </div>
+        <div class="card-set">
+          <button>
+            <h2>{{requestedcard.set_id.set_name}} ({{ requestedcard.set_id.set_code }})</h2>
+            #{{ requestedcard.serial_number }}
+          </button>
+        </div>
+        {% if requestedcard.card_id.related_cards.all %}
+          <div class="related-cards">
+            <h3>Cartas relacionadas</h3><br>
+            {% for related_card in requestedcard.card_id.related_cards.all %}
+              <a href="/card/{{ related_card.pk }}">{{ related_card.card_name }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Constructor de mazos</title>
+  </head>
+  <body>
+    <!-- Acá va el constructor de mazos en si, la parte visual y mucha de la logica. -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <div class="row">
+        <div class="column-left" >
+          <div class="row">
+            Filtrar
+            <form>
+              <input type="text" id="filter_search">
+              <input type="submit" value="Buscar">
+            </form>
+          </div>
+          <div class="available-cards">
+            {% for card in cardlist %}
+              <img src="{{ card.card_art.url }}"></img>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="column-right">
+            <p>Cartas en el mazo</p>
+        </div>
+    </div>
+  </body>
+</html>
