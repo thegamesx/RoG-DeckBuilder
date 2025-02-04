@@ -8,8 +8,26 @@ def card_list_query(request, query):
 
     if is_ajax:
         if request.method == 'GET':
-            cardlist = CardVersion.get_card_by_name("a") # Ver como pasar una variable
-            return JsonResponse({'context': cardlist})
+            queryset = CardVersion.evaluate_string(query)
+            cardlist = list(queryset.values(
+                "card_id__card_name", 
+                "card_art",
+                "card_id__faction",
+                "card_id__card_type",
+                "card_id__cost",
+                "card_id__converted_cost",
+                "card_id__rarity",
+                "card_id__attack",
+                "card_id__health",
+                "card_id__text_box",
+                "card_id", 
+                "set_id",
+                "serial_number",
+                ))
+            if cardlist:
+                return JsonResponse(cardlist, safe=False)
+            else:
+                return JsonResponse({'context': None})
         return JsonResponse ({'status': 'Invalid request'}, status=400)
     else:
         return HttpResponseBadRequest('Invalid request')

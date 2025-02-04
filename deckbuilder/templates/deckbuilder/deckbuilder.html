@@ -14,12 +14,46 @@
         <div class="column-left" >
           <div class="row">
             Filtrar
-            <form>
-              <input type="text" id="filter_search">
-              <input type="submit" value="Buscar">
-            </form>
+            <input type="text" id="user-query" id="filter_search">
+            <a class="submit-button" id="submit-button" href="#">Buscar</a>
           </div>
-          <div class="available-cards">
+          <div class="available-cards" id="available-cards">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+            <script type="text/javascript">
+              $('.submit-button').click(function(){
+                var query;
+                let search_url = "/builder/search/";
+                query = document.getElementById('user-query').value;
+                search_url = search_url.concat(query)
+                console.log(search_url);
+                $.ajax({
+                  url: search_url,
+                  type:"GET",
+                  dataType: "json",
+                  data:{ user_query: query },
+                  success: (data) => {
+                    function createFrame(link, art, name, id){
+                      return "<a href='"+ link +"' id='card-" + id + "'>"+
+                                  "<img src='/media/"+ art +"' alt='"+ name +"'/>"+
+                                "</a>";
+                    }
+                    console.log(data);
+                    document.getElementById("available-cards").innerHTML = ""
+                    $.each(data, function(i, item){
+                      card_link = "/builder/addcard/" + item.card_id
+                      document.getElementById("available-cards").innerHTML += createFrame(
+                        card_link, 
+                        item.card_art, 
+                        item.card_id__card_name, 
+                        item.card_id)
+                    })
+                  },
+                  error: (error) => {
+                    console.log(error);
+                  }
+                })
+              });
+            </script>
             {% for card in cardlist %}
               <img src="{{ card.card_art.url }}"></img>
             {% endfor %}
@@ -31,3 +65,14 @@
     </div>
   </body>
 </html>
+
+<!--
+var link = $'<a />', {
+  href= "/addcard/" + item.card_id
+}
+var card = $('<img />', {
+  src: item.card_art,
+  alt: item.card_id__card_name,
+})
+$(".available-cards").append("<img src='{{ card.card_art.url }}'></img>");
+-->

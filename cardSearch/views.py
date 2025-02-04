@@ -34,7 +34,11 @@ def generic_card_info(request, db_card_id):
         return render (request, "cardSearch/card.html", context)
     except CardVersion.DoesNotExist:
         raise Http404 ("Card not found")
-    
+
+
+def specific_set_cards(request, set_id):
+    return HttpResponseRedirect(f"/search/set:{set_id}")
+
 
 class SearchResult(ListView):
     model = CardVersion

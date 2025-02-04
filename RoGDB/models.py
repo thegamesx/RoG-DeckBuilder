@@ -322,7 +322,7 @@ class CardVersion(models.Model):
                                 case "!=":
                                     query_set = query_set.exclude(card_id__health__exact=None).exclude(card_id__health__exact=search_query['query'])
                         case "cost":
-                            pass
+                            pass # Implementar esto !!!
                         case "cc":
                             match search_query["operator"]:
                                 case "="|":":
