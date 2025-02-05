@@ -9,7 +9,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
+    <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
     <div class="row">
         <div class="column-left" >
           <div class="row">
@@ -18,61 +18,66 @@
             <a class="submit-button" id="submit-button" href="#">Buscar</a>
           </div>
           <div class="available-cards" id="available-cards">
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-            <script type="text/javascript">
-              $('.submit-button').click(function(){
-                var query;
-                let search_url = "/builder/search/";
-                query = document.getElementById('user-query').value;
-                search_url = search_url.concat(query)
-                console.log(search_url);
+            <script type="text/javascript" src="{% static "deckbuilder/createArrayOfCards.js" %}"></script>
+          </div>
+        </div>
+        <div class="column-right">
+          Nombre del mazo: <input type="text" id="deck-name-input">
+          <p>Cartas en el mazo</p>
+          <div class = "card-list" id = "card-list">
+            <script type="text/javascript" src="{% static "deckbuilder/addCardToList.js" %}"></script>
+            <script type="text/javascript" src="{% static "deckbuilder/removeCardOfList.js" %}"></script>
+          </div>
+          <br><a href="#" class="save-button" id="save-button">Guardar Mazo</a>
+          <script type="text/javascript">
+            // Terminar esto
+            $(".save-button").click(function(){
+              deckname = $("#deck-name-input").val();
+              if (deckname.trim().length === 0) {
+                alert("El nombre del mazo no puede estar vacio.");
+              } else {
+
+                let deckJSON = {
+                  deckname: deckname,
+                  cards: [],
+                };
+
+                $(".card-in-list").each(function(index){
+
+                  let card = {
+                    id: $(this).attr("id"),
+                    quantity: $(this).attr("data-quantity"),
+                    version: $(this).attr("data-version"),
+                    name: $(this).attr("data-card-name"),
+                  };
+
+                  deckJSON.cards.push(card);
+                });
+
+                console.log(deckJSON);
+                jsonstring = JSON.stringify(deckJSON);
+
+                const csrftoken = getCookie('csrftoken');
+
                 $.ajax({
-                  url: search_url,
-                  type:"GET",
+                  url: "saveDeck",
+                  headers: {'X-CSRFToken': csrftoken},
+                  mode: 'same-origin',
+                  type:"POST",
                   dataType: "json",
-                  data:{ user_query: query },
+                  data:{ deck: deckJSON },
                   success: (data) => {
-                    function createFrame(link, art, name, id){
-                      return "<a href='"+ link +"' id='card-" + id + "'>"+
-                                  "<img src='/media/"+ art +"' alt='"+ name +"'/>"+
-                                "</a>";
-                    }
+                    alert("Mazo guardado con éxito.");
                     console.log(data);
-                    document.getElementById("available-cards").innerHTML = ""
-                    $.each(data, function(i, item){
-                      card_link = "/builder/addcard/" + item.card_id
-                      document.getElementById("available-cards").innerHTML += createFrame(
-                        card_link, 
-                        item.card_art, 
-                        item.card_id__card_name, 
-                        item.card_id)
-                    })
                   },
                   error: (error) => {
                     console.log(error);
                   }
                 })
-              });
-            </script>
-            {% for card in cardlist %}
-              <img src="{{ card.card_art.url }}"></img>
-            {% endfor %}
-          </div>
-        </div>
-        <div class="column-right">
-            <p>Cartas en el mazo</p>
+              }
+            })
+          </script>
         </div>
     </div>
   </body>
 </html>
-
-<!--
-var link = $'<a />', {
-  href= "/addcard/" + item.card_id
-}
-var card = $('<img />', {
-  src: item.card_art,
-  alt: item.card_id__card_name,
-})
-$(".available-cards").append("<img src='{{ card.card_art.url }}'></img>");
--->

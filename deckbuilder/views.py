@@ -10,6 +10,7 @@ def card_list_query(request, query):
         if request.method == 'GET':
             queryset = CardVersion.evaluate_string(query)
             cardlist = list(queryset.values(
+                "id",
                 "card_id__card_name", 
                 "card_art",
                 "card_id__faction",
@@ -31,6 +32,9 @@ def card_list_query(request, query):
         return JsonResponse ({'status': 'Invalid request'}, status=400)
     else:
         return HttpResponseBadRequest('Invalid request')
+    
+def save_deck(request, deck):
+    pass
 
 def deckbuilder_page(request):
     cardlist = CardVersion.get_all_cards()
