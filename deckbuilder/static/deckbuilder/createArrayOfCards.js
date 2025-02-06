@@ -12,8 +12,8 @@ function createArrayOfCards(query){
     dataType: "json",
     data:{ user_query: searchQuery },
     success: (data) => {
-      function createFrame(versionID, art, name, id){
-        return "<a href='#' id='" + id + "' class='add-card' title='" + name + "' data-version='" + versionID + "'>"+
+      function createFrame(versionID, art, name, id, faction){
+        return "<a href='#' id='" + id + "' class='add-card' title='" + name + "' data-version='" + versionID + "' data-faction='" + faction + "'>"+
                     "<img src='/media/"+ art +"' alt='"+ name +"'/>"+
                   "</a>";
       }
@@ -24,7 +24,9 @@ function createArrayOfCards(query){
           item.id, 
           item.card_art,
           item.card_id__card_name, 
-          item.card_id)
+          item.card_id,
+          item.card_id__faction,
+        )
       })
     },
     error: (error) => {

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
+    {{loadedDeck|json_script:"loaded-deck"}}
     <div class="row">
         <div class="column-left" >
           <div class="row">
@@ -29,54 +30,14 @@
             <script type="text/javascript" src="{% static "deckbuilder/removeCardOfList.js" %}"></script>
           </div>
           <br><a href="#" class="save-button" id="save-button">Guardar Mazo</a>
-          <script type="text/javascript">
-            // Terminar esto
-            $(".save-button").click(function(){
-              deckname = $("#deck-name-input").val();
-              if (deckname.trim().length === 0) {
-                alert("El nombre del mazo no puede estar vacio.");
-              } else {
-
-                let deckJSON = {
-                  deckname: deckname,
-                  cards: [],
-                };
-
-                $(".card-in-list").each(function(index){
-
-                  let card = {
-                    id: $(this).attr("id"),
-                    quantity: $(this).attr("data-quantity"),
-                    version: $(this).attr("data-version"),
-                    name: $(this).attr("data-card-name"),
-                  };
-
-                  deckJSON.cards.push(card);
-                });
-
-                console.log(deckJSON);
-                jsonstring = JSON.stringify(deckJSON);
-
-                const csrftoken = getCookie('csrftoken');
-
-                $.ajax({
-                  url: "saveDeck",
-                  headers: {'X-CSRFToken': csrftoken},
-                  mode: 'same-origin',
-                  type:"POST",
-                  dataType: "json",
-                  data:{ deck: deckJSON },
-                  success: (data) => {
-                    alert("Mazo guardado con éxito.");
-                    console.log(data);
-                  },
-                  error: (error) => {
-                    console.log(error);
-                  }
-                })
-              }
-            })
-          </script>
+          <br><br><br>Descripción del mazo<br><textarea id="deck-description"></textarea>
+          <br><br>Visibilidad<br>
+          <select name="visibility" id="visibility">
+            <option value="P">Público</option>
+            <option value="U">No Listado</option>
+            <option value="R">Privado</option>
+          </select>
+          <script type="text/javascript" src="{% static "deckbuilder/saveDeck.js" %}"></script>
         </div>
     </div>
   </body>

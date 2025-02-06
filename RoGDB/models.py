@@ -153,6 +153,26 @@ class CardVersion(models.Model):
     def get_all_cards():
         return CardVersion.objects.filter(last_print=True)
     
+    def get_group_of_cards(array_of_ids):
+        queryset = CardVersion.objects.filter(card_id__in=array_of_ids)
+        return list(queryset.values(
+                "id",
+                "card_id__card_name", 
+                "card_art",
+                "card_id__faction",
+                "card_id__card_type",
+                "card_id__cost",
+                "card_id__converted_cost",
+                "card_id__rarity",
+                "card_id__attack",
+                "card_id__health",
+                "card_id__text_box",
+                "card_id", 
+                "set_id",
+                "serial_number",
+                ))
+
+    
     # Crea el string desde el formulario para luego ser evaluado
     def construct_string(form_fields):
         query_string = ""
