@@ -10,7 +10,7 @@
     <div class="banner">
         <a class="active" href="/">Inicio</a>
         <a href="#about">Mazos</a>
-        <a href="/search">Cartas</a>
+        <a href="/cards/search">Cartas</a>
         {% if user.is_authenticated %}
           <a href="/user/profile">Perfil: {{ user.get_username }}</a>
           <form id="logout-form" method="POST" action="{% url 'logout' %}">

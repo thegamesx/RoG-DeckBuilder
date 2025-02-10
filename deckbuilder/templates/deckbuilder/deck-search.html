@@ -7,22 +7,30 @@
   <body>
     {% load static %}
     <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
-    <div class="banner">
-        <a class="active" href="/">Inicio</a>
-        <a href="#about">Mazos</a>
-        <a href="/cards/search">Cartas</a>
-        <input type="text" placeholder="Buscar cartas...">
-    </div>
     <div class="search-result">
-        <!-- La idea es mostrar las cartas en paginas, de forma estatica. -->
         <div class="search-info">
           <!-- Esta info es para testear, cambiar por lo que corresponda luego -->
-          <p><strong>Se encontraron {{ page_obj.paginator.count }} cartas</strong></p>
+          <p><strong>Se encontraron {{ page_obj.paginator.count }} mazos</strong></p>
         </div>
-        <!-- Acá está el loop que carga el arte de las cartas, y les asigna una url. -->
-        <div class="card-list">
-          {% for card in card_list %}
-              <a href="/cards/{{ card.set_id.set_code }}/{{ card.serial_number }}"><img src="{{ card.card_art.url }}"  alt={{"card.card_id.card_name"}}></a>
+        <div class="search-options">
+            <!--
+            Las opciones de busqueda debe incluir:
+            - Buscar por formato (considerarlo opcional si hay uno solo)
+            - Filtrar por nombre
+            - Filtrar por facción
+            - Filtrar por carta especifica
+            -->
+            <label>Filtrar por carta </label>
+            <input type="text" class="card-filter" id="card-filter"></input>
+        </div>
+        <div class="deck-list">
+          {% for deck in deck_list %}
+            <div class="deck-box" id="deck-{{ deck.pk }}" data-factions="{{ deck.factions }}">
+                <a href="/decks/view/{{ deck.pk }}">
+                    <h3>{{ deck.deck_name }}</h3>
+                    {{ deck.format }}
+                </a>
+            </div>
           {% endfor %}
         </div>
         <div class="bottom-control-row">

@@ -60,6 +60,13 @@ class Card(models.Model):
 
     def __str__(self):
         return self.card_name
+    
+    def get_card_by_id(card_id):
+        return Card.objects.get(pk=card_id)
+    
+    def check_if_banned(format,card_id):
+        # Ver como revisar una carta esta baneada en x formato
+        pass
 
 
 class Format(models.Model):
@@ -76,7 +83,35 @@ class Format(models.Model):
         for format in format_list:
             return_list.append((format.format_name,format.format_name))
         return return_list
+    
+    def check_deck_legality(format, deck_list):
+        
+        # Devuelve si el deck es legal en el formato o no.
+        # Este juego tiene una regla importante, la cantidad de cartas está determinada por su rareza. Entonces:
+        # - Común: 4 copias
+        # - Rara: 3 copias
+        # - Épica: 2 copias
+        # - Legendaria: 1 copia
+        # Ademas de una lista de cartas prohibidas.
 
+        for card in deck_list:
+            full_info_card = Card.get_card_by_id(card["id"])
+            match full_info_card["rarity"]:
+                case 1:
+                    if card["quantity"]>4:
+                        return False
+                case 2:
+                    if card["quantity"]>3:
+                        return False
+                case 3:
+                    if card["quantity"]>2:
+                        return False
+                case 4:
+                    if card["quantity"]>1:
+                        return False
+            if Card.check_if_banned(format, card["id"]):
+                return False
+        return True
 
 class FormatFollows (models.Model):
 
@@ -154,7 +189,7 @@ class CardVersion(models.Model):
         return CardVersion.objects.filter(last_print=True)
     
     def get_group_of_cards(array_of_ids):
-        queryset = CardVersion.objects.filter(card_id__in=array_of_ids)
+        queryset = CardVersion.objects.filter(pk__in=array_of_ids)
         return list(queryset.values(
                 "id",
                 "card_id__card_name", 

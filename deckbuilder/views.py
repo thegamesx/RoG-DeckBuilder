@@ -1,9 +1,24 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_list_or_404
 from django.template import loader
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, Http404
 from RoGDB.models import CardVersion
+from django.views.generic import ListView
 from deckbuilder.models import DeckModel
 import json
+
+def get_cards_info(deck_json):
+    card_list = []
+    for card in deck_json:
+        card_list.append(card["version"])
+    
+    updated_card_list = CardVersion.get_group_of_cards(card_list)
+
+    # Despues de fetchear la data completa de las cartas, le agregamos la cantidad que habia en el mazo
+    for card in updated_card_list:
+        card_quantity = next((old_card.get('quantity') for old_card in deck_json if int(old_card["id"]) == card["card_id"]), 0)
+        card["quantity"] = int(card_quantity)
+
+    return updated_card_list
 
 def card_list_query(request, query):
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
@@ -53,24 +68,15 @@ def save_deck(request):
 def deckbuilder_page(request, deck_id=None):
     if deck_id:
         try:
-            deck = DeckModel.get_deck_from_id(deck_id)
-            card_list = []
-            for card in deck.card_list:
-                card_list.append(card["id"])
-            
-            updated_card_list = CardVersion.get_group_of_cards(card_list)
-
-            # Despues de fetchear la data completa de las cartas, le agregamos la cantidad que habia en el mazo
-            for card in updated_card_list:
-                card_quantity = next((old_card.get('quantity') for old_card in deck.card_list if int(old_card["id"]) == card["card_id"]), 0)
-                card["quantity"] = int(card_quantity)
+            deck_info = DeckModel.get_deck_from_id(deck_id)
+            updated_card_list = get_cards_info(deck_info.card_list)
 
             loaded_deck = {
-                "deckname": deck.deck_name,
+                "deckname": deck_info.deck_name,
                 "deck_id": deck_id,
-                "description": deck.deck_desc,
-                "visibility": deck.visibility,
-                "format": deck.format,
+                "description": deck_info.deck_desc,
+                "visibility": deck_info.visibility,
+                "format": deck_info.format,
                 "card_list": updated_card_list,
             }
             context = { 'loadedDeck': loaded_deck }
@@ -79,3 +85,35 @@ def deckbuilder_page(request, deck_id=None):
     else:
         context = { 'loadedDeck': None }
     return render(request, "deckbuilder/deckbuilder.html", context)
+
+def view_deck(request,deck_id):
+    # Hacer comprobacion de deck privado luego
+    try:
+        deck_info = DeckModel.get_deck_from_id(deck_id)
+        updated_decklist = get_cards_info(deck_info.card_list)
+
+        loaded_deck = {
+                    "deckname": deck_info.deck_name,
+                    "deck_id": deck_id,
+                    "description": deck_info.deck_desc,
+                    "visibility": deck_info.visibility,
+                    "format": deck_info.format,
+                    "card_list": updated_decklist,
+                }
+
+        return render(request, "deckbuilder/deck-view.html", { 'loadedDeck': loaded_deck })
+    except DeckModel.DoesNotExist as error:
+        return Http404(error)
+    
+class DeckSearch(ListView):
+    model = DeckModel
+    paginate_by = 30
+    template_name = "deckbuilder/deck-search.html"
+    context_object_name = "deck_list"
+    ordering = ['-published_date']
+
+    def get_queryset(self):
+        try:
+            user_query = self.kwargs['user_query']
+        except:
+            return get_list_or_404(DeckModel.get_all_public_decks())

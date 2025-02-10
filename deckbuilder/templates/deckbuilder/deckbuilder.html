@@ -6,6 +6,8 @@
   </head>
   <body>
     <!-- Acá va el constructor de mazos en si, la parte visual y mucha de la logica. -->
+
+    <!--IMPORTANTE: ver como agregar cartas al side-->
     {% load static %}
     <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -40,5 +42,11 @@
           <script type="text/javascript" src="{% static "deckbuilder/saveDeck.js" %}"></script>
         </div>
     </div>
+
+    <!-- Esta es una imagen que se va a mostrar cuando se ponga el mouse sobre una carta en la lista -->
+    <div class="img-on-hover">
+      <img src="#" class="img-hover"></img>
+    </div>
+    <script src={% static "deckbuilder/showImageWhenHovering.js" %}></script>
   </body>
 </html>

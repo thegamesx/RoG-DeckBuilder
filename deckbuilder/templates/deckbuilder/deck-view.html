@@ -9,13 +9,23 @@
     <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
+    {{loadedDeck|json_script:"loaded-deck"}}
+    <div class="deck-title">
+      <h1> {{ loadedDeck.deckname }} </h1>
+      <p> {{ loadedDeck.description }} </p>
+    </div>
     <div class="row">
         <div class="column-left" >
-            
+            <div class="card-image">
+              <img src="/media/media/card_Art/RoG-cardback.jpeg" id="card-art-display"></img>
+            </div>
         </div>
         <div class="column-right">
-
+          {% for card in loadedDeck.card_list %}
+            <ul id="card-{{card.id}}" class="card-item">{{card.quantity}}x {{card.card_id__card_name}}</ul>
+          {% endfor %}
         </div>
     </div>
+    <script text="text/javascript" src={% static "deckbuilder/updateCardImage.js" %}></script>
   </body>
 </html>

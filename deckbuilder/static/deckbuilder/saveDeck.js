@@ -7,6 +7,10 @@ $(".save-button").click(function(){
     } else {
       const loadedDeck = JSON.parse(document.getElementById('loaded-deck').textContent);
 
+      // Revisar la construcción del mazo para determinar si está armado correctamente:
+      // Esto incluye la proporción y cant de cartas como también que no contenga cartas prohibidas
+      // Me parece que lo mejor seria hacer esto en el modelo
+
       if (loadedDeck){
         current_deck_id = loadedDeck.deck_id;
       } else {

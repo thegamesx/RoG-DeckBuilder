@@ -1,4 +1,4 @@
-function addCard(cardTitle, cardID, cardVersionID, cardFaction, quantity=1){
+function addCard(cardTitle, cardID, cardVersionID, cardFaction, cardArt, quantity=1){
     if ($('#card-list #'+cardID).length){
       $('#card-list #'+cardID).attr("data-quantity", function(index, value){
         return parseInt(value) + 1;
@@ -13,7 +13,8 @@ function addCard(cardTitle, cardID, cardVersionID, cardFaction, quantity=1){
         + "' data-version='" + cardVersionID 
         + "' data-card-name='" + cardTitle 
         + "' data-faction='" + cardFaction 
-        + "' data-quantity='" + quantity + "'>"
+        + "' data-quantity='" + quantity
+        + "' data-card-art='" + cardArt +"'>"
         + quantity + "x "
         + cardTitle
         + "</div>";
@@ -36,6 +37,7 @@ $(function(){
         card.card_id,
         card.id,
         card.card_id__faction,
+        card.card_art,
         quantity=card.quantity,
       );
     });
