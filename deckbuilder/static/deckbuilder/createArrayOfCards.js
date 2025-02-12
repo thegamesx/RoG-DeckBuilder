@@ -13,9 +13,16 @@ function createArrayOfCards(query){
     data:{ user_query: searchQuery },
     success: (data) => {
       function createFrame(versionID, art, name, id, faction){
-        return "<a href='#' id='" + id + "' class='add-card' title='" + name + "' data-version='" + versionID + "' data-faction='" + faction + "'>"+
-                    "<img src='/media/"+ art +"' alt='"+ name +"'/>"+
-                  "</a>";
+        return "<div class='card-to-add'" +
+                "id='" + id + 
+                "' title='" + name + 
+                "' data-version='" + versionID + 
+                "' data-faction='" + faction + "'>"+
+                "<img src='/media/"+ art +"' alt='"+ name + "' />" +
+                "<input class='card-menu' type='button' value='Menú'>" +
+                "<input class='sub-card' type='button' value='-'>" +
+                "<input class='add-card' type='button' value='+'>" +
+                "</input></div>";
       }
       console.log(data);
       document.getElementById("available-cards").innerHTML = ""
@@ -40,5 +47,11 @@ $(function() {
   createArrayOfCards(" ")
 });
 $('.submit-button').click(function(){
-  createArrayOfCards(document.getElementById('user-query').value)
+  createArrayOfCards($('#user-query').val());
+});
+// Esta parte es para que se ejecute la busqueda cuando se apreta enter
+$('#user-query').on('keypress', function (e) {
+  if(e.which === 13){
+     createArrayOfCards($('#user-query').val());
+  }
 });

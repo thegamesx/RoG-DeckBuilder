@@ -6,8 +6,6 @@
   </head>
   <body>
     <!-- Acá va el constructor de mazos en si, la parte visual y mucha de la logica. -->
-
-    <!--IMPORTANTE: ver como agregar cartas al side-->
     {% load static %}
     <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -26,11 +24,12 @@
         </div>
         <div class="column-right">
           Nombre del mazo: <input type="text" id="deck-name-input">
-          <p>Cartas en el mazo</p>
-          <div class = "card-list" id = "card-list">
-            <script type="text/javascript" src="{% static "deckbuilder/addCardToList.js" %}"></script>
-            <script type="text/javascript" src="{% static "deckbuilder/removeCardOfList.js" %}"></script>
-          </div>
+          <p id="maindeck-title">Cartas en el mazo</p>
+          <div class = "main-card-list" id = "main-card-list"></div>
+          <p id="sidedeck-title">Cartas en el mazo secundario</p>
+          <div class = "side-card-list" id = "side-card-list"></div>
+          <p id="maybedeck-title">Cartas en duda</p>
+          <div class = "maybe-card-list" id = "maybe-card-list"></div>
           <br><a href="#" class="save-button" id="save-button">Guardar Mazo</a>
           <br><br><br>Descripción del mazo<br><textarea id="deck-description"></textarea>
           <br><br>Visibilidad<br>
@@ -48,5 +47,15 @@
       <img src="#" class="img-hover"></img>
     </div>
     <script src={% static "deckbuilder/showImageWhenHovering.js" %}></script>
+
+    <!-- Menu para elegir donde van las cartas -->
+    <div class="dropdown-menu">
+      <div id="menu-add-to-main"><a href='#'>Agregar al mazo principal</a></div>
+      <div id="menu-add-to-side"><a href='#'>Agregar al mazo secundario</a></div>
+      <div id="menu-add-to-maybe"><a href='#'>Agregar a candidatos</a></div>
+    </div>
+    <script type="text/javascript" src={% static "deckbuilder/cardMenu.js" %}></script>
+    <script type="text/javascript" src="{% static "deckbuilder/addCardToList.js" %}"></script>
+    <script type="text/javascript" src="{% static "deckbuilder/removeCardOfList.js" %}"></script>
   </body>
 </html>

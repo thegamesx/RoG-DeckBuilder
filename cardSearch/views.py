@@ -58,6 +58,6 @@ class SearchResult(ListView):
     
     def render_to_response(self, context, **response_kwargs):
         if len(self.object_list) == 1:
-            return redirect(f"/card/{self.object_list[0].card_id_id}")
+            return redirect(f"/cards/{self.object_list[0].card_id_id}")
         return super().render_to_response(context, **response_kwargs)
      

@@ -1,5 +1,7 @@
 // Arma el JSON para guardar el mazo en la base de datos.
 
+// TODO: Ver como guardar con el side y el maybe. Tambien revisar la legalidad del mazo
+
 $(".save-button").click(function(){
     deckname = $("#deck-name-input").val();
     if (deckname.trim().length === 0) {

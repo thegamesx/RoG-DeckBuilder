@@ -25,53 +25,10 @@ class CardSet(models.Model):
         return return_list
 
 
-class Card(models.Model):
-
-    RARITY=[
-        (0, "Token"),
-        (1, "Común"),
-        (2, "Rara"),
-        (3, "Épica"),
-        (4, "Legendaria"),
-    ]
-
-    FACTIONS = [
-        ("J", "Jupiter"),
-        ("M", "Marte"),
-        ("N", "Neptuno"),
-        ("P", "Pluton"),
-        ("S", "Saturno")
-    ]
-
-    card_name = models.CharField(max_length=200)
-    faction = MultiSelectField(choices=FACTIONS, blank=True)
-    card_type = models.CharField(max_length=200)
-    cost = models.CharField(default="", max_length=30)
-    converted_cost = models.IntegerField(default=0)
-    rarity = models.IntegerField(choices=RARITY)
-    attack = models.IntegerField(blank=True, null=True)
-    health = models.IntegerField(blank=True, null=True)
-    text_box = models.TextField(blank=True, default="")
-    rules_explanation = models.TextField(blank=True, default="")
-    related_cards = models.ManyToManyField('self', blank=True)
-
-    class Meta:
-        ordering = ['card_name']
-
-    def __str__(self):
-        return self.card_name
-    
-    def get_card_by_id(card_id):
-        return Card.objects.get(pk=card_id)
-    
-    def check_if_banned(format,card_id):
-        # Ver como revisar una carta esta baneada en x formato
-        pass
-
-
 class Format(models.Model):
     format_name = models.CharField(max_length=200)
     format_desc = models.TextField(default="")
+    card_id = models.ManyToManyField("Card", through="FormatFollows" ,verbose_name="Card")
 
     def __str__(self):
         return self.format_name
@@ -113,6 +70,58 @@ class Format(models.Model):
                 return False
         return True
 
+
+class Card(models.Model):
+
+    RARITY=[
+        (0, "Token"),
+        (1, "Común"),
+        (2, "Rara"),
+        (3, "Épica"),
+        (4, "Legendaria"),
+    ]
+
+    FACTIONS = [
+        ("J", "Jupiter"),
+        ("M", "Marte"),
+        ("N", "Neptuno"),
+        ("P", "Pluton"),
+        ("S", "Saturno")
+    ]
+
+    card_name = models.CharField(max_length=200)
+    faction = MultiSelectField(choices=FACTIONS, blank=True)
+    card_type = models.CharField(max_length=200)
+    cost = models.CharField(default="", max_length=30)
+    converted_cost = models.IntegerField(default=0)
+    rarity = models.IntegerField(choices=RARITY)
+    attack = models.IntegerField(blank=True, null=True)
+    health = models.IntegerField(blank=True, null=True)
+    text_box = models.TextField(blank=True, default="")
+    rules_explanation = models.TextField(blank=True, default="")
+    related_cards = models.ManyToManyField('self', blank=True)
+    card_legality = models.ManyToManyField(Format, through='FormatFollows', blank=True)
+
+    class Meta:
+        ordering = ['card_name']
+
+    def __str__(self):
+        return self.card_name
+    
+    def get_card_by_id(card_id):
+        return Card.objects.get(pk=card_id)
+    
+    def check_if_banned(format,card):
+        card_legality = FormatFollows.objects.get(card_id=card, format_id__format_name__iexact=format)
+        if card_legality:
+            if card_legality.legality == "B":
+                return True
+            else:
+                return False
+        else:
+            return None # TODO: Ver si programar un código de error
+
+
 class FormatFollows (models.Model):
 
     LEGALITY = [
@@ -126,7 +135,7 @@ class FormatFollows (models.Model):
     legality = models.CharField(max_length=3, choices=LEGALITY, default="L")
 
     def __str__(self):
-        return self.format_id.format_name + " - " + self.get_legality_display()
+        return self.format_id.format_name + " - " + self.get_legality_display() + " (" + self.card_id.card_name + ")"
 
 
 class CardVersion(models.Model):
@@ -138,7 +147,6 @@ class CardVersion(models.Model):
     artist = models.CharField(max_length=200)
     flavor_text = models.TextField(blank=True, default="")
     label = models.CharField(blank=True, max_length=200, default="")
-    legality = models.ManyToManyField(Format, blank=True)
     last_print = models.BooleanField(default=True)
 
     class Meta:
@@ -209,6 +217,7 @@ class CardVersion(models.Model):
 
     
     # Crea el string desde el formulario para luego ser evaluado
+    # TODO: Ver los que falten aca
     def construct_string(form_fields):
         query_string = ""
         if form_fields["card_name"]:
@@ -239,9 +248,11 @@ class CardVersion(models.Model):
         
     
     # Evalua el string, permitiendo multiples filtros al mismo tiempo
-    def evaluate_string(user_query, only_last_print=True):
+    def evaluate_string(user_query, only_last_print=True, include_tokens=False):
         splited_query = user_query.split()
         query_set = CardVersion.objects.all()
+        if not include_tokens:
+            query_set = query_set.exclude(card_id__rarity=0)
         specific_set = False
         for query in splited_query:
             splited_terms = re.split(":|!=|>=|<=|<|>|=", query)
@@ -286,12 +297,12 @@ class CardVersion(models.Model):
                                 query_set = query_set.filter(card_id__card_name__icontains=query)
                         case "legal":
                             if search_query['operator'] in [":","="]:
-                                pass # Acordarse de hacer esto !!!
+                                query_set = query_set.filter(card_id__card_legality__format_name__iexact=search_query["query"]).filter(card_id__formatfollows__legality="L")
                             else:
                                 query_set = query_set.filter(card_id__card_name__icontains=query)
                         case "banned":
                             if search_query['operator'] in [":","="]:
-                                pass
+                                query_set = query_set.filter(card_id__card_legality__format_name__iexact=search_query["query"]).filter(card_id__formatfollows__legality="B")
                             else:
                                 query_set = query_set.filter(card_id__card_name__icontains=query)
                         case "rarity":
@@ -321,7 +332,7 @@ class CardVersion(models.Model):
                                     query_set = query_set.filter(card_id__rarity__lte=rarity_value)
                                 case "!=":
                                     query_set = query_set.exclude(card_id__rarity__exact=rarity_value)
-                        # Implementar luego soporte para multiples facciones
+                        # TODO: Implementar luego soporte para multiples facciones
                         case "faction" | "f":
                             if len(search_query["query"])>1:
                                 match search_query["query"]:
@@ -377,7 +388,7 @@ class CardVersion(models.Model):
                                 case "!=":
                                     query_set = query_set.exclude(card_id__health__exact=None).exclude(card_id__health__exact=search_query['query'])
                         case "cost":
-                            pass # Implementar esto !!!
+                            pass # TODO: Implementar esto !!!
                         case "cc":
                             match search_query["operator"]:
                                 case "="|":":

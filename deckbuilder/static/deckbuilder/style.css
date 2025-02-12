@@ -17,11 +17,6 @@ body{
     background-color: beige;
 }
 
-.available-cards img{
-    width: 190px;
-    height: auto;
-}
-
 .card-image img{
     width: 250px;
     height: auto;
@@ -36,4 +31,64 @@ body{
 
 .deck-title{
     color: azure;
+}
+
+.available-cards{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1.5fr));
+}
+
+.card-to-add{
+    display: flex;
+    width: 190px;
+    position: relative;
+}
+
+.available-cards img{
+    width: 190px;
+    height: auto;
+}
+
+.card-to-add:hover input {
+    position: absolute;
+    display: block;
+}
+
+.card-to-add:hover .card-menu {
+    top: 3%;
+    left: 5%;
+}
+
+.card-to-add:hover .sub-card {
+    top: 3%;
+    left: 68%;
+}
+
+.card-to-add:hover .add-card {
+    top: 3%;
+    left: 82%;
+}
+
+.card-to-add input {
+    top:0;
+    left:100%;
+    display: none;
+}
+
+.dropdown-menu{
+    display: block;
+    position: absolute;
+    background-color: darkgray;
+    border-style: solid;
+    border-color: black;
+    padding: 8px;
+}
+
+.dropdown-menu a{
+    color: black;
+    text-decoration: none;
+}
+
+.dropdown-menu div:hover{
+    background-color:lightgray;
 }
