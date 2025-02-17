@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'RoGDB.apps.RogdbConfig',
     'cardSearch.apps.CardsearchConfig',
     'deckbuilder.apps.DeckbuilderConfig',
+    'baseTemplates.apps.BasetemplatesConfig',
 ]
 
 MIDDLEWARE = [

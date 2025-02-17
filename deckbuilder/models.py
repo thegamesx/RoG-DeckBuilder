@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
 from multiselectfield import MultiSelectField
+from RoGDB.models import Format
 
 
 class DeckModel(models.Model):
@@ -41,7 +42,7 @@ class DeckModel(models.Model):
     def get_deck_from_id(deck_id):
         return DeckModel.objects.get(pk=deck_id) 
 
-    def save_deck(user_instance, deck_json):
+    def save_deck(user_instance, deck_json, legal):
         deck = DeckModel.objects.create(
             deck_owner = user_instance,
             deck_name = deck_json["deckname"],
@@ -50,11 +51,12 @@ class DeckModel(models.Model):
             visibility = deck_json["visibility"],
             format = "Eterno", # Cambiar luego
             card_list = deck_json["cards"],
+            legal = legal,
         )
         return deck
     
 
-    def update_deck(user_instance, deck_json):
+    def update_deck(user_instance, deck_json, legal):
         deck = DeckModel.get_deck_from_id(deck_json["deck_id"])
         if user_instance == deck.deck_owner:
             deck.deck_name = deck_json["deckname"]
@@ -63,6 +65,7 @@ class DeckModel(models.Model):
             deck.visibility = deck_json["visibility"]
             deck.format = deck_json["format"]
             deck.card_list = deck_json["cards"]
+            deck.legal = legal
             deck.save()
             return deck
         else:
@@ -73,3 +76,7 @@ class DeckModel(models.Model):
         # que la tengan cambien el estado a ilegal.
         # Esto debe efectuarse al modificar la base de datos.
         pass  
+
+    def check_deck_list_legality(format, deck):
+        # Ver si hacerlo asi
+        return Format.check_deck_legality(format, deck)

@@ -1,46 +1,38 @@
-<!doctype html>
-<html lang="es-AR">
-  <head>
-    <meta charset="utf-8" />
-    <title>Buscar cartas</title>
-  </head>
-  <body>
-    {% load static %}
-    <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
-    <div class="banner">
-        <a class="active" href="/">Inicio</a>
-        <a href="#about">Mazos</a>
-        <a href="/cards/search">Cartas</a>
-        <input type="text" placeholder="Buscar cartas...">
-    </div>
-    <div class="card-info">
-        <!-- Cuerpo de la informacion de una carta-->
+{% extends "baseTemplates/base.html" %}
 
-        <div class="row">
-          <div class="card-illustration">
-            <img src="{{ requestedcard.card_art.url }}">
-          </div>
-          <div class="card-info">
-            <h1><b>{{ requestedcard.card_id.card_name }}</b></h1>
-            <p>Rareza: {{ requestedcard.rarity }}</p><br>
-            <p>Texto: {{requestedcard.card_id.text_box}}</p>
-            <p>Artista: {{ requestedcard.artist }} </p>
-          </div>
-        </div>
-        <div class="card-set">
-          <a class="set-button" href="/set/{{ requestedcard.set_id.set_code }}">
-            <h2>{{requestedcard.set_id.set_name}} ({{ requestedcard.set_id.set_code }})</h2>
-            #{{ requestedcard.serial_number }}
-          </button>
-        </div>
-        {% if requestedcard.card_id.related_cards.all %}
-          <div class="related-cards">
-            <h3>Cartas relacionadas</h3><br>
-            {% for related_card in requestedcard.card_id.related_cards.all %}
-              <a href="/cards/{{ related_card.pk }}">{{ related_card.card_name }}</a>
-            {% endfor %}
-          </div>
-        {% endif %}
+{% block title %}RoG - {{ requestedcard.card_id.card_name }}{% endblock %}
+
+{% block content %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
+
+  <div class="row row-cols-3">
+    <div class="col card-illustration">
+      <img src="{{ requestedcard.card_art.url }}">
     </div>
-  </body>
-</html>
+    <div class="col card-info">
+      <h1><b>{{ requestedcard.card_id.card_name }}</b></h1>
+      <p>Rareza: {{ requestedcard.card_id.get_rarity_display }}</p>
+      <p>Tipo: {{requestedcard.card_id.card_type}}</p>
+      <p>Texto: {{requestedcard.card_id.text_box}}</p>
+      {% if requestedcard.card_id.attack > 0 %}
+        <p>{{requestedcard.card_id.attack}}/{{requestedcard.card_id.health}}</p>
+      {% endif %}
+      <p>Artista: {{ requestedcard.artist }} </p>
+    </div>
+    <div class="col card-set">
+      <a class="set-button" href="/set/{{ requestedcard.set_id.set_code }}">
+        <h2>{{requestedcard.set_id.set_name}} ({{ requestedcard.set_id.set_code }})</h2>
+        #{{ requestedcard.serial_number }}
+      </a>
+    {% if requestedcard.card_id.related_cards.all %}
+      <div class="related-cards">
+        <h3>Cartas relacionadas</h3><br>
+        {% for related_card in requestedcard.card_id.related_cards.all %}
+          <a href="/cards/{{ related_card.pk }}">{{ related_card.card_name }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+    </div>
+  </div>
+{% endblock %}

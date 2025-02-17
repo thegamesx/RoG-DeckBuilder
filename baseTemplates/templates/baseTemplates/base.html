@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  </head>
+  <body>
+    {% load static %}
+    <link rel="stylesheet" href="{% static "baseTemplates/style.css" %}">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/"><img src="{% static 'baseTemplates/logo.png'%}" alt="Rise of Gods" width="30" height="30"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="/cards/search">Cartas</a></li>
+            <li class="nav-item"><a class="nav-link" href="/decks/search">Mazos</a></li>
+          </ul>
+          <div class="col-md-5 mx-auto">
+            <div class="input-group position-relative">
+                <input class="form-control rounded-pill search-bar pe-5 z-1" type="text" placeholder="Buscar..." aria-label="Buscar..." id="search-input">
+                <select class="form-select position-absolute top-50 end-0 translate-middle-y rounded-pill w-auto z-2 me-5" aria-label="Default select example" id="navbar-select">
+                  <option selected value="cards">Cartas</option>
+                  <option value="decks">Mazos</option>
+                  <option value="users">Usuarios</option>
+                </select>
+                <button class="btn position-absolute top-50 end-0 translate-middle-y z-2" type="button">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+          <ul class="navbar-nav">
+            <a class="nav-link" href="/cards/advanced">Avanzado</a>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Usuario
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Ir a mi perfil</a></li>
+                <li><a class="dropdown-item" href="#">Mis mazos</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Opciones</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div id="content">
+      {% block content %}{% endblock content %}
+    </div>
+    <footer class="footer p-5">
+      <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <h2>Rise of Gods</h2>
+                <h5>Buscador de cartas y constructor de mazos</h5>
+            </div>
+            <div class="col-md-3">
+                <h5>About Us</h5>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at mauris posuere, eleifend nisi et, iaculis nisi. Lorem ipsum dolor sit amet.
+                </p>
+            </div>
+            <div class="col-md-3">
+                <h5>Contactanos</h5>
+                <ul class="list-unstyled">
+                    <li>Email: info@example.com</li>
+                    <li>Phone: +1233567890</li>
+                    <li>Address: 123 Street, City, Country</li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>¡Seguinos!</h5>
+                <ul class="list-inline footer-links">
+                    <li class="list-inline-item">
+                      <a href="https://www.instagram.com/rise_of_gods_tcg/?utm_source=ig_web_button_share_sheet#" class="social-media-link">
+                        <i class="bi bi-instagram"></i>
+                      </a>
+                    </li>
+                    <li class="list-inline-item">
+                      <a href="https://www.youtube.com/channel/UCNu2YQVfGQ0bqN9QF8zPW0w" class="social-media-link">
+                        <i class="bi bi-youtube"></i>
+                      </a>
+                    </li>
+                    <li class="list-inline-item">
+                      <a href="https://discord.gg/ChSsFxJC" class="social-media-link">
+                        <i class="bi bi-discord"></i>
+                      </a>
+                    </li>
+                    <li class="list-inline-item">
+                      <a href="https://github.com/thegamesx/RoG-DeckBuilder" class="social-media-link">
+                        <i class="bi bi-github"></i>
+                      </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <p>&copy; 2025 Todos los derechos reservados.</p>
+            </div>
+            <div class="col-md-6 text-end">
+                <ul class="list-inline footer-links">
+                    <li class="list-inline-item">
+                        <a href="#" class="text-white">
+                            Privacy Policy
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="#" class="text-white">
+                            Terms of Service
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="#" class="text-white">
+                            Sitemap
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>

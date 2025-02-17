@@ -26,7 +26,11 @@ $(".save-button").click(function(){
         visibility: $("#visibility").val(),
         format: "Eterno", // Cambiar esto luego
         faction: [],
-        cards: [],
+        cards: {
+          main: [],
+          side: [],
+          maybe: [],
+        },
       };
 
       $(".card-in-list").each(function(index){
@@ -42,7 +46,18 @@ $(".save-button").click(function(){
           deckJSON.faction.push($(this).attr("data-faction"));
         }
 
-        deckJSON.cards.push(card);
+        whichDeck = $(this).closest("div.card-list").attr("id");
+
+        if (whichDeck == "main-card-list"){
+          deckJSON.cards.main.push(card);
+        }
+        if (whichDeck == "side-card-list"){
+          deckJSON.cards.side.push(card);
+        }
+        if (whichDeck == "maybe-card-list"){
+          deckJSON.cards.maybe.push(card);
+        }
+        
       });
 
       console.log(deckJSON);

@@ -32,17 +32,19 @@ $(function(){
     $("#deck-description").val(loadedDeck.description);
     $("#visibility").val(loadedDeck.visibility);
     // Agregar formato luego
-  
-    $.each(loadedDeck.card_list, function(index, card){
-      addCard(
-        card.card_id__card_name,
-        card.card_id,
-        card.id,
-        card.card_id__faction,
-        card.card_art,
-        "main",
-        quantity=card.quantity,
-      );
+    
+    $.each(loadedDeck.card_list, function(deckType, deck){
+      $.each(deck, function(index, card){
+        addCard(
+          card.card_id__card_name,
+          card.card_id,
+          card.id,
+          card.card_id__faction,
+          "/media/" + card.card_art,
+          deckType,
+          quantity=card.quantity,
+        );
+      });
     });
   };
 });
@@ -53,19 +55,20 @@ $('.available-cards').on('click', 'input.add-card', function(){
     $(this).closest("div").attr("id"),
     $(this).closest("div").attr("data-version"),
     $(this).closest("div").attr("data-faction"),
-    $(this).closest('img').attr("src"),
+    $(this).siblings('img').attr("src"),
     "main"
   )
 });
 
 $('.dropdown-menu').on("click", "#menu-add-to-main", function() {
   cardDiv = $(".card-to-add#"+$(this).closest("div[triggered-card-id]").attr("triggered-card-id"))
+  console.log($(this).closest('img').attr("src"))
   addCard(
     cardDiv.attr("title"),
     cardDiv.attr("id"),
     cardDiv.attr("data-version"),
     cardDiv.attr("data-faction"),
-    cardDiv.closest('img').attr("src"),
+    cardDiv.children('img').attr("src"),
     "main",
   )
 });
@@ -77,7 +80,7 @@ $('.dropdown-menu').on("click", "#menu-add-to-side", function() {
     cardDiv.attr("id"),
     cardDiv.attr("data-version"),
     cardDiv.attr("data-faction"),
-    cardDiv.closest('img').attr("src"),
+    cardDiv.children('img').attr("src"),
     "side",
   )
 });
@@ -89,7 +92,7 @@ $('.dropdown-menu').on("click", "#menu-add-to-maybe", function() {
     cardDiv.attr("id"),
     cardDiv.attr("data-version"),
     cardDiv.attr("data-faction"),
-    cardDiv.closest('img').attr("src"),
+    cardDiv.children('img').attr("src"),
     "maybe",
   )
 });

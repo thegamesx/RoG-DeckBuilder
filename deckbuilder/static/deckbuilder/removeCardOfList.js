@@ -1,3 +1,5 @@
+// Actualizar esto luego, dar más opciones
+
 function subCard(cardListObject){
   cardListObject.attr("data-quantity", function(index, value){
     return parseInt(value) - 1;

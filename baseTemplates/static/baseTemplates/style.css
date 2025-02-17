@@ -1,0 +1,15 @@
+.footer{
+    background-color:darkslategray;
+}
+
+.footer-links a {
+    color: #fff;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.social-media-link {
+    font-size: 24px;
+}

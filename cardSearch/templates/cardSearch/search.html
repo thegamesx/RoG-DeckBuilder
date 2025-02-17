@@ -1,53 +1,44 @@
-<!doctype html>
-<html lang="es-AR">
-  <head>
-    <meta charset="utf-8" />
-    <title>Buscar cartas</title>
-  </head>
-  <body>
-    {% load static %}
-    <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
-    <div class="banner">
-        <a class="active" href="/">Inicio</a>
-        <a href="#about">Mazos</a>
-        <a href="/cards/search">Cartas</a>
-        <input type="text" placeholder="Buscar cartas...">
-    </div>
-    <div class="search-result">
-        <!-- La idea es mostrar las cartas en paginas, de forma estatica. -->
-        <div class="search-info">
-          <!-- Esta info es para testear, cambiar por lo que corresponda luego -->
-          <p><strong>Se encontraron {{ page_obj.paginator.count }} cartas</strong></p>
+{% extends "baseTemplates/base.html" %}
+
+{% block title %}RoG - Buscar cartas{% endblock %}
+
+{% block content %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
+  <div class="search-result">
+      <!-- La idea es mostrar las cartas en paginas, de forma estatica. -->
+      <div class="search-info">
+        <!-- Esta info es para testear, cambiar por lo que corresponda luego -->
+        <p><strong>Se encontraron {{ page_obj.paginator.count }} cartas</strong></p>
+      </div>
+      <!-- Acá está el loop que carga el arte de las cartas, y les asigna una url. -->
+      <div class="card-list">
+        {% for card in card_list %}
+            <a href="/cards/{{ card.set_id.set_code }}/{{ card.serial_number }}"><img src="{{ card.card_art.url }}"  alt={{"card.card_id.card_name"}}></a>
+        {% endfor %}
+      </div>
+      <div class="bottom-control-row">
+        <div class = "control-left-side">
         </div>
-        <!-- Acá está el loop que carga el arte de las cartas, y les asigna una url. -->
-        <div class="card-list">
-          {% for card in card_list %}
-              <a href="/cards/{{ card.set_id.set_code }}/{{ card.serial_number }}"><img src="{{ card.card_art.url }}"  alt={{"card.card_id.card_name"}}></a>
-          {% endfor %}
+        <div class = "control-right-side">
+          <!-- Agregar código para habilitar o deshabilitar botones -->
+          <span class="step-links">
+            {% if page_obj.has_previous %}
+              <a href="?page=1" class="btn btn-dark btn-sm"><b><i class="bi bi-arrow-bar-left"></i></b></a>
+              <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-dark btn-sm"><i class="bi bi-arrow-left-short"></i> Anterior</a>
+            {% else %}
+            <a class="btn btn-dark disabled btn-sm"><i class="bi bi-arrow-bar-left"></i></a>
+            <a class="btn btn-dark disabled btn-sm"><i class="bi bi-arrow-left-short"></i> Anterior</a>
+            {% endif %}
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}" class="btn btn-dark btn-sm">Siguiente <i class="bi bi-arrow-right-short"></i></a>
+              <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-dark btn-sm"><i class="bi bi-arrow-bar-right"></i></a>
+            {% else %}
+              <a class="btn btn-dark disabled btn-sm">Siguiente <i class="bi bi-arrow-right-short"></i></a>
+              <a class="btn btn-dark disabled btn-sm"><i class="bi bi-arrow-bar-right"></i></a>
+            {% endif %}
+          </span>
         </div>
-        <div class="bottom-control-row">
-          <div class = "control-left-side">
-          </div>
-          <div class = "control-right-side">
-            <!-- Agregar código para habilitar o deshabilitar botones -->
-            <span class="step-links">
-              {% if page_obj.has_previous %}
-                <a href="?page=1" class="button"><b> &#60;&#60; </b></a>
-                <a href="?page={{ page_obj.previous_page_number }}" class="button"><b> Anterior </b></a>
-              {% else %}
-              <a class="button" disabled><b> &#60;&#60; </b></a>
-              <a class="button" disabled><b> Anterior </b></a>
-              {% endif %}
-              {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" class="button"><b> Siguiente </b></a>
-                <a href="?page={{ page_obj.paginator.num_pages }}" class="button"><b> &#62;&#62; </b></a>
-              {% else %}
-                <a class="button" disabled><b> Siguiente </b></a>
-                <a class="button" disabled><b> &#62;&#62; </b></a>
-              {% endif %}
-            </span>
-          </div>
-        </div>
-    </div>
-  </body>
-</html>
+      </div>
+  </div>
+{% endblock %}

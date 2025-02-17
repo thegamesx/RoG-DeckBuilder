@@ -8,8 +8,7 @@ $(function(){
 
 $(document).on({
     mouseenter: function(){
-        console.log($(this).attr("data-card-art"));
-        $(".img-on-hover img").attr("src", "/media/" + $(this).attr("data-card-art"));
+        $(".img-on-hover img").attr("src", $(this).attr("data-card-art"));
         $(".img-on-hover").show();
     },
     mouseleave: function(){

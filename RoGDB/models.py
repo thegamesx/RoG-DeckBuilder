@@ -51,24 +51,46 @@ class Format(models.Model):
         # - Legendaria: 1 copia
         # Ademas de una lista de cartas prohibidas.
 
-        for card in deck_list:
+        # Primero agregamos la cant de cartas en el side junto con el main, asi revisamos todo junto
+        main_deck_size = 0
+        side_deck_size = 0
+
+        for side_card in deck_list["side"]:
+            found = False
+            for main_card in deck_list["main"]:
+                if main_card["id"] == side_card["id"]:
+                    main_quantity = int(main_card["quantity"])
+                    main_card["quantity"] = str(main_quantity + int(side_card["quantity"]))
+                    found = True
+            if not found:
+                deck_list["main"].append(side_card)
+        for card in deck_list["main"]:
+            # Ver de poner una excepción para los sigilos
             full_info_card = Card.get_card_by_id(card["id"])
-            match full_info_card["rarity"]:
+            match full_info_card.rarity:
                 case 1:
-                    if card["quantity"]>4:
+                    if int(card["quantity"])>4:
                         return False
                 case 2:
-                    if card["quantity"]>3:
+                    if int(card["quantity"])>3:
                         return False
                 case 3:
-                    if card["quantity"]>2:
+                    if int(card["quantity"])>2:
                         return False
                 case 4:
-                    if card["quantity"]>1:
+                    if int(card["quantity"])>1:
                         return False
             if Card.check_if_banned(format, card["id"]):
                 return False
-        return True
+            main_deck_size += int(card["quantity"])
+        for card in deck_list["side"]:
+            side_deck_size += int(card["quantity"])
+        
+        # Luego ver de definir el tamaño del mazo según el formato
+        if main_deck_size == 40 and side_deck_size == 10:
+            return True
+        else:
+            return False
 
 
 class Card(models.Model):

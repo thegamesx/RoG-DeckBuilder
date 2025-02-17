@@ -55,10 +55,11 @@ def save_deck(request):
     if request.method == "POST":
         try:
             deck_data = json.loads(request.body)
+            legal = DeckModel.check_deck_list_legality("Eterno", deck_data["cards"])
             if deck_data["deck_id"]:
-                DeckModel.update_deck(request.user, deck_data)
+                DeckModel.update_deck(request.user, deck_data, legal)
             else:
-                DeckModel.save_deck(request.user, deck_data)
+                DeckModel.save_deck(request.user, deck_data, legal)
             return JsonResponse({"message": "Mazo guardado con éxito."}, status=200)
         except json.JSONDecodeError as error:
             return JsonResponse({"error": "JSON inválido.", "details": str(error)}, status=400)
@@ -68,8 +69,11 @@ def save_deck(request):
 def deckbuilder_page(request, deck_id=None):
     if deck_id:
         try:
+            updated_card_list = {}
             deck_info = DeckModel.get_deck_from_id(deck_id)
-            updated_card_list = get_cards_info(deck_info.card_list)
+            updated_card_list["main"] = get_cards_info(deck_info.card_list["main"])
+            updated_card_list["side"] = get_cards_info(deck_info.card_list["side"])
+            updated_card_list["maybe"] = get_cards_info(deck_info.card_list["maybe"])
 
             loaded_deck = {
                 "deckname": deck_info.deck_name,

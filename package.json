@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.6",
+    "bootstrap-icons": "^1.11.3",
+    "node": "^22.14.0",
+    "tailwindcss": "^4.0.6"
+  }
+}
