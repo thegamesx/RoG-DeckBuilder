@@ -1,8 +1,10 @@
 /* General */
 
-body{
-    color: aliceblue;
-    background-color: black;
+.img-on-hover img{
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 230px;
+    height: auto;
 }
 
 /* Relacionado a search.html */
@@ -36,6 +38,7 @@ body{
 .card-list{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(290px, 1.5fr));
+    row-gap: 15px;
 }
 
 .bottom-control-row{
@@ -53,6 +56,11 @@ body{
 }
 
 /* Relacionado a card.html*/
+
+.card-info-container{
+    padding-top: 30px;
+}
+
 .card-info{
     padding-top: 40px;
     margin: 0px auto 0px auto;
@@ -75,7 +83,14 @@ body{
     width: 480px;
 }
 
+.card-set{
+    padding-top: 50px;
+}
+
 .set-button{
-    width: 480px;
-    background-color: aqua;
+    width: 340px;
+}
+
+.list-group-item{
+    width: 340px;
 }

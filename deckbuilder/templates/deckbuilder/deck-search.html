@@ -1,61 +1,61 @@
-<!doctype html>
-<html lang="es-AR">
-  <head>
-    <meta charset="utf-8" />
-    <title>Buscar cartas</title>
-  </head>
-  <body>
-    {% load static %}
-    <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
-    <div class="search-result">
-        <div class="search-info">
-          <!-- Esta info es para testear, cambiar por lo que corresponda luego -->
-          <p><strong>Se encontraron {{ page_obj.paginator.count }} mazos</strong></p>
-        </div>
-        <div class="search-options">
-            <!--
-            Las opciones de busqueda debe incluir:
-            - Buscar por formato (considerarlo opcional si hay uno solo)
-            - Filtrar por nombre
-            - Filtrar por facción
-            - Filtrar por carta especifica
-            -->
-            <label>Filtrar por carta </label>
-            <input type="text" class="card-filter" id="card-filter"></input>
-        </div>
-        <div class="deck-list">
-          {% for deck in deck_list %}
-            <div class="deck-box" id="deck-{{ deck.pk }}" data-factions="{{ deck.factions }}">
-                <a href="/decks/view/{{ deck.pk }}">
-                    <h3>{{ deck.deck_name }}</h3>
-                    {{ deck.format }}
-                </a>
-            </div>
-          {% endfor %}
-        </div>
-        <div class="bottom-control-row">
-          <div class = "control-left-side">
-          </div>
-          <div class = "control-right-side">
-            <!-- Agregar código para habilitar o deshabilitar botones -->
-            <span class="step-links">
-              {% if page_obj.has_previous %}
-                <a href="?page=1" class="button"><b> &#60;&#60; </b></a>
-                <a href="?page={{ page_obj.previous_page_number }}" class="button"><b> Anterior </b></a>
-              {% else %}
-              <a class="button" disabled><b> &#60;&#60; </b></a>
-              <a class="button" disabled><b> Anterior </b></a>
-              {% endif %}
-              {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" class="button"><b> Siguiente </b></a>
-                <a href="?page={{ page_obj.paginator.num_pages }}" class="button"><b> &#62;&#62; </b></a>
-              {% else %}
-                <a class="button" disabled><b> Siguiente </b></a>
-                <a class="button" disabled><b> &#62;&#62; </b></a>
-              {% endif %}
-            </span>
-          </div>
-        </div>
+{% extends "baseTemplates/base.html" %}
+
+{% block title %}RoG - Buscar mazos{% endblock %}
+
+{% block content %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
+  <div class="search-result container">
+    <div class="search-info container">
+      <!-- Esta info es para testear, cambiar por lo que corresponda luego -->
+      <p><strong>Se encontraron {{ page_obj.paginator.count }} mazos</strong></p>
     </div>
-  </body>
-</html>
+    <div class="search-options">
+        <!--
+        Las opciones de busqueda debe incluir:
+        - Buscar por formato (considerarlo opcional si hay uno solo)
+        - Filtrar por nombre
+        - Filtrar por facción
+        - Filtrar por carta especifica
+        -->
+        <label>Filtrar por carta </label>
+        <input type="text" class="card-filter" id="card-filter"></input>
+    </div>
+    <div class="deck-list flex-container col-3 justify-content-evenly text-center">
+      {% for deck in deck_list %}
+        <div class="deck-box card center" id="deck-{{ deck.pk }}" data-factions="{{ deck.deck_factions }}">
+          <a href="/decks/view/{{ deck.pk }}">
+            <h4 class="card-title">{{ deck.deck_name }}</h4>
+            <div class="factions text-center">
+              {% for faction in deck.deck_factions %}
+                <img class="faction-icon" src="{% static 'RoGDB/sellos/sello-'|add:faction|add:'.webp' %}"></img>
+              {% endfor %}
+            </div>
+            <p class="card-text">{{ deck.format }}</p>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="bottom-control-row">
+      <div class = "control-left-side"></div>
+      <div class = "control-right-side">
+        <span class="step-links">
+          {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-dark btn-sm"><b><i class="bi bi-arrow-bar-left"></i></b></a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-dark btn-sm"><i class="bi bi-arrow-left-short"></i> Anterior</a>
+          {% else %}
+          <a class="btn btn-dark disabled btn-sm"><i class="bi bi-arrow-bar-left"></i></a>
+          <a class="btn btn-dark disabled btn-sm"><i class="bi bi-arrow-left-short"></i> Anterior</a>
+          {% endif %}
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-dark btn-sm">Siguiente <i class="bi bi-arrow-right-short"></i></a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-dark btn-sm"><i class="bi bi-arrow-bar-right"></i></a>
+          {% else %}
+            <a class="btn btn-dark disabled btn-sm">Siguiente <i class="bi bi-arrow-right-short"></i></a>
+            <a class="btn btn-dark disabled btn-sm"><i class="bi bi-arrow-bar-right"></i></a>
+          {% endif %}
+        </span>
+      </div>
+    </div>
+  </div>
+{% endblock %}

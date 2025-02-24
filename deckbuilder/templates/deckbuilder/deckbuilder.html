@@ -7,7 +7,7 @@
   <body>
     <!-- Acá va el constructor de mazos en si, la parte visual y mucha de la logica. -->
     {% load static %}
-    <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
+    <link rel="stylesheet" href="{% static "deckbuilder/deckbuilder-style.css" %}">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
     {{loadedDeck|json_script:"loaded-deck"}}

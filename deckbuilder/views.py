@@ -94,7 +94,11 @@ def view_deck(request,deck_id):
     # Hacer comprobacion de deck privado luego
     try:
         deck_info = DeckModel.get_deck_from_id(deck_id)
-        updated_decklist = get_cards_info(deck_info.card_list)
+        updated_decklist = {
+            'main': get_cards_info(deck_info.card_list["main"]),
+            'side': get_cards_info(deck_info.card_list["side"]),
+            'maybe': get_cards_info(deck_info.card_list["maybe"]),
+        }
 
         loaded_deck = {
                     "deckname": deck_info.deck_name,

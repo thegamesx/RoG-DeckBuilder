@@ -3,7 +3,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.core.paginator import Paginator
 from django.views.generic import ListView
 from django.db.models import Q
-from RoGDB.models import CardVersion
+from RoGDB.models import CardVersion, Card
 from RoGDB.forms import AdvancerSearchForm
 
 
@@ -18,26 +18,29 @@ def advanced_search(request):
     return render (request, "cardSearch/advanced.html", {'form': advanced_form})
 
 
-def specific_card_info(request, set_id, card_id):
+def specific_card_info(request, card_id, set_id=False):
     try:
-        card = CardVersion.get_specific_card(card_id,set_id)
-        context = { 'requestedcard': card }
-        return render (request, "cardSearch/card.html", context)
-    except CardVersion.DoesNotExist:
-        raise Http404 ("Card not found")
-
-
-def generic_card_info(request, db_card_id):
-    try:
-        card = CardVersion.get_last_version(db_card_id)
-        context = { 'requestedcard': card }
+        if set_id:
+            card = CardVersion.get_specific_card(card_id,set_id)
+        else:
+            card = CardVersion.get_last_version(card_id)
+        other_prints = CardVersion.get_all_versions_of_a_card(card.card_id)
+        related_cards = card.card_id.related_cards.all()
+        related_cards_info = []
+        for related_card in related_cards:
+            related_cards_info.append(CardVersion.get_last_version(related_card.pk))
+        context = { 
+            'requestedcard': card,
+            'otherprints': other_prints,
+            'relatedcards': related_cards_info,
+        }
         return render (request, "cardSearch/card.html", context)
     except CardVersion.DoesNotExist:
         raise Http404 ("Card not found")
 
 
 def specific_set_cards(request, set_id):
-    return HttpResponseRedirect(f"/search/set:{set_id}")
+    return HttpResponseRedirect(f"/cards/search/set:{set_id}")
 
 
 class SearchResult(ListView):
@@ -56,6 +59,7 @@ class SearchResult(ListView):
         card_list = get_list_or_404(queryset)
         return card_list
     
+    # Si el resultado de la busqueda devuelve solo una carta, redirecciona directamente a la info de esa carta
     def render_to_response(self, context, **response_kwargs):
         if len(self.object_list) == 1:
             return redirect(f"/cards/{self.object_list[0].card_id_id}")

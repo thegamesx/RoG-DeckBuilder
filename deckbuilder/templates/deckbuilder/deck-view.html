@@ -1,31 +1,66 @@
-<!doctype html>
-<html lang="es-AR">
-  <head>
-    <meta charset="utf-8" />
-    <title>{{ deck.deckname }}</title>
-  </head>
-  <body>
-    {% load static %}
-    <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
-    {{loadedDeck|json_script:"loaded-deck"}}
-    <div class="deck-title">
-      <h1> {{ loadedDeck.deckname }} </h1>
-      <p> {{ loadedDeck.description }} </p>
-    </div>
-    <div class="row">
-        <div class="column-left">
-            <div class="card-image">
-              <img src="/media/media/card_Art/RoG-cardback.jpeg" id="card-art-display"></img>
-            </div>
-        </div>
-        <div class="column-right">
-          {% for card in loadedDeck.card_list %}
-            <ul id="card-{{card.id}}" class="card-item">{{card.quantity}}x {{card.card_id__card_name}}</ul>
+{% extends "baseTemplates/base.html" %}
+
+{% block title %}RoG - {{ loadedDeck.deckname }}{% endblock %}
+
+{% block content %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
+  <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
+  {{loadedDeck|json_script:"loaded-deck"}}
+  <div class="deck-title text-center p-3">
+    <div class="deckname-text fs-2"> {{ loadedDeck.deckname }}</div>
+    <div class="desc-text text-wrap p-2"> {{ loadedDeck.description }}</div>
+    <div class="format-text fst-italic">{{loadedDeck.format}}</div>
+  </div>
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="column-left col">
+          <div class="card-image">
+            <img src="/media/media/card_Art/RoG-cardback.jpeg" id="card-art-display"></img>
+          </div>
+      </div>
+      <div class="column-right col">
+        <div class="main-deck">
+          <h5>Mazo Principal</h5>
+          <ul class="list-group list-group-flush card-item bg-transparent">
+          {% for card in loadedDeck.card_list.main %}
+            <li class="list-group-item bg-transparent text-light card-item">
+              <div class="card-item-in-list" id="{{card.id}}">
+                <div class="card-quantity">{{card.quantity}}</div>
+                <div class="card-name">{{card.card_id__card_name}}</div>
+              </div>
+            </li>
           {% endfor %}
+          </ul>
+          {% if loadedDeck.card_list.side %}
+          <h5>Side</h5>
+          <ul class="list-group list-group-flush card-item bg-transparent">
+            {% for card in loadedDeck.card_list.side %}
+              <li class="list-group-item bg-transparent text-light card-item">
+                <div class="card-item-in-list" id="{{card.id}}">
+                  <div class="card-quantity">{{card.quantity}}</div>
+                  <div class="card-name">{{card.card_id__card_name}}</div>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          {% if loadedDeck.card_list.maybe %}
+            <h5>Candidatos</h5>
+            <ul class="list-group list-group-flush card-item bg-transparent">
+              {% for card in loadedDeck.card_list.maybe %}
+                <li class="list-group-item bg-transparent text-light card-item">
+                  <div class="card-item-in-list" id="{{card.id}}">
+                    <div class="card-quantity">{{card.quantity}}</div>
+                    <div class="card-name">{{card.card_id__card_name}}</div>
+                  </div>
+                </li>
+              {% endfor %}
+              </ul>
+          {% endif %}
         </div>
+      </div>
     </div>
-    <script text="text/javascript" src={% static "deckbuilder/updateCardImage.js" %}></script>
-  </body>
-</html>
+  </div>
+  <script text="text/javascript" src={% static "deckbuilder/updateCardImage.js" %}></script>
+{% endblock %}

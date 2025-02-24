@@ -6,33 +6,59 @@
   {% load static %}
   <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
 
-  <div class="row row-cols-3">
-    <div class="col card-illustration">
-      <img src="{{ requestedcard.card_art.url }}">
-    </div>
-    <div class="col card-info">
-      <h1><b>{{ requestedcard.card_id.card_name }}</b></h1>
-      <p>Rareza: {{ requestedcard.card_id.get_rarity_display }}</p>
-      <p>Tipo: {{requestedcard.card_id.card_type}}</p>
-      <p>Texto: {{requestedcard.card_id.text_box}}</p>
-      {% if requestedcard.card_id.attack > 0 %}
-        <p>{{requestedcard.card_id.attack}}/{{requestedcard.card_id.health}}</p>
-      {% endif %}
-      <p>Artista: {{ requestedcard.artist }} </p>
-    </div>
-    <div class="col card-set">
-      <a class="set-button" href="/set/{{ requestedcard.set_id.set_code }}">
-        <h2>{{requestedcard.set_id.set_name}} ({{ requestedcard.set_id.set_code }})</h2>
-        #{{ requestedcard.serial_number }}
-      </a>
-    {% if requestedcard.card_id.related_cards.all %}
-      <div class="related-cards">
-        <h3>Cartas relacionadas</h3><br>
-        {% for related_card in requestedcard.card_id.related_cards.all %}
-          <a href="/cards/{{ related_card.pk }}">{{ related_card.card_name }}</a>
-        {% endfor %}
+  <div class="container card-info-container pb-3">
+    <div class="row align-items-start mx-auto">
+      <div class="col card-illustration">
+        <img src="{{ requestedcard.card_art.url }}">
       </div>
-    {% endif %}
+      <div class="col card-info">
+        <h1><b>{{ requestedcard.card_id.card_name }}</b></h1>
+        <p>Rareza: {{ requestedcard.card_id.get_rarity_display }}</p>
+        <p>Tipo: {{requestedcard.card_id.card_type}}</p>
+        <p>Texto: {{requestedcard.card_id.text_box}}</p>
+        {% if requestedcard.card_id.attack > 0 %}
+          <p>{{requestedcard.card_id.attack}}/{{requestedcard.card_id.health}}</p>
+        {% endif %}
+        <em>Ilustrado por: {{ requestedcard.artist }} </em> <!--Hacer un link-->
+        <!--Poner las legalidades acá-->
+      </div>
+      <div class="col card-set">
+        <a class="btn btn-primary set-button" href="/cards/set/{{ requestedcard.set_id.set_code }}">
+          <h5>{{requestedcard.set_id.set_name}} ({{ requestedcard.set_id.set_code }})</h5>
+          #{{ requestedcard.serial_number }}
+        </a>
+        <div class="prints">
+          <div class="prints-title">
+            <p>IMPRESIONES</p>
+          </div>
+          <ul class="list-group z-0">
+          {% for print in otherprints %}
+            {% if print.pk == requestedcard.pk %}
+              <a class="show-card-image list-group-item list-group-item-action active" href="/cards/{{print.set_id.set_code}}/{{print.serial_number}}" data-card-art="/media/{{print.card_art}}">{{print.set_id.set_name}}</a>
+            {% else %}
+              <a class="show-card-image list-group-item list-group-item-action" href="/cards/{{print.set_id.set_code}}/{{print.serial_number}}" data-card-art="/media/{{print.card_art}}">{{print.set_id.set_name}}</a>
+            {% endif %}
+          {% endfor %}
+          </ul>
+        </div>
+      {% if requestedcard.card_id.related_cards.all %}
+        <div class="related-cards">
+          <p>CARTAS RELACIONADAS</p>
+          <ul class="list-group z-0">
+          {% for related_card in relatedcards %}
+            <!--Arreglar el link del arte-->
+            <a class="show-card-image list-group-item list-group-item-action" href="/cards/{{ related_card.pk }}" data-card-art="/media/{{related_card.card_art}}">{{ related_card.card_id.card_name }}</a>
+          {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      </div>
     </div>
   </div>
+
+  <!-- Esta es una imagen que se va a mostrar cuando se ponga el mouse sobre una carta en la lista -->
+  <div class="img-on-hover z-2">
+    <img src="#" class="img-hover"></img>
+  </div>
+  <script src={% static "cardSearch/showImageWhenHovering.js" %}></script>
 {% endblock %}
