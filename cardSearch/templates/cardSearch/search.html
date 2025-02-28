@@ -14,7 +14,11 @@
       <!-- Acá está el loop que carga el arte de las cartas, y les asigna una url. -->
       <div class="card-list">
         {% for card in card_list %}
-            <a href="/cards/{{ card.set_id.set_code }}/{{ card.serial_number }}"><img src="{{ card.card_art.url }}"  alt={{"card.card_id.card_name"}}></a>
+            <div class="individual-card">
+              <a href="/cards/{{ card.set_id.set_code }}/{{ card.serial_number }}">
+                <img src="{{ card.card_art.url }}"  alt={{"card.card_id.card_name"}}>
+              </a>
+            </div>
         {% endfor %}
       </div>
       <div class="bottom-control-row">

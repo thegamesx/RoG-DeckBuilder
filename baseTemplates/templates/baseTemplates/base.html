@@ -25,30 +25,38 @@
           </ul>
           <div class="col-md-5 mx-auto">
             <div class="input-group position-relative">
-                <input class="form-control rounded-pill search-bar pe-5 z-1" type="text" placeholder="Buscar..." aria-label="Buscar..." id="search-input">
-                <select class="form-select position-absolute top-50 end-0 translate-middle-y rounded-pill w-auto z-2 me-5" aria-label="Default select example" id="navbar-select">
+                <input class="search-input form-control rounded-pill search-bar pe-5 z-1" type="text" placeholder="Buscar..." aria-label="Buscar..." id="search-input">
+                <select class="search-select-category form-select position-absolute top-50 end-0 translate-middle-y rounded-pill w-auto z-2 me-5" aria-label="Default select example" id="navbar-select">
                   <option selected value="cards">Cartas</option>
                   <option value="decks">Mazos</option>
                   <option value="users">Usuarios</option>
                 </select>
-                <button class="btn position-absolute top-50 end-0 translate-middle-y z-2" type="button">
+                <button class="search-button btn position-absolute top-50 end-0 translate-middle-y z-2" type="button">
                     <i class="bi bi-search"></i>
                 </button>
             </div>
         </div>
           <ul class="navbar-nav">
             <a class="nav-link" href="/cards/advanced">Avanzado</a>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Usuario
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Ir a mi perfil</a></li>
-                <li><a class="dropdown-item" href="#">Mis mazos</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Opciones</a></li>
-              </ul>
-            </li>
+            {% if user.is_authenticated %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Usuario
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="/user/profile">Ir a mi perfil</a></li>
+                  <li><a class="dropdown-item" href="/user/{{user.get_username}}/decks">Mis mazos</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/user/options">Opciones</a></li>
+                  <form id="logout-form" method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button class="dropdown-item">Cerrar sesión</button>
+                  </form>
+                </ul>
+              </li>
+            {% else %}
+              <a class="nav-link" href="/user/login">Ingresar</a>
+            {% endif %}
           </ul>
         </div>
       </div>

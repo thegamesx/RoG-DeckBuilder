@@ -6,23 +6,25 @@
   {% load static %}
   <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
 
-  <div class="container card-info-container pb-3">
-    <div class="row align-items-start mx-auto">
-      <div class="col card-illustration">
+  <div class="container card-info-container pb-3 justify-content-center d-flex">
+    <div class="row align-items-start gx-0">
+      <div class="col-lg-2 card-illustration align-self-center">
         <img src="{{ requestedcard.card_art.url }}">
       </div>
-      <div class="col card-info">
-        <h1><b>{{ requestedcard.card_id.card_name }}</b></h1>
-        <p>Rareza: {{ requestedcard.card_id.get_rarity_display }}</p>
-        <p>Tipo: {{requestedcard.card_id.card_type}}</p>
-        <p>Texto: {{requestedcard.card_id.text_box}}</p>
-        {% if requestedcard.card_id.attack > 0 %}
-          <p>{{requestedcard.card_id.attack}}/{{requestedcard.card_id.health}}</p>
-        {% endif %}
-        <em>Ilustrado por: {{ requestedcard.artist }} </em> <!--Hacer un link-->
+      <div class="col-lg-3 col-xl-4 card-info pe-2">
+        <ul class="list-group list-group-flush bg-transparent">
+          <li class="list-group-item bg-transparent"><h1><b>{{ requestedcard.card_id.card_name }}</b></h1></li>
+          <li class="list-group-item bg-transparent"><p>Rareza: {{ requestedcard.card_id.get_rarity_display }}</p></li>
+          <li class="list-group-item bg-transparent"><p>Tipo: {{requestedcard.card_id.card_type}}</p></li>
+          <li class="list-group-item bg-transparent"><p>{{requestedcard.card_id.text_box}}</p></li>
+          {% if requestedcard.card_id.attack > 0 %}
+            <li class="list-group-item bg-transparent"><p>{{requestedcard.card_id.attack}}/{{requestedcard.card_id.health}}</p></li>
+          {% endif %}
+          <li class="list-group-item bg-transparent"><em>Ilustrado por: <a href="/cards/search/artist={{requestedcard.artist}}" class="link-body-emphasis link-underline-opacity-0 link-underline-opacity-75-hover">{{requestedcard.artist}}</a></em></li>
+        </ul>
         <!--Poner las legalidades acá-->
       </div>
-      <div class="col card-set">
+      <div class="col-lg-3 card-set align-self-top">
         <a class="btn btn-primary set-button" href="/cards/set/{{ requestedcard.set_id.set_code }}">
           <h5>{{requestedcard.set_id.set_name}} ({{ requestedcard.set_id.set_code }})</h5>
           #{{ requestedcard.serial_number }}

@@ -20,3 +20,9 @@
     display: inline-block;
     vertical-align: middle;
 }
+
+@media screen and (max-width: 750px){
+    .column-left{
+        display: none;
+    }
+}

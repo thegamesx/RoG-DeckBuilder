@@ -45,7 +45,7 @@ def specific_set_cards(request, set_id):
 
 class SearchResult(ListView):
     model = CardVersion
-    paginate_by = 8
+    paginate_by = 30
     template_name = "cardSearch/search.html"
     context_object_name = "card_list"
     ordering = ['card_id__card_name']

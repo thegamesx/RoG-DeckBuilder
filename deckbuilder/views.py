@@ -56,11 +56,14 @@ def save_deck(request):
         try:
             deck_data = json.loads(request.body)
             legal = DeckModel.check_deck_list_legality("Eterno", deck_data["cards"])
-            if deck_data["deck_id"]:
-                DeckModel.update_deck(request.user, deck_data, legal)
+            if request.user.is_authenticated:
+                if deck_data["deck_id"]:
+                    DeckModel.update_deck(request.user, deck_data, legal)
+                else:
+                    DeckModel.save_deck(request.user, deck_data, legal)
+                return JsonResponse({"message": "Mazo guardado con éxito."}, status=200)
             else:
-                DeckModel.save_deck(request.user, deck_data, legal)
-            return JsonResponse({"message": "Mazo guardado con éxito."}, status=200)
+                return JsonResponse({"error": "Debe iniciar sesión para guardar un mazo."}, status=403)
         except json.JSONDecodeError as error:
             return JsonResponse({"error": "JSON inválido.", "details": str(error)}, status=400)
     
@@ -82,6 +85,7 @@ def deckbuilder_page(request, deck_id=None):
                 "visibility": deck_info.visibility,
                 "format": deck_info.format,
                 "card_list": updated_card_list,
+                "deck_owner": deck_info.deck_owner.get_username(),
             }
             context = { 'loadedDeck': loaded_deck }
         except DeckModel.DoesNotExist as error:
@@ -107,6 +111,7 @@ def view_deck(request,deck_id):
                     "visibility": deck_info.visibility,
                     "format": deck_info.format,
                     "card_list": updated_decklist,
+                    "deck_owner": deck_info.deck_owner.get_username(),
                 }
 
         return render(request, "deckbuilder/deck-view.html", { 'loadedDeck': loaded_deck })

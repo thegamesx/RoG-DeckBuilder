@@ -1,40 +1,37 @@
-<!doctype html>
-<html lang="es-AR">
-  <head>
-    <meta charset="utf-8" />
-    <title>Buscar cartas</title>
-  </head>
-  <body>
+{% extends "baseTemplates/base.html" %}
+
+{% block title %}RoG Deckbuilder{% endblock %}
+
+{% block content %}
     {% load static %}
     <link rel="stylesheet" href="{% static "homepage/style.css" %}">
-    <div class="banner">
-        <a class="active" href="/">Inicio</a>
-        <a href="#about">Mazos</a>
-        <a href="/cards/search">Cartas</a>
-        {% if user.is_authenticated %}
-          <a href="/user/profile">Perfil: {{ user.get_username }}</a>
-          <form id="logout-form" method="POST" action="{% url 'logout' %}">
+    <div class="px-4 py-2 my-5 text-center">
+      <img class="d-block mx-auto mb-4 mw-100" src={% static "homepage/home-banner-placeholder.png" %} alt="">
+      <h1 class="display-5 fw-bold text-body-light">RoG Deckbuilder</h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">Creador de mazos y base de datos de cartas para el TCG Argentino Rise of Gods</p>
+        <div class="d-grid gap-2 justify-content-sm-center">
+          <form method="POST" role="search">
             {% csrf_token %}
-            <button type="submit">Logout</button>
-          </form>
-        {% else %}
-          <a href="/user/login">Ingresar {{ user.get_username }}</a>
-        {% endif %}
-    </div>
-    <div class="homepage-body">
-        <div class="center">
-            <h2>Rise of Gods</h2>
-            <p>Creador de mazos y base de datos de cartas</p>
-            <div class="search-form">
-                <form method="POST" role="search">
-                    {% csrf_token %}
-                    {{ form }}
-                    <button class="btn btn-outline-success" type="submit">Buscar</button>
-                </form>
-                <br>
-                <a href="/cards/advanced/">Busqueda avanzada</a>
+            <div class="btn-group p-2" role="group" aria-label="Seleccion de busqueda">
+              <input type="radio" class="btn-check" name="btnradio" id="btnradiocards" autocomplete="off" checked>
+              <label class="btn btn-secondary" for="btnradiocards">Cartas</label>
+            
+              <input type="radio" class="btn-check" name="btnradio" id="btnradiodecks" autocomplete="off">
+              <label class="btn btn-secondary" for="btnradiodecks">Mazos</label>
+            
+              <input type="radio" class="btn-check" name="btnradio" id="btnradiousers" autocomplete="off">
+              <label class="btn btn-secondary" for="btnradiousers">Creadores</label>
             </div>
+            <div class="input-group input-group-lg mb-3">
+              <input type="text" class="form-control search-input" placeholder="Buscar..." aria-label="Buscar..." aria-describedby="button-addon2">
+              <button class="btn btn-secondary search-button" type="submit" id="search-button"><i class="bi bi-search"></i></button>
+            </div>
+          </form>
+          
+          <!-- {{form}} -->
+          <a href="/cards/advanced/" class="link-light link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Avanzado<i class="bi bi-arrow-right-short"></i></a>
         </div>
+      </div>
     </div>
-  </body>
-</html>
+{% endblock %}

@@ -7,35 +7,25 @@
   <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
   <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
   {{loadedDeck|json_script:"loaded-deck"}}
-  <div class="deck-title text-center p-3">
+  <div class="deck-title container text-center p-3 w-75">
     <div class="deckname-text fs-2"> {{ loadedDeck.deckname }}</div>
     <div class="desc-text text-wrap p-2"> {{ loadedDeck.description }}</div>
     <div class="format-text fst-italic">{{loadedDeck.format}}</div>
+    <div class="user-text">Creado por <a href="/user/profile/{{loadedDeck.deck_owner}}" class="link-body-emphasis link-underline-opacity-0 link-underline-opacity-75-hover">{{loadedDeck.deck_owner}}</a></div>
   </div>
-  <div class="container">
+  <div class="container p-3">
     <div class="row align-items-center">
       <div class="column-left col">
           <div class="card-image">
             <img src="/media/media/card_Art/RoG-cardback.jpeg" id="card-art-display"></img>
           </div>
       </div>
-      <div class="column-right col">
-        <div class="main-deck">
-          <h5>Mazo Principal</h5>
-          <ul class="list-group list-group-flush card-item bg-transparent">
-          {% for card in loadedDeck.card_list.main %}
-            <li class="list-group-item bg-transparent text-light card-item">
-              <div class="card-item-in-list" id="{{card.id}}">
-                <div class="card-quantity">{{card.quantity}}</div>
-                <div class="card-name">{{card.card_id__card_name}}</div>
-              </div>
-            </li>
-          {% endfor %}
-          </ul>
-          {% if loadedDeck.card_list.side %}
-          <h5>Side</h5>
-          <ul class="list-group list-group-flush card-item bg-transparent">
-            {% for card in loadedDeck.card_list.side %}
+      <div class="column-right col container-fluid">
+        <div class="main-deck col-sm-1 col-lg-3">
+          <div class="row">
+            <h5>Mazo Principal</h5>
+            <ul class="list-group list-group-flush card-item bg-transparent col-3">
+            {% for card in loadedDeck.card_list.main %}
               <li class="list-group-item bg-transparent text-light card-item">
                 <div class="card-item-in-list" id="{{card.id}}">
                   <div class="card-quantity">{{card.quantity}}</div>
@@ -43,12 +33,11 @@
                 </div>
               </li>
             {% endfor %}
-          </ul>
-          {% endif %}
-          {% if loadedDeck.card_list.maybe %}
-            <h5>Candidatos</h5>
-            <ul class="list-group list-group-flush card-item bg-transparent">
-              {% for card in loadedDeck.card_list.maybe %}
+            </ul>
+            {% if loadedDeck.card_list.side %}
+            <h5>Side</h5>
+            <ul class="list-group list-group-flush card-item bg-transparent col-3">
+              {% for card in loadedDeck.card_list.side %}
                 <li class="list-group-item bg-transparent text-light card-item">
                   <div class="card-item-in-list" id="{{card.id}}">
                     <div class="card-quantity">{{card.quantity}}</div>
@@ -56,8 +45,22 @@
                   </div>
                 </li>
               {% endfor %}
-              </ul>
-          {% endif %}
+            </ul>
+            {% endif %}
+            {% if loadedDeck.card_list.maybe %}
+              <h5>Candidatos</h5>
+              <ul class="list-group list-group-flush card-item bg-transparent col-3">
+                {% for card in loadedDeck.card_list.maybe %}
+                  <li class="list-group-item bg-transparent text-light card-item">
+                    <div class="card-item-in-list" id="{{card.id}}">
+                      <div class="card-quantity">{{card.quantity}}</div>
+                      <div class="card-name">{{card.card_id__card_name}}</div>
+                    </div>
+                  </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
