@@ -73,7 +73,7 @@
     }
     .card-list{
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(210px, 1.5fr));
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1.5fr));
         row-gap: 12px;
     }
 }

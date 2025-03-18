@@ -1,0 +1,11 @@
+{% extends "baseTemplates/base.html" %}
+
+{% block title %}RoG - Registro{% endblock %}
+
+{% block content %}
+    {% load static %}
+    <div class="container align-items-center justify-content-center col-lg-6 text-center py-5">
+        {% csrf_token %}
+        {{form}}
+    </div>  
+{% endblock %}

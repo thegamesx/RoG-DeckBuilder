@@ -23,7 +23,8 @@ from cardSearch.views import SearchResult
 urlpatterns = [
     path('', include("homepage.urls")),
     path('cards/', include("cardSearch.urls")),
-    path('user/', include('django.contrib.auth.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('django_registration.backends.one_step.urls')),
     path('admin/', admin.site.urls),
     path('decks/', include("deckbuilder.urls")),
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -6,7 +6,7 @@ def homepage(request):
     if request.method == 'POST':
         search_form = SearchForm(request.POST)
         if search_form.is_valid():
-            return HttpResponseRedirect(f"/cards/{search_form.cleaned_data['search_category']}/{search_form.cleaned_data['search_query']}")
+            return HttpResponseRedirect(f"/{search_form.cleaned_data['search_category']}/search/{search_form.cleaned_data['query']}")
     else:
         search_form = SearchForm()
     return render (request, "homepage/home.html", {"form": search_form})

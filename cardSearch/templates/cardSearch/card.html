@@ -11,8 +11,8 @@
       <div class="col-lg-2 card-illustration align-self-center">
         <img src="{{ requestedcard.card_art.url }}">
       </div>
-      <div class="col-lg-3 col-xl-4 card-info pe-2">
-        <ul class="list-group list-group-flush bg-transparent">
+      <div class="col-lg-3 col-xl-4 card-info pe-2 ">
+        <ul class="list-group list-group-flush bg-transparent border border-light-subtle text-light-emphasis">
           <li class="list-group-item bg-transparent"><h1><b>{{ requestedcard.card_id.card_name }}</b></h1></li>
           <li class="list-group-item bg-transparent"><p>Rareza: {{ requestedcard.card_id.get_rarity_display }}</p></li>
           <li class="list-group-item bg-transparent"><p>Tipo: {{requestedcard.card_id.card_type}}</p></li>

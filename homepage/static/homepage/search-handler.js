@@ -3,28 +3,30 @@ function searchProcess (query, category){
     if (searchQuery == ""){
         searchQuery = " ";
     }
-    $.ajax({
-    url: "/" + category + "/search/" + searchQuery,
-    headers: {
-      'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
-    },
-    type:"GET",
-    dataType: "json",
-    data:{ user_query: searchQuery },
-    success: (data) => {
-      
-    },
-    error: (error) => {
-      console.log(error);
-    }
-  })
+    jsonstring = JSON.stringify({ user_query: searchQuery, cat: category });
+    const csrftoken = getCookie('csrftoken');
+    console.log(searchQuery);
+    console.log(category);
+    $.post({
+      headers: {'X-CSRFToken': csrftoken},
+      type:"POST",
+      dataType: "json",
+      contentType: "application/json",
+      data: jsonstring,
+      success: (data) => {
+        console.log(data);
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
 }
 
-$(".search-button").click(function (e) { 
-    searchProcess($(this).siblings(".search-input").val())
+$("#home-search-button").click(function (e) { 
+    searchProcess($('#home-search-input').val(), $("input[name='searchcategory']:checked").attr("data-cat"))
 });
-$('.search-input').on('keypress', function (e) {
+$('#home-search-input').on('keypress', function (e) {
     if(e.which === 13){
-        searchProcess($(this).val());
+        searchProcess($(this).val(), $("input[name='searchcategory']:checked").attr("data-cat"));
     }
 });
