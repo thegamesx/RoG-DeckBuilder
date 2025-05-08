@@ -1,0 +1,31 @@
+{% extends "baseTemplates/base.html" %}
+
+{% block title %}Mazos de {{ user.get_username }}{% endblock %} <!-- Probablemente tenga que cambiar la variable acá -->
+
+{% block content %}
+    {% load static %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Facciones</th>
+                <th scope="col">Formato</th>
+                <th scope="col">Ultima actualización</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for deck in deck_list %}
+                <tr>
+                    <td><a href="/decks/view/{{ deck.pk }}">{{ deck.deck_name }}</a></td>
+                    <td>
+                        {% for faction in deck.deck_factions %}
+                            <img class="faction-icon" src="{% static 'RoGDB/sellos/sello-'|add:faction|add:'.webp' %}"></img>
+                        {% endfor %}
+                    </td>
+                    <td>{{ deck.format }}</td>
+                    <td>{{ deck.last_updated }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+{% endblock %}

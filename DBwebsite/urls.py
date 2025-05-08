@@ -19,12 +19,20 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from cardSearch.views import SearchResult
+from django.contrib.auth import views as auth_views
+from users.forms import CustomAuthenticationForm
 
 urlpatterns = [
     path('', include("homepage.urls")),
     path('cards/', include("cardSearch.urls")),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/', include('django_registration.backends.one_step.urls')),
+    # Cambiamos el form del login para poder usar clases
+    path('user/login/', auth_views.LoginView.as_view(
+        template_name = 'registration/login.html',
+        authentication_form = CustomAuthenticationForm
+    ), name="login"),
+    path('user/', include('django.contrib.auth.urls')),
+    path('user/', include('django_registration.backends.one_step.urls')),
+    path('user/', include("users.urls")),
     path('admin/', admin.site.urls),
     path('decks/', include("deckbuilder.urls")),
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

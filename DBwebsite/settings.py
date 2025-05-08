@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'cardSearch.apps.CardsearchConfig',
     'deckbuilder.apps.DeckbuilderConfig',
     'baseTemplates.apps.BasetemplatesConfig',
+    'users.apps.UsersConfig',
     "django_registration",
 ]
 

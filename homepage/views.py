@@ -10,3 +10,6 @@ def homepage(request):
     else:
         search_form = SearchForm()
     return render (request, "homepage/home.html", {"form": search_form})
+
+def register(request):
+    return render (request, "homepage/register.html")

@@ -14,54 +14,56 @@
     <div class="user-text">Creado por <a href="/user/profile/{{loadedDeck.deck_owner}}" class="link-body-emphasis link-underline-opacity-0 link-underline-opacity-75-hover">{{loadedDeck.deck_owner}}</a></div>
   </div>
   <div class="container p-3">
-    <div class="row align-items-center">
-      <div class="column-left col">
-          <div class="card-image">
-            <img src="/media/media/card_Art/RoG-cardback.jpeg" id="card-art-display"></img>
-          </div>
+    <div class="row">
+      <!-- Columna izquierda: imagen -->
+      <div class="column-left col-md-4 text-center mb-4">
+        <div class="card-image">
+          <img src="/media/media/card_Art/RoG-cardback.jpeg" id="card-art-display" class="img-fluid">
+        </div>
       </div>
-      <div class="column-right col container-fluid">
-        <div class="main-deck col-sm-1 col-lg-3">
-          <div class="row">
-            <h5>Mazo Principal</h5>
-            <ul class="list-group list-group-flush card-item bg-transparent col-3">
-            {% for card in loadedDeck.card_list.main %}
+
+
+      <!-- Columna derecha: listas -->
+      <div class="column-right col-md-8">
+        <h5>Mazo Principal</h5>
+        <ul class="list-group list-group-flush mb-4">
+          {% for card in loadedDeck.card_list.main %}
+            <li class="list-group-item bg-transparent text-light card-item">
+              <div class="card-item-in-list d-flex justify-content-between" id="{{card.id}}">
+                <div class="card-quantity">{{card.quantity}}</div>
+                <div class="card-name">{{card.card_id__card_name}}</div>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+
+        {% if loadedDeck.card_list.side %}
+          <h5>Side</h5>
+          <ul class="list-group list-group-flush mb-4">
+            {% for card in loadedDeck.card_list.side %}
               <li class="list-group-item bg-transparent text-light card-item">
-                <div class="card-item-in-list" id="{{card.id}}">
+                <div class="card-item-in-list d-flex justify-content-between" id="{{card.id}}">
                   <div class="card-quantity">{{card.quantity}}</div>
                   <div class="card-name">{{card.card_id__card_name}}</div>
                 </div>
               </li>
             {% endfor %}
-            </ul>
-            {% if loadedDeck.card_list.side %}
-            <h5>Side</h5>
-            <ul class="list-group list-group-flush card-item bg-transparent col-3">
-              {% for card in loadedDeck.card_list.side %}
-                <li class="list-group-item bg-transparent text-light card-item">
-                  <div class="card-item-in-list" id="{{card.id}}">
-                    <div class="card-quantity">{{card.quantity}}</div>
-                    <div class="card-name">{{card.card_id__card_name}}</div>
-                  </div>
-                </li>
-              {% endfor %}
-            </ul>
-            {% endif %}
-            {% if loadedDeck.card_list.maybe %}
-              <h5>Candidatos</h5>
-              <ul class="list-group list-group-flush card-item bg-transparent col-3">
-                {% for card in loadedDeck.card_list.maybe %}
-                  <li class="list-group-item bg-transparent text-light card-item">
-                    <div class="card-item-in-list" id="{{card.id}}">
-                      <div class="card-quantity">{{card.quantity}}</div>
-                      <div class="card-name">{{card.card_id__card_name}}</div>
-                    </div>
-                  </li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-          </div>
-        </div>
+          </ul>
+        {% endif %}
+
+        {% if loadedDeck.card_list.maybe %}
+          <h5>Candidatos</h5>
+          <ul class="list-group list-group-flush mb-4">
+            {% for card in loadedDeck.card_list.maybe %}
+              <li class="list-group-item bg-transparent text-light card-item">
+                <div class="card-item-in-list d-flex justify-content-between" id="{{card.id}}">
+                  <div class="card-quantity">{{card.quantity}}</div>
+                  <div class="card-name">{{card.card_id__card_name}}</div>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
       </div>
     </div>
   </div>
