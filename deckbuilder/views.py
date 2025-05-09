@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, Http
 from RoGDB.models import CardVersion
 from django.views.generic import ListView
 from deckbuilder.models import DeckModel
+from .forms import DeckSearchForm
 import json
 
 def get_cards_info(deck_json):
@@ -126,7 +127,13 @@ class DeckSearch(ListView):
     ordering = ['-published_date']
 
     def get_queryset(self):
-        try:
-            user_query = self.kwargs['user_query']
-        except:
-            return get_list_or_404(DeckModel.get_all_public_decks())
+        query = self.request.GET.get('query', '')
+        if query:
+            return DeckModel.filter_decks(query)
+        return DeckModel.get_all_public_decks()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('query', '')
+        context['form'] = DeckSearchForm(initial={'query': query})
+        return context

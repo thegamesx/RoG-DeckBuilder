@@ -46,7 +46,7 @@
                 </a>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="/user/profile">Ir a mi perfil</a></li>
-                  <li><a class="dropdown-item" href="/user/{{user.get_username}}/decks">Mis mazos</a></li>
+                  <li><a class="dropdown-item" href="/user/decks/{{user.get_username}}">Mis mazos</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="/user/options">Opciones</a></li>
                   <form id="logout-form" method="POST" action="{% url 'logout' %}">

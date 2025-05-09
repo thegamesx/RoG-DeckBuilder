@@ -5,21 +5,43 @@
 {% block content %}
   {% load static %}
   <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
-  <div class="search-result container">
+  <div class="search-result container p-5">
     <div class="search-info container">
       <!-- Esta info es para testear, cambiar por lo que corresponda luego -->
-      <p><strong>Se encontraron {{ page_obj.paginator.count }} mazos</strong></p>
+       <h1 class="">Mazos públicos</h2>
+      
     </div>
-    <div class="search-options">
-        <!--
-        Las opciones de busqueda debe incluir:
-        - Buscar por formato (considerarlo opcional si hay uno solo)
-        - Filtrar por nombre
-        - Filtrar por facción
-        - Filtrar por carta especifica
-        -->
-        <label>Filtrar por carta </label>
-        <input type="text" class="card-filter" id="card-filter"></input>
+    <form method="GET" role="search">
+      <div class="search-options pt-3 pb-3 gap-3 d-flex flex-column flex-md-row align-items-stretch justify-content-between align-items-md-center">
+          <!--
+          Las opciones de busqueda debe incluir:
+          - Buscar por formato (considerarlo opcional si hay uno solo)
+          - Filtrar por nombre
+          - Filtrar por facción
+          - Filtrar por carta especifica
+          -->
+          <div class="input-group w-100 w-md-25">
+              {% csrf_token %}
+              {{ form.query }}
+              <button class="btn btn-dark" type="submit" id="button-addon2"><i class="bi bi-search"></i></button>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-dark dropdown-toggle w-100 w-md-auto" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Ordenar <i class="bi bi-arrow-down-up"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Recientemente creado</a></li>
+              <li><a class="dropdown-item" href="#">Recientemente modificado</a></li>
+              <li><a class="dropdown-item" href="#">Facciones</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Ascendente  <i class="bi bi-arrow-up"></i></a></li>
+              <li><a class="dropdown-item" href="#">Descendente <i class="bi bi-arrow-down"></i></a></li>
+            </ul>
+          </div>
+      </div>
+    </form>
+    <div class="deck-list-info text-start">
+      <p class="text-light fs-6">Se encontraron {{ page_obj.paginator.count }} mazos</p>
     </div>
     <div class="deck-list row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
       {% for deck in deck_list %}
@@ -32,13 +54,13 @@
                   <img class="faction-icon" src="{% static 'RoGDB/sellos/sello-'|add:faction|add:'.webp' %}"></img>
                 {% endfor %}
               </div>
-              <p class="card-text">{{ deck.format }}</p>
+              <a class="card-text" href="/user/decks/{{ deck.deck_owner }}">Por {{ deck.deck_owner }}</a>
             </a>
           </div>
         </div>
       {% endfor %}
     </div>
-    <div class="bottom-control-row">
+    <div class="bottom-control-row pt-4">
       <div class = "control-left-side"></div>
       <div class = "control-right-side">
         <span class="step-links">

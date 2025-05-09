@@ -137,7 +137,7 @@ class DeckModel(models.Model):
                     case _:
                         query_set = query_set.filter(deck_name__icontains=splited_terms[1])
             else:
-                query_set = query_set.filter(deck_name__icontains=splited_terms)
+                query_set = query_set.filter(deck_name__icontains=splited_terms[0])
         return query_set
     
 
