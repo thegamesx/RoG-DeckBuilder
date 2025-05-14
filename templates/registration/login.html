@@ -11,10 +11,18 @@
         
         <form method="post" action="{% url 'login' %}">
           {% csrf_token %}
-  
+          
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-warning" role="warning">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+
           {% if form.errors %}
             <div class="alert alert-danger" role="alert">
-              Your username and password didn't match. Please try again.
+              Usuario o contraseña incorrecta. Por favor, intente de nuevo.
             </div>
           {% endif %}
   
@@ -51,13 +59,13 @@
 
           <!-- Remember me and forgot password -->
           <div class="text-center mb-3">
-            <a href="{% url 'password_reset' %}">No me acuerdo la contraseña</a>
+            <a href="{% url 'password_reset' %}" class="link-light">No me acuerdo la contraseña</a>
           </div>
   
           <!-- Register & social -->
           <div class="text-center">
-            <p><a href="{% url 'register' %}">Registrate acá</a></p>
-            <p>Ingresa con:</p>
+            <p><a href="{% url 'register' %}" class="link-light">Registrate acá</a></p>
+            <p>O ingresa con:</p>
             <button type="button" class="btn btn-dark btn-sm mx-1"><i class="bi bi-facebook"></i></button>
             <button type="button" class="btn btn-dark btn-sm mx-1"><i class="bi bi-google"></i></button>
             <button type="button" class="btn btn-dark btn-sm mx-1"><i class="bi bi-twitter-x"></i></button>

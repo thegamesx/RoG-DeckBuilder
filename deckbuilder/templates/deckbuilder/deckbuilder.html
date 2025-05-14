@@ -1,20 +1,17 @@
-<!doctype html>
-<html lang="es-AR">
-  <head>
-    <meta charset="utf-8" />
-    <title>Constructor de mazos</title>
-  </head>
-  <body>
+{% extends "baseTemplates/base.html" %}
+
+{% block title %}Constructor de mazos{% endblock %}
+
+{% block content %}
     <!-- Acá va el constructor de mazos en si, la parte visual y mucha de la logica. -->
     {% load static %}
     <link rel="stylesheet" href="{% static "deckbuilder/deckbuilder-style.css" %}">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
     {{loadedDeck|json_script:"loaded-deck"}}
-    <div class="row">
-        <div class="column-left" >
-          <div class="row">
-            Filtrar
+    <div class="row deckbuilder text-black">
+        <div class="column-left">
+          <div class="row p-2">
+            <span>Filtrar</span>
             <input type="text" id="user-query" id="filter_search">
             <a class="submit-button" id="submit-button" href="#">Buscar</a>
           </div>
@@ -24,16 +21,16 @@
         </div>
         <div class="column-right">
           Nombre del mazo: <input type="text" id="deck-name-input">
-          <p id="maindeck-title">Cartas en el mazo</p>
+          <p id="maindeck-title"  class="pt-2">Cartas en el mazo</p>
           <div class = "card-list" id = "main-card-list"></div>
-          <p id="sidedeck-title">Cartas en el mazo secundario</p>
+          <br><p id="sidedeck-title">Cartas en el mazo secundario</p>
           <div class = "card-list" id = "side-card-list"></div>
-          <p id="maybedeck-title">Cartas en duda</p>
+          <br><p id="maybedeck-title">Cartas en duda</p>
           <div class = "card-list" id = "maybe-card-list"></div>
           <br><a href="#" class="save-button" id="save-button">Guardar Mazo</a>
           <br><br><br>Descripción del mazo<br><textarea id="deck-description"></textarea>
           <br><br>Visibilidad<br>
-          <select name="visibility" id="visibility">
+          <select name="visibility" id="visibility"  class="pb-2">
             <option value="P">Público</option>
             <option value="U">No Listado</option>
             <option value="R">Privado</option>
@@ -57,5 +54,4 @@
     <script type="text/javascript" src={% static "deckbuilder/cardMenu.js" %}></script>
     <script type="text/javascript" src="{% static "deckbuilder/addCardToList.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/removeCardOfList.js" %}"></script>
-  </body>
-</html>
+{% endblock %}

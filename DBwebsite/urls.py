@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 from cardSearch.views import SearchResult
 from django.contrib.auth import views as auth_views
 from users.forms import CustomAuthenticationForm
+from users.views import custom_logout_view
 
 urlpatterns = [
     path('', include("homepage.urls")),
@@ -30,9 +31,9 @@ urlpatterns = [
         template_name = 'registration/login.html',
         authentication_form = CustomAuthenticationForm
     ), name="login"),
+    path('user/', include("users.urls")),
     path('user/', include('django.contrib.auth.urls')),
     path('user/', include('django_registration.backends.one_step.urls')),
-    path('user/', include("users.urls")),
     path('admin/', admin.site.urls),
     path('decks/', include("deckbuilder.urls")),
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -21,7 +21,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
-            <li class="nav-item"><a class="nav-link active" aria-current="page" href="/cards/search">Cartas</a></li>
+            <li class="nav-item"><a class="nav-link" aria-current="page" href="/cards/search">Cartas</a></li>
             <li class="nav-item"><a class="nav-link" href="/decks/search">Mazos</a></li>
           </ul>
           <div class="col-md-5 mx-auto">
@@ -44,11 +44,11 @@
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Usuario
                 </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/user/profile">Ir a mi perfil</a></li>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="/decks/builder">Crear un mazo</a></li>
                   <li><a class="dropdown-item" href="/user/decks/{{user.get_username}}">Mis mazos</a></li>
                   <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="/user/options">Opciones</a></li>
+                  <!--<li><a class="dropdown-item" href="/user/options">Opciones</a></li>-->
                   <form id="logout-form" method="POST" action="{% url 'logout' %}">
                     {% csrf_token %}
                     <button class="dropdown-item">Cerrar sesión</button>

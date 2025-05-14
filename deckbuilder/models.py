@@ -94,14 +94,11 @@ class DeckModel(models.Model):
     # Si user_instance tiene un valor, se asume que el dueño quiere ver sus mazos, y por lo tanto se muestran los mazos privados.
     # TODO: Ver si esta forma de verificar es segura
     def get_all_decks_from_user(target_user, user_instance=None):
-        if user_instance:
-            if user_instance.username == target_user:
-                return DeckModel.objects.filter(deck_owner=user_instance.id) # Ver si usar id o algo por el estilo
-            else:
-                return PermissionError
+        if user_instance.username == target_user:
+            return DeckModel.objects.filter(deck_owner=user_instance) # Ver si usar id o algo por el estilo
         else:
             # TODO: Cambiar esto para que pueda usar el id. Capas haya que cambiar algo en el modelo
-            return DeckModel.objects.filter(deck_owner=target_user).exclude(visibility="R")
+            return DeckModel.objects.filter(deck_owner__username=target_user).exclude(visibility="R")
         
     # Armo el string desde los forms, asi puedo filtrarlo adecuadamente luego
     def contruct_string(form_fields):

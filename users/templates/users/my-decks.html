@@ -2,13 +2,13 @@
 
 {% extends "baseTemplates/base.html" %}
 
-{% block title %}Mazos de {{ user.get_username }}{% endblock %} <!-- Probablemente tenga que cambiar la variable acá -->
+{% block title %}Mazos de {{ profile_name }}{% endblock %} <!-- Probablemente tenga que cambiar la variable acá -->
 
 {% block content %}
     {% load static %}
     <link rel="stylesheet" href="{% static "users/style.css" %}">
     <div class="container text-center pt-5">
-            <h1 class="">Mazos de {{ user.get_username }}</h1>
+            <h1 class="">Mazos de {{ profile_name }}</h1>
         </div>
     <div class="container p-5">
         <table class="table">
@@ -18,6 +18,7 @@
                     <th scope="col">Facciones</th>
                     <th scope="col">Formato</th>
                     <th scope="col">Ultima actualización</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +32,14 @@
                         </td>
                         <td>{{ deck.format }}</td>
                         <td>{{ deck.last_updated }}</td>
+                        <td>
+                            {% if user.get_username == profile_name %}
+                                <a href="/decks/builder/{{ deck.pk }}" class="btn btn-primary-outline"><i class="bi bi-pencil-square"></i></a>
+                            {% else %}
+                                <a href="/decks/builder/{{ deck.pk }}" class="btn btn-primary-outline"><i class="bi bi-copy"></i></i></a>
+                            {% endif %}
+                            
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

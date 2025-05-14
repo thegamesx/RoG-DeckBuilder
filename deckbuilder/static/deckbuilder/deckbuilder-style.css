@@ -1,5 +1,5 @@
 body{
-    background-color: black;
+    background-color: lightgray;
 }
 
 .row {
@@ -8,7 +8,7 @@ body{
   
 .column-left {
     flex: 70%;
-    background-color: aqua;
+    background-color: lightgray;
 }
 
 .column-right {

@@ -80,6 +80,10 @@
 
 /* Relacionado a card.html*/
 
+.card-info .list-group-item {
+    color: inherit !important;
+}
+
 .card-info-container{
     padding-top: 30px;
 }
