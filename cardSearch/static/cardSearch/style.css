@@ -6,6 +6,13 @@
     width: 230px;
     height: auto;
 }
+
+/* Ocultar en móvil */
+@media (max-width: 767px) {
+  .img-on-hover {
+    display: none !important;
+  }
+}
   
 
 /* Relacionado a search.html */
@@ -101,12 +108,17 @@
     font-size: 18px;
   }
 
-.card-illustration{
-    width: 440px;
+.card-illustration {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
-.card-illustration img{
-    width: 420px;
+.card-illustration img {
+  max-width: 380px;
+  width: 100%;
+  height: auto;
 }
 
 @media screen and (max-width: 600px){
@@ -123,10 +135,120 @@
     padding-top: 50px;
 }
 
-.set-button{
-    width: 340px;
+.set-button,
+.list-group-item{
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.list-group-item{
-    width: 340px;
+.list-group {
+    width: 100%;
+}
+
+/* General responsive tweaks */
+@media (max-width: 768px) {
+  .card-info-container {
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 1rem;
+  }
+
+  .card-illustration,
+  .card-info,
+  .card-set {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 1rem;
+  }
+
+  .card-illustration img {
+    width: 100%;
+    height: auto;
+  }
+
+  .set-button,
+  .list-group-item {
+    width: 100% !important;
+  }
+
+  .card-set {
+    padding-top: 30px;
+  }
+
+  .card-info {
+    padding-top: 20px;
+  }
+
+  .prints,
+  .related-cards {
+    margin-top: 1rem;
+  }
+
+  .prints-title p,
+  .related-cards p {
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1200px) {
+  .card-info-container {
+    flex-direction: column;
+    align-items: center;
+    
+  }
+
+  .card-illustration,
+  .card-info,
+  .card-set {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0 1rem 1rem 1rem;
+  }
+
+  .card-illustration img {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .set-button,
+  .list-group-item {
+    width: 100% !important;
+  }
+
+  .prints,
+  .related-cards {
+    margin-top: 1rem;
+  }
+
+  .card-info {
+    padding-top: 20px;
+  }
+}
+
+
+@media screen and (min-width: 1200px) {
+  .card-info-container {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .card-illustration {
+    width: 35%;
+  }
+
+  .card-info {
+    width: 33%;
+    padding-top: 10px;
+  }
+
+  .card-set {
+    width: 25%;
+    padding-top: 0;
+  }
 }

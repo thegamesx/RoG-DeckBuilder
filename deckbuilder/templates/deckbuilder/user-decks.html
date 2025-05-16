@@ -1,12 +1,10 @@
-<!-- Ver como cargar mazos de otros usuarios, y mostrar sus nombres correctamente-->
-
 {% extends "baseTemplates/base.html" %}
 
 {% block title %}Mazos de {{ profile_name }}{% endblock %} <!-- Probablemente tenga que cambiar la variable acá -->
 
 {% block content %}
     {% load static %}
-    <link rel="stylesheet" href="{% static "users/style.css" %}">
+    <link rel="stylesheet" href="{% static "deckbuilder/style.css" %}">
     <div class="container text-center pt-5">
             <h1 class="">Mazos de {{ profile_name }}</h1>
         </div>
@@ -14,6 +12,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th scope="col"></th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Facciones</th>
                     <th scope="col">Formato</th>
@@ -23,7 +22,13 @@
             </thead>
             <tbody>
                 {% for deck in deck_list %}
-                    <tr>
+                    <tr class="align-middle">
+                        <td class="fs-5">
+                            <!--Poner un tooltip para especificar que significa cada icono-->
+                            {% if deck.visibility == 'P' %}<i class="bi bi-globe-americas"></i>{% endif %}
+                            {% if deck.visibility == 'U' %}<i class="bi bi-eye-slash"></i>{% endif %}
+                            {% if deck.visibility == 'R' %}<i class="bi bi-lock-fill"></i>{% endif %}
+                        </td>
                         <td><a href="/decks/view/{{ deck.pk }}">{{ deck.deck_name }}</a></td>
                         <td>
                             {% for faction in deck.deck_factions %}
@@ -34,7 +39,15 @@
                         <td>{{ deck.last_updated }}</td>
                         <td>
                             {% if user.get_username == profile_name %}
-                                <a href="/decks/builder/{{ deck.pk }}" class="btn btn-primary-outline"><i class="bi bi-pencil-square"></i></a>
+                                <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
+                                <div class="d-flex align-items-center">
+                                    <a href="/decks/builder/{{ deck.pk }}" class="btn btn-primary-outline">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-primary-outline delete-button" data-deck-id="{{ deck.pk }}">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </div>
                             {% else %}
                                 <a href="/decks/builder/{{ deck.pk }}" class="btn btn-primary-outline"><i class="bi bi-copy"></i></i></a>
                             {% endif %}
@@ -45,5 +58,6 @@
             </tbody>
         </table>
     </div>
+    <script type="text/javascript" src="{% static "deckbuilder/deleteDeck.js" %}"></script>
 
 {% endblock %}

@@ -11,7 +11,12 @@
     <div class="deckname-text fs-2"> {{ loadedDeck.deckname }}</div>
     <div class="desc-text text-wrap p-2"> {{ loadedDeck.description }}</div>
     <div class="format-text fst-italic">{{loadedDeck.format}}</div>
-    <div class="user-text">Creado por <a href="/user/decks/{{loadedDeck.deck_owner}}" class="link-body-emphasis link-underline-opacity-0 link-underline-opacity-75-hover">{{loadedDeck.deck_owner}}</a></div>
+    <div class="user-text">Creado por 
+      <a href="/decks/user/{{loadedDeck.deck_owner}}" class="link-body-emphasis link-underline-opacity-0 link-underline-opacity-75-hover">{{loadedDeck.deck_owner}}</a>
+      {% if loadedDeck.visibility == 'P' %}<i class="bi bi-globe-americas"></i>{% endif %}
+      {% if loadedDeck.visibility == 'U' %}<i class="bi bi-eye-slash"></i>{% endif %}
+      {% if loadedDeck.visibility == 'R' %}<i class="bi bi-lock-fill"></i>{% endif %}
+    </div>
   </div>
   <div class="container p-3">
     <div class="row">

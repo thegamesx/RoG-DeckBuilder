@@ -5,28 +5,32 @@
 {% block content %}
   {% load static %}
   <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
+  <div class="container card-info-container d-flex flex-column flex-xl-row align-items-start pb-3">
 
-  <div class="container card-info-container pb-3 justify-content-center d-flex">
-    <div class="row align-items-start gx-0">
-      <div class="col-lg-2 card-illustration align-self-center">
-        <img src="{{ requestedcard.card_art.url }}">
+      <!-- Imagen de la carta -->
+      <div class="card-illustration mb-3">
+        <img src="{{ requestedcard.card_art.url }}" class="img-fluid">
       </div>
-      <div class="col-lg-3 col-xl-4 card-info pe-2">
+
+      <!-- Info de la carta -->
+      <div class="card-info pe-2">
         <ul class="list-group list-group-flush bg-transparent border border-light-subtle text-white">
           <li class="list-group-item bg-transparent"><h1><b>{{ requestedcard.card_id.card_name }}</b></h1></li>
           <li class="list-group-item bg-transparent"><p>Rareza: {{ requestedcard.card_id.get_rarity_display }}</p></li>
           <li class="list-group-item bg-transparent"><p>Tipo: {{requestedcard.card_id.card_type}}</p></li>
           <li class="list-group-item bg-transparent"><p>{{requestedcard.card_id.text_box}}</p></li>
-          {% if requestedcard.card_id.attack > 0 %}
+          {% if requestedcard.card_id.attack > 0 %} <!-- Revisar esto, si la carta no tiene ataque no va a aparecer este dato -->
             <li class="list-group-item bg-transparent"><p>{{requestedcard.card_id.attack}}/{{requestedcard.card_id.health}}</p></li>
           {% endif %}
           <li class="list-group-item bg-transparent"><em>Ilustrado por: <a href="/cards/search/artist={{requestedcard.artist}}" class="link-body-emphasis link-underline-opacity-0 link-underline-opacity-75-hover">{{requestedcard.artist}}</a></em></li>
         </ul>
         <!--Poner las legalidades acá-->
       </div>
-      <div class="col-lg-3 card-set align-self-top">
-        <a class="btn btn-primary set-button" href="/cards/set/{{ requestedcard.set_id.set_code }}">
-          <h5>{{requestedcard.set_id.set_name}} ({{ requestedcard.set_id.set_code }})</h5>
+
+      <!-- Sets e impresiones -->
+      <div class="card-set align-self-top">
+        <a class="btn btn-primary set-button text-start" href="/cards/set/{{ requestedcard.set_id.set_code }}">
+          <h5 class="mb-0">{{requestedcard.set_id.set_name}} ({{ requestedcard.set_id.set_code }})</h5>
           #{{ requestedcard.serial_number }}
         </a>
         <div class="prints">
@@ -35,11 +39,7 @@
           </div>
           <ul class="list-group z-0">
           {% for print in otherprints %}
-            {% if print.pk == requestedcard.pk %}
-              <a class="show-card-image list-group-item list-group-item-action active" href="/cards/{{print.set_id.set_code}}/{{print.serial_number}}" data-card-art="/media/{{print.card_art}}">{{print.set_id.set_name}}</a>
-            {% else %}
-              <a class="show-card-image list-group-item list-group-item-action" href="/cards/{{print.set_id.set_code}}/{{print.serial_number}}" data-card-art="/media/{{print.card_art}}">{{print.set_id.set_name}}</a>
-            {% endif %}
+              <a class="show-card-image list-group-item list-group-item-action {% if print.pk == requestedcard.pk %}active{% endif %}" href="/cards/{{print.set_id.set_code}}/{{print.serial_number}}" data-card-art="/media/{{print.card_art}}">{{print.set_id.set_name}}</a>
           {% endfor %}
           </ul>
         </div>
@@ -56,7 +56,6 @@
       {% endif %}
       </div>
     </div>
-  </div>
 
   <!-- Esta es una imagen que se va a mostrar cuando se ponga el mouse sobre una carta en la lista -->
   <div class="img-on-hover z-2">

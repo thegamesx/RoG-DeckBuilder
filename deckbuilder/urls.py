@@ -9,4 +9,6 @@ urlpatterns = [
     path("view/<int:deck_id>", views.view_deck, name="view_deck"),
     path("search/", views.DeckSearch.as_view(), name="search_all_decks"),
     path("search/<str:user_query>", views.DeckSearch.as_view(), name="search_decks"),
+    path("user/<str:profile_name>/", views.UserDecks.as_view(), name="user_decks"),
+    path("user/<str:profile_name>/delete/<int:deck_id>", views.delete_deck, name="delete_deck"),
 ]

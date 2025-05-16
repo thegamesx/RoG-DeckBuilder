@@ -90,34 +90,50 @@ def deckbuilder_page(request, deck_id=None):
             }
             context = { 'loadedDeck': loaded_deck }
         except DeckModel.DoesNotExist as error:
-            return Http404(error)
+            return render(request, "deckbuilder/deck-403-404.html")
     else:
         context = { 'loadedDeck': None }
     return render(request, "deckbuilder/deckbuilder.html", context)
 
 def view_deck(request,deck_id):
-    # Hacer comprobacion de deck privado luego
     try:
         deck_info = DeckModel.get_deck_from_id(deck_id)
-        updated_decklist = {
-            'main': get_cards_info(deck_info.card_list["main"]),
-            'side': get_cards_info(deck_info.card_list["side"]),
-            'maybe': get_cards_info(deck_info.card_list["maybe"]),
-        }
+        if deck_info.visibility == "R" and request.user != deck_info.deck_owner:
+            return render(request, "deckbuilder/deck-403-404.html")
+        else:
+            updated_decklist = {
+                'main': get_cards_info(deck_info.card_list["main"]),
+                'side': get_cards_info(deck_info.card_list["side"]),
+                'maybe': get_cards_info(deck_info.card_list["maybe"]),
+            }
 
-        loaded_deck = {
-                    "deckname": deck_info.deck_name,
-                    "deck_id": deck_id,
-                    "description": deck_info.deck_desc,
-                    "visibility": deck_info.visibility,
-                    "format": deck_info.format,
-                    "card_list": updated_decklist,
-                    "deck_owner": deck_info.deck_owner.get_username(),
-                }
-
-        return render(request, "deckbuilder/deck-view.html", { 'loadedDeck': loaded_deck })
+            loaded_deck = {
+                        "deckname": deck_info.deck_name,
+                        "deck_id": deck_id,
+                        "description": deck_info.deck_desc,
+                        "visibility": deck_info.visibility,
+                        "format": deck_info.format,
+                        "card_list": updated_decklist,
+                        "deck_owner": deck_info.deck_owner.get_username(),
+                    }
+            return render(request, "deckbuilder/deck-view.html", { 'loadedDeck': loaded_deck })
     except DeckModel.DoesNotExist as error:
-        return Http404(error)
+        return render(request, "deckbuilder/deck-403-404.html")
+    
+def delete_deck(request, profile_name, deck_id):
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    if is_ajax:
+        if request.method == "DELETE":
+            try:
+                DeckModel.delete_deck(request.user, deck_id)
+                return JsonResponse({"message": "Mazo borrado con éxito."}, status=200)
+            except DeckModel.DoesNotExist as error:
+                return JsonResponse({"error": "Mazo no encontrado."}, status=404)
+        else:
+            return JsonResponse({"error": "Método no permitido."}, status=405)
+    else:
+        return JsonResponse({"error": "Petición invalida."}, status=400)
     
 class DeckSearch(ListView):
     model = DeckModel
@@ -137,3 +153,20 @@ class DeckSearch(ListView):
         query = self.request.GET.get('query', '')
         context['form'] = DeckSearchForm(initial={'query': query})
         return context
+    
+class UserDecks(ListView):
+    model = DeckModel
+    paginate_by = 30
+    template_name = "deckbuilder/user-decks.html"
+    context_object_name = "deck_list"
+    ordering = ['-published_date']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile_name'] = self.kwargs['profile_name']
+        return context
+
+    def get_queryset(self):
+        profile_name = self.kwargs['profile_name']
+        # Cambiar esto para que no de un 404
+        return get_list_or_404(DeckModel.get_all_decks_from_user(profile_name, self.request.user))

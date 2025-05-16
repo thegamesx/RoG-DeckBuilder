@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from multiselectfield import MultiSelectField
 from RoGDB.models import Format
 import re
@@ -144,10 +144,11 @@ class DeckModel(models.Model):
         deck_to_be_deleted = DeckModel.get_deck_from_id(deck_id)
         if user_instance == deck_to_be_deleted.deck_owner:
             deck_to_be_deleted.delete()
+            return JsonResponse({"message": "Mazo borrado con éxito."}, status=200)
         else:
-            raise HttpResponseForbidden("Solo el dueño puede borrar su mazo.")
+            raise JsonResponse({"forbidden:","Solo el dueño puede borrar su mazo."}, status=403)
         
-    # Clona un mazo y lo guarda en los mazos del usuario. Revisamos que el mazo sea publico o le pertenece al usuario antes de copiarlo,
+    # Clona un mazo y lo guarda en los mazos del usuario. Revisamos que el mazo no sea privado o le pertenece al usuario antes de copiarlo,
     # porque sino alguien podría copiar mazos privados usando ids al azar.
     def clone_deck(user_instance, deck_id):
         deck_to_be_cloned = DeckModel.get_deck_from_id(deck_id)
@@ -157,4 +158,4 @@ class DeckModel(models.Model):
             cloned_deck = DeckModel.save_deck(user_instance, deck_to_be_cloned, deck_to_be_cloned.legal)
             return cloned_deck
         else:
-            raise HttpResponseForbidden("No se pueden clonar mazos privados si no le pertence.")
+            raise JsonResponse({"forbidden:","No se pueden clonar mazos privados si no le pertence."}, status=403)

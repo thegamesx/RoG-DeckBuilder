@@ -144,3 +144,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/' # Ver si usar esto
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # Borrar luego, es para testear emails
+
+ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
+
+REGISTRATION_OPEN = os.getenv('REGISTRATION_ENABLED')
+
+ACCOUNT_FORMS = {
+    'signup': 'users.forms.CustomRegistrationForm',
+}

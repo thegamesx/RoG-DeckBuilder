@@ -35,7 +35,7 @@
               <li><a class="dropdown-item" href="#">Facciones</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#">Ascendente  <i class="bi bi-arrow-up"></i></a></li>
-              <li><a class="dropdown-item" href="#">Descendente <i class="bi bi-arrow-down"></i></a></li>
+              <li><a class="dropdown-item active" href="#">Descendente <i class="bi bi-arrow-down"></i></a></li>
             </ul>
           </div>
       </div>
@@ -54,7 +54,7 @@
                   <img class="faction-icon" src="{% static 'RoGDB/sellos/sello-'|add:faction|add:'.webp' %}"></img>
                 {% endfor %}
               </div>
-              <a class="card-text" href="/user/decks/{{ deck.deck_owner }}">Por {{ deck.deck_owner }}</a>
+              <a class="card-text" href="/decks/user/{{ deck.deck_owner }}">Por {{ deck.deck_owner }}</a>
             </a>
           </div>
         </div>
