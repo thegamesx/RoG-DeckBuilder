@@ -1,7 +1,5 @@
 // Arma el JSON para guardar el mazo en la base de datos.
 
-// TODO: Ver como guardar con el side y el maybe. Tambien revisar la legalidad del mazo
-
 $(".save-button").click(function(){
     deckname = $("#deck-name-input").val();
     if (deckname.trim().length === 0) {
@@ -11,6 +9,7 @@ $(".save-button").click(function(){
 
       // Revisar la construcción del mazo para determinar si está armado correctamente:
       // Esto incluye la proporción y cant de cartas como también que no contenga cartas prohibidas
+      // También revisar que el mazo contenga al menos 1 carta
       // Me parece que lo mejor seria hacer esto en el modelo
 
       if (loadedDeck){

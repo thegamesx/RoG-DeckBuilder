@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_list_or_404
 from django.template import loader
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, Http404
+from django.http import HttpResponseRedirect, HttpResponseBadRequest, JsonResponse, Http404
 from RoGDB.models import CardVersion
 from django.views.generic import ListView
 from deckbuilder.models import DeckModel
@@ -143,16 +143,27 @@ class DeckSearch(ListView):
     ordering = ['-published_date']
 
     def get_queryset(self):
-        query = self.request.GET.get('query', '')
-        if query:
-            return DeckModel.filter_decks(query)
-        return DeckModel.get_all_public_decks()
+        try:
+            user_query = self.kwargs['user_query']
+        except:
+            return DeckModel.get_all_public_decks()
+        queryset = DeckModel.filter_decks(user_query)
+        deck_list = get_list_or_404(queryset)
+        return deck_list
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         query = self.request.GET.get('query', '')
         context['form'] = DeckSearchForm(initial={'query': query})
         return context
+    
+    def post(self, request, *args, **kwargs):
+        form = DeckSearchForm(request.POST)
+        if form.is_valid():
+            # query_string = DeckModel.construct_string(form.cleaned_data)
+            return HttpResponseRedirect(f'/decks/search/{form.cleaned_data["deck_name"]}')
+        else:
+            return self.get(request, *args, **kwargs)
     
 class UserDecks(ListView):
     model = DeckModel

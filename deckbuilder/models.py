@@ -101,7 +101,7 @@ class DeckModel(models.Model):
             return DeckModel.objects.filter(deck_owner__username=target_user).exclude(visibility="R")
         
     # Armo el string desde los forms, asi puedo filtrarlo adecuadamente luego
-    def contruct_string(form_fields):
+    def construct_string(form_fields):
         query_string = ""
         if form_fields["deck_name"]:
             query_string += form_fields["deck_name"] + " "

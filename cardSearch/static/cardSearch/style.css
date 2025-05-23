@@ -29,11 +29,14 @@
     padding-top: 40px;
     margin: 0px auto 0px auto;
     width: 1200px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .card-list{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(290px, 1.5fr));
+    justify-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     row-gap: 12px;
 }
 
@@ -54,12 +57,16 @@
 @media screen and (max-width: 1200px){
     .search-result{
         width: 900px;
+        margin: 0 auto;
     }
 }
 
 @media screen and (max-width: 867px){
-    .search-result{
-        width: 100vw;
+    .card-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        justify-content: center;
     }
     .individual-card{
         width: 45vw;
@@ -70,19 +77,31 @@
         height: auto;
     }
     .search-result{
-        margin-left: 7px;
+        width: 90%;
+        margin: 0 auto;
     }
 }
 
 @media screen and (max-width: 600px){
-    .search-result{
-        margin-left: 1%;
-    }
-    .card-list{
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1.5fr));
-        row-gap: 12px;
-    }
+  .card-list {
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: center;
+  }
+
+  .individual-card {
+    display: flex;
+    justify-content: center;
+  }
+
+  .individual-card img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .search-result {
+    width: 90%;
+    margin: 0 auto;
+  }
 }
 
 /* Relacionado a card.html*/
