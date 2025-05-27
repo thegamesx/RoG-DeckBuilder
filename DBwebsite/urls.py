@@ -25,6 +25,7 @@ from users.views import custom_logout_view
 
 urlpatterns = [
     path('', include("homepage.urls")),
+    path("search/", include("baseTemplates.urls")),
     path('cards/', include("cardSearch.urls")),
     # Cambiamos el form del login para poder usar clases
     path('user/login/', auth_views.LoginView.as_view(

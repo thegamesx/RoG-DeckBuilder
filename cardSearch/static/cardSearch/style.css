@@ -1,10 +1,14 @@
+/*         */
 /* General */
+/*         */
 
 .img-on-hover img{
     position: absolute;
     transform: translate(-50%, -50%);
     width: 230px;
     height: auto;
+    z-index: 9999; /* muy alto para estar al frente de todo */
+    pointer-events: none; /* para que no interfiera con clics */
 }
 
 /* Ocultar en móvil */
@@ -14,8 +18,18 @@
   }
 }
   
+/*                                   */
+/* Relacionado a advancedSearch.html */
+/*                                   */
 
+.form-row {
+  max-width: 600px;
+}
+
+/*                           */
 /* Relacionado a search.html */
+/*                           */
+
 #navbar-select{
     right: 10px;
 }
@@ -104,7 +118,9 @@
   }
 }
 
+/*                        */
 /* Relacionado a card.html*/
+/*                        */
 
 .card-info .list-group-item {
     color: inherit !important;

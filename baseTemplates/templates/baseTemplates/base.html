@@ -24,10 +24,11 @@
             <li class="nav-item"><a class="nav-link" aria-current="page" href="/cards/search">Cartas</a></li>
             <li class="nav-item"><a class="nav-link" href="/decks/search">Mazos</a></li>
           </ul>
-          <div class="col-md-5 mx-auto">
+          <form class="col-md-5 mx-auto" method="GET" action="/search" id="search-form">
+            {% csrf_token %}
             <div class="input-group position-relative">
-                <input class="search-input form-control rounded-pill search-bar pe-5 z-1" type="text" placeholder="Buscar..." aria-label="Buscar..." id="search-input">
-                <select class="search-select-category form-select position-absolute top-50 end-0 translate-middle-y rounded-pill w-auto z-2 me-5" aria-label="Default select example" id="navbar-select">
+                <input class="search-input form-control rounded-pill search-bar pe-5 z-1" name="q" type="text" placeholder="Buscar..." aria-label="Buscar..." id="search-input">
+                <select class="search-select-category form-select position-absolute top-50 end-0 translate-middle-y rounded-pill w-auto z-2 me-5" name="categoria" aria-label="Default select example" id="navbar-select">
                   <option selected value="cards">Cartas</option>
                   <option value="decks">Mazos</option>
                   <option value="users">Usuarios</option>
@@ -36,6 +37,7 @@
                     <i class="bi bi-search"></i>
                 </button>
             </div>
+          </form>
         </div>
           <ul class="navbar-nav">
             <a class="nav-link" href="/cards/advanced">Avanzado</a>

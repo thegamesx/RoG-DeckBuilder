@@ -5,87 +5,90 @@
 {% block content %}
   {% load static %}
   <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
-  <div class="advanced-search-body">
-      <div class="center">
-        <form method="POST" role="search" class="row g-3">
-          {% csrf_token %}
-          
-          <div class="col-md-6">
-            <label for="{{ form.card_name.id_for_label }}" class="form-label">{{ form.card_name.label }}</label>
-            {{ form.card_name }}
-        </div>
-        
-        <div class="col-md-6">
-            <label for="{{ form.text_box.id_for_label }}" class="form-label">{{ form.text_box.label }}</label>
-            {{ form.text_box }}
-        </div>
-    
-        <div class="col-md-4">
-            <label for="{{ form.card_type.id_for_label }}" class="form-label">{{ form.card_type.label }}</label>
-            {{ form.card_type }}
-        </div>
-    
-        <div class="col-md-4">
-            <label for="{{ form.faction.id_for_label }}" class="form-label">{{ form.faction.label }}</label>
-            {{ form.faction }}
-        </div>
-    
-        <div class="col-md-4">
-            <label for="{{ form.rarity.id_for_label }}" class="form-label">{{ form.rarity.label }}</label>
-            {{ form.rarity }}
-        </div>
-    
-        <div class="col-md-3">
-            <label for="{{ form.cc_operator.id_for_label }}" class="form-label">{{ form.cc_operator.label }}</label>
-            {{ form.cc_operator }}
-        </div>
-        
-        <div class="col-md-3">
-            <label for="{{ form.converted_cost.id_for_label }}" class="form-label">{{ form.converted_cost.label }}</label>
-            {{ form.converted_cost }}
-        </div>
-    
-        <div class="col-md-3">
-            <label for="{{ form.a_operator.id_for_label }}" class="form-label">{{ form.a_operator.label }}</label>
-            {{ form.a_operator }}
-        </div>
-    
-        <div class="col-md-3">
-            <label for="{{ form.attack.id_for_label }}" class="form-label">{{ form.attack.label }}</label>
-            {{ form.attack }}
-        </div>
-    
-        <div class="col-md-3">
-            <label for="{{ form.h_operator.id_for_label }}" class="form-label">{{ form.h_operator.label }}</label>
-            {{ form.h_operator }}
-        </div>
-    
-        <div class="col-md-3">
-            <label for="{{ form.health.id_for_label }}" class="form-label">{{ form.health.label }}</label>
-            {{ form.health }}
-        </div>
-    
-        <div class="col-md-4">
-            <label for="{{ form.set_dropdown.id_for_label }}" class="form-label">{{ form.set_dropdown.label }}</label>
-            {{ form.set_dropdown }}
-        </div>
-    
-        <div class="col-md-4">
-            <label for="{{ form.legality.id_for_label }}" class="form-label">{{ form.legality.label }}</label>
-            {{ form.legality }}
-        </div>
-    
-        <div class="col-md-4">
-            <label for="{{ form.format.id_for_label }}" class="form-label">{{ form.format.label }}</label>
-            {{ form.format }}
-        </div>
-    
-        <div class="col-12 text-center">
-            <button type="submit" class="btn btn-primary">
-                Buscar <i class="bi bi-search"></i>
-            </button>
-        </div>
-      </form>
+
+  <div class="container py-5">
+    <h2 class="text-center mb-4 text-white">Buscador Avanzado</h2>
+    <form method="POST" role="search" class="d-flex flex-column align-items-center gap-3">
+      {% csrf_token %}
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.card_name.id_for_label }}" class="form-label">{{ form.card_name.label }}</label>
+        {{ form.card_name }}
       </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.text_box.id_for_label }}" class="form-label">{{ form.text_box.label }}</label>
+        {{ form.text_box }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.card_type.id_for_label }}" class="form-label">{{ form.card_type.label }}</label>
+        {{ form.card_type }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.faction.id_for_label }}" class="form-label">{{ form.faction.label }}</label>
+        {{ form.faction }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.rarity.id_for_label }}" class="form-label">{{ form.rarity.label }}</label>
+        {{ form.rarity }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.cc_operator.id_for_label }}" class="form-label">{{ form.cc_operator.label }}</label>
+        {{ form.cc_operator }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.converted_cost.id_for_label }}" class="form-label">{{ form.converted_cost.label }}</label>
+        {{ form.converted_cost }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.a_operator.id_for_label }}" class="form-label">{{ form.a_operator.label }}</label>
+        {{ form.a_operator }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.attack.id_for_label }}" class="form-label">{{ form.attack.label }}</label>
+        {{ form.attack }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.h_operator.id_for_label }}" class="form-label">{{ form.h_operator.label }}</label>
+        {{ form.h_operator }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.health.id_for_label }}" class="form-label">{{ form.health.label }}</label>
+        {{ form.health }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.set_dropdown.id_for_label }}" class="form-label">{{ form.set_dropdown.label }}</label>
+        {{ form.set_dropdown }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.legality.id_for_label }}" class="form-label">{{ form.legality.label }}</label>
+        {{ form.legality }}
+      </div>
+
+      <div class="form-group w-100 form-row">
+        <label for="{{ form.format.id_for_label }}" class="form-label">{{ form.format.label }}</label>
+        {{ form.format }}
+      </div>
+
+      <div class="col-12 d-flex justify-content-center gap-5 mt-3">
+        <button type="reset" class="btn btn-secondary">
+          Limpiar <i class="bi bi-x-circle"></i>
+        </button>
+        <button type="submit" class="btn btn-primary">
+          Buscar <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </form>
   </div>
 {% endblock %}

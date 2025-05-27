@@ -12,7 +12,7 @@ def advanced_search(request):
         advanced_form = AdvancerSearchForm(request.POST)
         if advanced_form.is_valid():
             query_string = CardVersion.construct_string(advanced_form.cleaned_data)
-            return HttpResponseRedirect(f'/search/{query_string}')
+            return HttpResponseRedirect(f'/cards/search/{query_string}')
     else:
         advanced_form = AdvancerSearchForm()
     return render (request, "cardSearch/advanced.html", {'form': advanced_form})
