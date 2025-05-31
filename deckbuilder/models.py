@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden, JsonResponse
+from django.utils import timezone
 from multiselectfield import MultiSelectField
 from RoGDB.models import Format
 import re
@@ -24,19 +25,26 @@ class DeckModel(models.Model):
 
     deck_owner = models.ForeignKey(User, verbose_name=("Usuario"), on_delete=models.DO_NOTHING)
     deck_name = models.CharField(max_length=100)
-    deck_desc = models.TextField(max_length=500)
+    deck_desc = models.TextField(verbose_name=("Descripción"), max_length=500)
     deck_factions = MultiSelectField(choices=FACTIONS, blank=True)
     visibility = models.CharField(max_length=2, choices=VISIBILITY, default="P")
     format = models.CharField(default="Sin formato", max_length=30) # Cambiar el default luego
     legal = models.BooleanField(default=True)
     card_list = models.JSONField(default=None, blank=True)
-    published_date = models.DateField(auto_now=True, auto_now_add=False)
-    last_modified = models.DateField(auto_now=True, auto_now_add=False)
+    published_date = models.DateField(editable=False)
+    last_modified = models.DateField()
 
 
     def __str__(self):
         return self.deck_name + " (" + self.deck_owner.get_username() + ")"
     
+    def save(self, *args, **kwargs):
+        # Si es la primera vez que se guarda el mazo, se le asigna la fecha de publicacion
+        if not self.id:
+            self.published_date = timezone.now().date()
+        self.last_modified = timezone.now().date()
+        return super().save(*args, **kwargs)
+
     def get_all_public_decks():
         return DeckModel.objects.filter(visibility="P")
 

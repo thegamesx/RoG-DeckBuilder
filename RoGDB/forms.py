@@ -8,7 +8,7 @@ class AdvancerSearchForm(forms.Form):
         ("Criatura","Criatura"),
         ("Sigilo","Sigilo"),
         ("Magia Lenta","Magia Lenta"),
-        ("Magia Rapida","Magia Rapida"),
+        ("Magia Rápida","Magia Rápida"),
         ("Artefacto","Artefacto"),
         ("Terreno","Terreno"),
         ("Estructura","Estructura"),
@@ -50,7 +50,7 @@ class AdvancerSearchForm(forms.Form):
     text_box = forms.CharField(label="Habilidad", max_length=2000, required=False, widget=forms.Textarea(attrs={'class': 'form-control','rows':"1"}))
     card_type = forms.ChoiceField(label="Tipo", choices=TYPE, required=False, widget=forms.Select(attrs={'class': 'form-select'}))
     faction = forms.ChoiceField(label="Facción", choices=FACTION, required=False, widget=forms.Select(attrs={'class': 'form-select'}))
-    cost = forms.CharField(label="Coste", max_length=20, required=False, widget=forms.Select(attrs={'class': 'form-select'}))
+    cost = forms.CharField(label="Coste", max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'form-select'}))
     cc_operator = forms.ChoiceField(choices=OPERATORS, required=False, widget=forms.Select(attrs={'class': 'form-select'}))
     converted_cost = forms.IntegerField(label="Costo total", required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'step': 1}))
     a_operator = forms.ChoiceField(choices=OPERATORS, required=False, widget=forms.Select(attrs={'class': 'form-select'}))

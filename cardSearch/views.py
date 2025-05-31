@@ -53,11 +53,14 @@ class SearchResult(ListView):
     def get_queryset(self):
         try:
             user_query = self.kwargs['user_query']
-        except:
-            return CardVersion.objects.filter(last_print=True)
-        queryset = CardVersion.evaluate_string(user_query)
-        card_list = get_list_or_404(queryset)
-        return card_list
+            queryset = CardVersion.evaluate_string(user_query)
+        except KeyError:
+            # Programar un aviso de que no se encontró ningun resultado
+            queryset = CardVersion.objects.filter(last_print=True)
+
+        # Como reemplazamos el get_queryset, hay que llamar a get_ordering manualmente
+        ordering = self.get_ordering()
+        return queryset.order_by(*ordering)
     
     # Si el resultado de la busqueda devuelve solo una carta, redirecciona directamente a la info de esa carta
     def render_to_response(self, context, **response_kwargs):

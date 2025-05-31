@@ -249,7 +249,8 @@ class CardVersion(models.Model):
             for word in text_box:
                 query_string += "t:" + word + " "
         if form_fields["card_type"]:
-            query_string += "type:" + form_fields["card_type"] + " "
+            for word in form_fields["card_type"].split(" "):
+                query_string += "type:" + word + " "
         if form_fields["faction"]:
             query_string += "f:" + form_fields["faction"] + " "
         if form_fields["cost"]:
@@ -263,13 +264,15 @@ class CardVersion(models.Model):
         if form_fields["rarity"]:
             query_string += "rarity:" + form_fields["rarity"] + " "
         if form_fields["set_dropdown"]:
-            query_string += "set:" + form_fields["set_dropdown"] + " "
+            for word in form_fields["set_dropdown"].split(" "):
+                query_string += "set:" + word + " "
         if form_fields["format"]:
             query_string += form_fields["legality"] + "=" + form_fields["format"] + " "
         return query_string
         
     
     # Evalua el string, permitiendo multiples filtros al mismo tiempo
+    # TODO: IMPORTANTE: los espacios rompen ciertas busquedas (especificamente type=Magia Lenta). Ver como arreglarlo
     def evaluate_string(user_query, only_last_print=True, include_tokens=False):
         splited_query = user_query.split()
         query_set = CardVersion.objects.all()
@@ -296,12 +299,13 @@ class CardVersion(models.Model):
                             if search_query['operator'] == "!=":
                                 query_set = query_set.exclude(card_id__card_type__iexact=search_query['query'])
                             elif search_query['operator'] in [":","="]:
-                                query_set = query_set.filter(card_id__card_type__iexact=search_query['query'])
+                                query_set = query_set.filter(card_id__card_type__icontains=search_query['query'])
                             else:
                                 query_set = query_set.filter(set_id__set_code__icontains=query)
                         case "set":
                             if search_query['operator'] in [":","="]:
-                                query_set = query_set.filter(set_id__set_code__iexact=search_query['query'])
+                                # Ver si funciona bien esto
+                                query_set = query_set.filter(set_id__set_code__icontains=search_query['query'])
                                 specific_set = True
                             else:
                                 query_set = query_set.filter(card_id__card_name__iexact=query)
@@ -410,7 +414,14 @@ class CardVersion(models.Model):
                                 case "!=":
                                     query_set = query_set.exclude(card_id__health__exact=None).exclude(card_id__health__exact=search_query['query'])
                         case "cost":
-                            pass # TODO: Implementar esto !!!
+                            if search_query['operator'] in [":","="]:
+                                # Si el último caracter es un numero, lo ponemos al principio
+                                if search_query['query'][-1].isdigit():
+                                    query_set = query_set.filter(card_id__cost__iexact=(search_query['query'][-1] + search_query['query'][:-1]))
+                                else:
+                                    query_set = query_set.filter(card_id__cost__iexact=search_query['query'])
+                            else:
+                                query_set = query_set.filter(card_id__card_name__icontains=query)
                         case "cc":
                             match search_query["operator"]:
                                 case "="|":":

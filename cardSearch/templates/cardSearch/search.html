@@ -6,25 +6,34 @@
   {% load static %}
   <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
   <div class="search-result pb-5">
-      <!-- La idea es mostrar las cartas en paginas, de forma estatica. -->
-      <div class="search-info">
-        <!-- Esta info es para testear, cambiar por lo que corresponda luego -->
-        <p><strong>Se encontraron {{ page_obj.paginator.count }} cartas</strong></p>
-      </div>
-      <!-- Acá está el loop que carga el arte de las cartas, y les asigna una url. -->
-      <div class="card-list">
-        {% for card in card_list %}
-            <div class="individual-card">
-              <a href="/cards/{{ card.set_id.set_code }}/{{ card.serial_number }}">
-                <img src="{{ card.card_art.url }}"  alt={{"card.card_id.card_name"}}>
-              </a>
-            </div>
-        {% endfor %}
-      </div>
-      <div class="bottom-control-row">
-        <div class = "control-left-side">
+    <form method="POST" role="search">
+      <div class="search-options pb-3 gap-3 d-flex flex-column flex-md-row align-items-stretch align-items-md-center">
+        {% csrf_token %}
+        <div class="dropdown">
+          <button class="btn btn-dark dropdown-toggle w-100 w-md-auto" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Ordenar <i class="bi bi-arrow-down-up"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Nombre</a></li>
+            <li><a class="dropdown-item" href="#">Facciones</a></li>
+            <li><a class="dropdown-item" href="#">Rareza</a></li>
+            <li><a class="dropdown-item" href="#">Coste total</a></li>
+            <li><a class="dropdown-item" href="#">Ataque</a></li>
+            <li><a class="dropdown-item" href="#">Salud</a></li>
+            <li><a class="dropdown-item" href="#">Fecha de impresión</a></li>
+            <li><hr class="dropdown-divider"></li>
+          </ul>
         </div>
-        <div class = "control-right-side">
+        <div class="dropdown">
+          <button class="btn btn-dark dropdown-toggle w-100 w-md-auto" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Ordenar <i class="bi bi-arrow-down-up"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#"><i class="bi bi-arrow-up"> Ascendente</i></a></li>
+            <li><a class="dropdown-item active" href="#"><i class="bi bi-arrow-down"> Descendente</i></a></li>
+          </ul>
+        </div>
+        <div class = "align-items-right">
           <span class="step-links">
             {% if page_obj.has_previous %}
               <a href="?page=1" class="btn btn-dark btn-sm"><b><i class="bi bi-arrow-bar-left"></i></b></a>
@@ -43,5 +52,43 @@
           </span>
         </div>
       </div>
+    </form>
+    <!-- La idea es mostrar las cartas en paginas, de forma estatica. -->
+    <div class="search-info">
+      <!-- Esta info es para testear, cambiar por lo que corresponda luego -->
+      <p class="fs-6">Se encontraron {{ page_obj.paginator.count }} cartas</p>
+    </div>
+    <!-- Acá está el loop que carga el arte de las cartas, y les asigna una url. -->
+    <div class="card-list">
+      {% for card in card_list %}
+          <div class="individual-card">
+            <a href="/cards/{{ card.set_id.set_code }}/{{ card.serial_number }}">
+              <img src="{{ card.card_art.url }}"  alt={{"card.card_id.card_name"}}>
+            </a>
+          </div>
+      {% endfor %}
+    </div>
+    <div class="bottom-control-row">
+      <div class = "control-left-side">
+      </div>
+      <div class = "control-right-side">
+        <span class="step-links">
+          {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-dark btn-sm"><b><i class="bi bi-arrow-bar-left"></i></b></a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-dark btn-sm"><i class="bi bi-arrow-left-short"></i> Anterior</a>
+          {% else %}
+          <a class="btn btn-dark disabled btn-sm"><i class="bi bi-arrow-bar-left"></i></a>
+          <a class="btn btn-dark disabled btn-sm"><i class="bi bi-arrow-left-short"></i> Anterior</a>
+          {% endif %}
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-dark btn-sm">Siguiente <i class="bi bi-arrow-right-short"></i></a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-dark btn-sm"><i class="bi bi-arrow-bar-right"></i></a>
+          {% else %}
+            <a class="btn btn-dark disabled btn-sm">Siguiente <i class="bi bi-arrow-right-short"></i></a>
+            <a class="btn btn-dark disabled btn-sm"><i class="bi bi-arrow-bar-right"></i></a>
+          {% endif %}
+        </span>
+      </div>
+    </div>
   </div>
 {% endblock %}

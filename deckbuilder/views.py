@@ -145,11 +145,13 @@ class DeckSearch(ListView):
     def get_queryset(self):
         try:
             user_query = self.kwargs['user_query']
-        except:
-            return DeckModel.get_all_public_decks()
-        queryset = DeckModel.filter_decks(user_query)
-        deck_list = get_list_or_404(queryset)
-        return deck_list
+            queryset = DeckModel.filter_decks(user_query)
+        except KeyError:
+            # Mostrar un aviso de que no se encontró ningun mazo
+            queryset = DeckModel.get_all_public_decks()
+        # Como reemplazamos el get_queryset, hay que llamar a get_ordering manualmente
+        ordering = self.get_ordering()
+        return queryset.order_by(*ordering)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
