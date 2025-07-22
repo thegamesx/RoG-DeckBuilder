@@ -50,17 +50,48 @@ class SearchResult(ListView):
     context_object_name = "card_list"
     ordering = ['card_id__card_name']
 
+    # Actualizamos el contexto para mostrar el campo de ordenación y la dirección correctos en el template
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        sort_by = self.request.GET.get('sort_by', 'card_id__card_name')
+        order = self.request.GET.get('order', 'des')
+
+        context['current_sort_by'] = sort_by
+        context['current_order'] = order
+
+        # Mapeo de campos para mostrar texto legible
+        field_labels = {
+            'card_id__card_name': 'Nombre',
+            'card_id__faction': 'Facciones',
+            'card_id__rarity': 'Rareza',
+            'card_id__converted_cost': 'Coste total',
+            'card_id__attack': 'Ataque',
+            'card_id__health': 'Salud',
+            'card_id__release_date': 'Fecha de impresión',
+        }
+
+        context['sort_by_label'] = field_labels.get(sort_by, 'Nombre')
+        context['order_label'] = 'Ascendente' if order == 'asc' else 'Descendente'
+        context['order_icon'] = 'bi-arrow-up' if order == 'asc' else 'bi-arrow-down'
+
+        return context
+
     def get_queryset(self):
         try:
             user_query = self.kwargs['user_query']
             queryset = CardVersion.evaluate_string(user_query)
         except KeyError:
-            # Programar un aviso de que no se encontró ningun resultado
+            # TODO: Programar un aviso de que no se encontró ningun resultado
             queryset = CardVersion.objects.filter(last_print=True)
+        
+        # Ordenamos según el campo y dirección de ordenación seleccionados. Por defecto, ordena por nombre de carta de forma ascendente
+        sort_by = self.request.GET.get('sort_by', 'card_id__card_name')
+        order = self.request.GET.get('order', 'asc')
 
         # Como reemplazamos el get_queryset, hay que llamar a get_ordering manualmente
-        ordering = self.get_ordering()
-        return queryset.order_by(*ordering)
+        ordering = f"-{sort_by}" if order == 'des' else sort_by
+        return queryset.order_by(ordering)
     
     # Si el resultado de la busqueda devuelve solo una carta, redirecciona directamente a la info de esa carta
     def render_to_response(self, context, **response_kwargs):

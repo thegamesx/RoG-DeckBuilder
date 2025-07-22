@@ -18,3 +18,14 @@ body{
 .social-media-link {
     font-size: 24px;
 }
+
+/* Botón de busqueda */
+.search-button i {
+  color: #212529;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.search-button:hover i {
+  transform: scale(1.15); /* Agranda suavemente */
+  filter: brightness(1.2); /* Levemente más brillante sin volverse blanco */
+}

@@ -7,31 +7,44 @@
   <link rel="stylesheet" href="{% static "cardSearch/style.css" %}">
   <div class="search-result pb-5">
     <form method="POST" role="search">
-      <div class="search-options pb-3 gap-3 d-flex flex-column flex-md-row align-items-stretch align-items-md-center">
+      <div class="search-options pb-3 gap-3 d-flex flex-column flex-md-row align-items-center justify-content-center justify-content-md-between text-center text-md-start">
         {% csrf_token %}
-        <div class="dropdown">
-          <button class="btn btn-dark dropdown-toggle w-100 w-md-auto" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Ordenar <i class="bi bi-arrow-down-up"></i>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Nombre</a></li>
-            <li><a class="dropdown-item" href="#">Facciones</a></li>
-            <li><a class="dropdown-item" href="#">Rareza</a></li>
-            <li><a class="dropdown-item" href="#">Coste total</a></li>
-            <li><a class="dropdown-item" href="#">Ataque</a></li>
-            <li><a class="dropdown-item" href="#">Salud</a></li>
-            <li><a class="dropdown-item" href="#">Fecha de impresión</a></li>
-            <li><hr class="dropdown-divider"></li>
-          </ul>
-        </div>
-        <div class="dropdown">
-          <button class="btn btn-dark dropdown-toggle w-100 w-md-auto" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Ordenar <i class="bi bi-arrow-down-up"></i>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#"><i class="bi bi-arrow-up"> Ascendente</i></a></li>
-            <li><a class="dropdown-item active" href="#"><i class="bi bi-arrow-down"> Descendente</i></a></li>
-          </ul>
+        <div class = "d-flex gap-2">
+          <div class="dropdown">
+            <button 
+              id="sort-field-button"
+              class="btn btn-dark dropdown-toggle w-100 w-md-auto btn-sm" 
+              type="button" 
+              data-bs-toggle="dropdown" 
+              aria-expanded="false"
+              data-query={{current_sort_by}}>
+              {{ sort_by_label }}
+            </button>
+            <ul class="dropdown-menu" >
+              <li><a class="dropdown-item {% if current_sort_by == 'card_id__card_name' %}active{% endif %}" href="#" data-query="card_id__card_name">Nombre</a></li>
+              <li><a class="dropdown-item {% if current_sort_by == 'card_id__faction' %}active{% endif %}" href="#" data-query="card_id__faction">Facciones</a></li>
+              <li><a class="dropdown-item {% if current_sort_by == 'card_id__rarity' %}active{% endif %}" href="#" data-query="card_id__rarity">Rareza</a></li>
+              <li><a class="dropdown-item {% if current_sort_by == 'card_id__converted_cost' %}active{% endif %}" href="#" data-query="card_id__converted_cost">Coste total</a></li>
+              <li><a class="dropdown-item {% if current_sort_by == 'card_id__attack' %}active{% endif %}" href="#" data-query="card_id__attack">Ataque</a></li>
+              <li><a class="dropdown-item {% if current_sort_by == 'card_id__health' %}active{% endif %}" href="#" data-query="card_id__health">Salud</a></li>
+              <li><a class="dropdown-item {% if current_sort_by == 'todo' %}active{% endif %}" href="#" data-query="card_id__card_name">Fecha de impresión</a></li> <!-- Ver como poner esto -->
+            </ul>
+          </div>
+          <div class="dropdown">
+            <button 
+              id="sort-direction-button"
+              class="btn btn-dark dropdown-toggle w-100 w-md-auto btn-sm" 
+              type="button" 
+              data-bs-toggle="dropdown" 
+              aria-expanded="false"
+              data-query={{current_order}}>
+              <i class="bi {{ order_icon }}"></i> {{ order_label }}
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item {% if current_order == 'asc' %}active{% endif %}" href="#" data-query="asc"><i class="bi bi-arrow-up"></i> Ascendente</a></li>
+              <li><a class="dropdown-item {% if current_order == 'des' %}active{% endif %}" href="#" data-query="des"><i class="bi bi-arrow-down"></i> Descendente</a></li>
+            </ul>
+          </div>
         </div>
         <div class = "align-items-right">
           <span class="step-links">
@@ -54,7 +67,7 @@
       </div>
     </form>
     <!-- La idea es mostrar las cartas en paginas, de forma estatica. -->
-    <div class="search-info">
+    <div class="search-info text-center text-md-start">
       <!-- Esta info es para testear, cambiar por lo que corresponda luego -->
       <p class="fs-6">Se encontraron {{ page_obj.paginator.count }} cartas</p>
     </div>
@@ -91,4 +104,5 @@
       </div>
     </div>
   </div>
+  <script src={% static "cardSearch/dropdownLogic.js" %}></script>
 {% endblock %}
