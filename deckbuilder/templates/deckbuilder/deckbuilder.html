@@ -3,40 +3,75 @@
 {% block title %}Constructor de mazos{% endblock %}
 
 {% block content %}
-    <!-- Acá va el constructor de mazos en si, la parte visual y mucha de la logica. -->
     {% load static %}
     <link rel="stylesheet" href="{% static "deckbuilder/deckbuilder-style.css" %}">
     <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
     {{loadedDeck|json_script:"loaded-deck"}}
-    <div class="row deckbuilder text-black">
-        <div class="column-left">
-          <div class="row p-2">
-            <span>Filtrar</span>
-            <input type="text" id="user-query" id="filter_search">
-            <a class="submit-button" id="submit-button" href="#">Buscar</a>
+    <div class="container-fluid">
+      <div class="row deckbuilder text-black">
+          <div class="column-left col-md-9">
+            <!-- Este div contiene la barra de acciones para la lista de cartas -->
+            <div class="row p-2">
+              <div class="col-md-6">
+                <div class="input-group input-group-sm mb-3">
+                    <input type="text" id="user-query" id="filter_search" class='form-control search-input' placeholder="Buscar cartas">
+                    <button class="btn btn-secondary filter-button" type="button" id="submit-button">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <!-- Me parece mejor si usamos iconos visuales -->
+                <select class="form-select form-select-sm" aria-label="Selección de facción" id="faction-select">
+                  <option selected value="">Todas las facciones</option>
+                  {% for faction in factions %}
+                    <option value="{{ faction.0 }}">{{ faction.1 }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-2">
+                <!-- TODO: Programar esto -->
+                <select class="form-select form-select-sm" aria-label="Selección de facción" id="faction-select">
+                  <option selected value="card_id__card_name">Nombre</option>
+                  <option value="card_id__faction">Facciones</option>
+                  <option value="card_id__rarity">Rareza</option>
+                  <option value="card_id__converted_cost">Coste total</option>
+                  <option value="card_id__attack">Ataque</option>
+                  <option value="card_id__health">Salud</option>
+                </select>
+              </div>
+            </div>
+            <div class="available-cards" id="available-cards">
+              <script type="text/javascript" src="{% static "deckbuilder/createArrayOfCards.js" %}"></script>
+            </div>
           </div>
-          <div class="available-cards" id="available-cards">
-            <script type="text/javascript" src="{% static "deckbuilder/createArrayOfCards.js" %}"></script>
+          <div class="column-right col-md-3">
+            <h4 id="deck-name-title" class="text-center">Sin nombre</h4>
+            <input type="text" id="deck-name-input" class="form-control d-none text-center" />
+            <!-- TODO: Ver como formatear esta parte para que se acomode al mazo actual -->
+            {% if loadedDeck %}
+              <p id="maindeck-title"  class="pt-2">Cartas en el mazo</p>
+              <div class = "card-list" id = "main-card-list"></div>
+              <br><p id="sidedeck-title">Cartas en el mazo secundario</p>
+              <div class = "card-list" id = "side-card-list"></div>
+              <br><p id="maybedeck-title">Cartas en duda</p>
+              <div class = "card-list" id = "maybe-card-list"></div>
+            {% else %}
+              <div class = "empty-deck-message">
+                <p class="text-center">Acá empieza la magia</p>
+                <p class="text-center">Proba agregando algunas cartas al mazo.</p>
+            {% endif %}
+            <br><a href="#" class="save-button" id="save-button">Guardar Mazo</a>
+            <br><br><br>Descripción del mazo<br><textarea id="deck-description"></textarea>
+            <br><br>Visibilidad<br>
+            <select name="visibility" id="visibility"  class="pb-2">
+              <option value="P">Público</option>
+              <option value="U">No Listado</option>
+              <option value="R">Privado</option>
+            </select>
+            <script type="text/javascript" src="{% static "deckbuilder/saveDeck.js" %}"></script>
           </div>
-        </div>
-        <div class="column-right">
-          Nombre del mazo: <input type="text" id="deck-name-input">
-          <p id="maindeck-title"  class="pt-2">Cartas en el mazo</p>
-          <div class = "card-list" id = "main-card-list"></div>
-          <br><p id="sidedeck-title">Cartas en el mazo secundario</p>
-          <div class = "card-list" id = "side-card-list"></div>
-          <br><p id="maybedeck-title">Cartas en duda</p>
-          <div class = "card-list" id = "maybe-card-list"></div>
-          <br><a href="#" class="save-button" id="save-button">Guardar Mazo</a>
-          <br><br><br>Descripción del mazo<br><textarea id="deck-description"></textarea>
-          <br><br>Visibilidad<br>
-          <select name="visibility" id="visibility"  class="pb-2">
-            <option value="P">Público</option>
-            <option value="U">No Listado</option>
-            <option value="R">Privado</option>
-          </select>
-          <script type="text/javascript" src="{% static "deckbuilder/saveDeck.js" %}"></script>
-        </div>
+      </div>
     </div>
 
     <!-- Esta es una imagen que se va a mostrar cuando se ponga el mouse sobre una carta en la lista -->
@@ -54,4 +89,5 @@
     <script type="text/javascript" src={% static "deckbuilder/cardMenu.js" %}></script>
     <script type="text/javascript" src="{% static "deckbuilder/addCardToList.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/removeCardOfList.js" %}"></script>
+    <script type="text/javascript" src="{% static "deckbuilder/editDeckName.js" %}"></script>
 {% endblock %}

@@ -1,5 +1,11 @@
 body{
+    display: flex;
+    flex-direction: column;
     background-color: lightgray;
+}
+
+html, body {
+    height: 100%;
 }
 
 .row {
@@ -91,4 +97,23 @@ body{
 
 .dropdown-menu div:hover{
     background-color:lightgray;
+}
+
+/* Titulo editable */
+#deck-name-title {
+  cursor: pointer;
+  border: 1px dashed transparent;
+  padding: 2px;
+}
+
+.editable-title:focus {
+  outline: none;
+  border-color: #aaa;
+}
+
+.editing-title {
+  background-color: dimgray;
+  color: white;
+  border-radius: 4px;
+  padding: 2px 4px;
 }

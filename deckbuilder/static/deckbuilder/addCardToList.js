@@ -28,7 +28,7 @@ $(function(){
   console.log(loadedDeck);
 
   if (loadedDeck){
-    $("#deck-name-input").val(loadedDeck.deckname);
+    $("#deck-name-title").val(loadedDeck.deckname);
     $("#deck-description").val(loadedDeck.description);
     $("#visibility").val(loadedDeck.visibility);
     // Agregar formato luego

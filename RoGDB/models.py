@@ -143,6 +143,9 @@ class Card(models.Model):
         else:
             return None # TODO: Ver si programar un código de error
 
+    @staticmethod
+    def get_list_of_factions():
+        return Card.FACTIONS
 
 class FormatFollows (models.Model):
 

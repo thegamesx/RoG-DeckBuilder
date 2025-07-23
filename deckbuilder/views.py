@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_list_or_404
 from django.template import loader
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, JsonResponse, Http404
-from RoGDB.models import CardVersion
+from RoGDB.models import CardVersion, Card
 from django.views.generic import ListView
 from deckbuilder.models import DeckModel
 from .forms import DeckSearchForm
@@ -71,6 +71,10 @@ def save_deck(request):
     return JsonResponse({"error": "Método no permitido."}, status=405)
 
 def deckbuilder_page(request, deck_id=None):
+    context = {
+        "loadedDeck": None,
+        "factions": Card.get_list_of_factions(),
+    }
     if deck_id:
         try:
             updated_card_list = {}
@@ -88,11 +92,9 @@ def deckbuilder_page(request, deck_id=None):
                 "card_list": updated_card_list,
                 "deck_owner": deck_info.deck_owner.get_username(),
             }
-            context = { 'loadedDeck': loaded_deck }
+            context['loadedDeck'] = loaded_deck
         except DeckModel.DoesNotExist as error:
             return render(request, "deckbuilder/deck-403-404.html")
-    else:
-        context = { 'loadedDeck': None }
     return render(request, "deckbuilder/deckbuilder.html", context)
 
 def view_deck(request,deck_id):
