@@ -31,7 +31,7 @@
               </div>
               <div class="col-md-2">
                 <!-- TODO: Programar esto -->
-                <select class="form-select form-select-sm" aria-label="Selección de facción" id="faction-select">
+                <select class="form-select form-select-sm" aria-label="Selección de orden" id="attribute-order-select">
                   <option selected value="card_id__card_name">Nombre</option>
                   <option value="card_id__faction">Facciones</option>
                   <option value="card_id__rarity">Rareza</option>
@@ -40,27 +40,48 @@
                   <option value="card_id__health">Salud</option>
                 </select>
               </div>
+              <div class="col-md-1">
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Ordenar
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" data-value="asc"><i class="bi bi-arrow-up"></i> Ascendente</a></li>
+                    <li><a class="dropdown-item" href="#" data-value="des"><i class="bi bi-arrow-down"></i> Descendente</a></li>
+                  </ul>
+                </div>
+              </div>
             </div>
             <div class="available-cards" id="available-cards">
               <script type="text/javascript" src="{% static "deckbuilder/createArrayOfCards.js" %}"></script>
             </div>
           </div>
           <div class="column-right col-md-3">
+            <!-- Titulo del mazo (editable) -->
             <h4 id="deck-name-title" class="text-center">Sin nombre</h4>
             <input type="text" id="deck-name-input" class="form-control d-none text-center" />
-            <!-- TODO: Ver como formatear esta parte para que se acomode al mazo actual -->
-            {% if loadedDeck %}
-              <p id="maindeck-title"  class="pt-2">Cartas en el mazo</p>
-              <div class = "card-list" id = "main-card-list"></div>
-              <br><p id="sidedeck-title">Cartas en el mazo secundario</p>
-              <div class = "card-list" id = "side-card-list"></div>
-              <br><p id="maybedeck-title">Cartas en duda</p>
-              <div class = "card-list" id = "maybe-card-list"></div>
-            {% else %}
-              <div class = "empty-deck-message">
-                <p class="text-center">Acá empieza la magia</p>
-                <p class="text-center">Proba agregando algunas cartas al mazo.</p>
-            {% endif %}
+            <!-- Ver donde acomodar esta opcion -->
+            <select id="sort-cards" class="form-select w-auto mb-2">
+              <option value="cost">Coste</option>
+              <option value="faction">Facción</option>
+              <option value="name">Nombre</option>
+              <option value="type">Tipo</option>
+            </select>
+            <div class="text-center fs-5 p-1" id="main-deck-title" hidden>Mazo principal</div>
+            <ul class="list-group" id="main-deck-list">
+            </ul>
+            <div class="text-center fs-5 p-1" id="side-deck-title" hidden>Side</div>
+            <ul class="list-group" id="side-deck-list">
+            </ul>
+            <div class="text-center fs-5 p-1" id="maybe-deck-title" hidden>Candidatos</div>
+            <ul class="list-group" id="maybe-deck-list">
+            </ul>
+            <!-- Mensaje para mostrar que está vacío el mazo -->
+            <div id="empty-deck-message">
+              <p class="text-center">Acá empieza la magia</p>
+              <p class="text-center">Proba agregando algunas cartas al mazo.</p>
+            </div>
+            <!-- TODO: Cambiar esto -->
             <br><a href="#" class="save-button" id="save-button">Guardar Mazo</a>
             <br><br><br>Descripción del mazo<br><textarea id="deck-description"></textarea>
             <br><br>Visibilidad<br>
@@ -81,13 +102,12 @@
     <script src={% static "deckbuilder/showImageWhenHovering.js" %}></script>
 
     <!-- Menu para elegir donde van las cartas -->
-    <div class="dropdown-menu">
+    <div class="dropdown-menu card-menu" id="card-menu">
       <div id="menu-add-to-main"><a href='#'>Agregar al mazo principal</a></div>
       <div id="menu-add-to-side"><a href='#'>Agregar al mazo secundario</a></div>
       <div id="menu-add-to-maybe"><a href='#'>Agregar a candidatos</a></div>
     </div>
     <script type="text/javascript" src={% static "deckbuilder/cardMenu.js" %}></script>
-    <script type="text/javascript" src="{% static "deckbuilder/addCardToList.js" %}"></script>
-    <script type="text/javascript" src="{% static "deckbuilder/removeCardOfList.js" %}"></script>
+    <script type="text/javascript" src="{% static "deckbuilder/modifyCardList.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/editDeckName.js" %}"></script>
 {% endblock %}
