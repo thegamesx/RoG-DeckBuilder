@@ -116,21 +116,37 @@ function addCard(cardTitle, cardID, cardVersionID, cardFaction, cardArt, cardCos
     });
 
   }
+  autoSaveDeck(); // Guardamos el mazo automáticamente al agregar una carta
 }
-
-
-// Actualizar esto luego, dar más opciones
 
 // Resta una copia de una carta del mazo, eliminandola si llega a cero
 function subCard(cardListObject){
   let quantity = parseInt(cardListObject.getAttribute('data-quantity')) || 0;
+  let deckType = cardListObject.parentElement.getAttribute('id');
   quantity--;
 
   if (quantity <= 0){
     cardListObject.classList.add("fade-out");
     setTimeout(() => {
       cardListObject.remove();
-    }, 300); // Espera 500ms para que se vea la animación de desvanecimiento
+
+      // Escondemos el titulo de un mazo si este no tiene cartas
+      if (document.getElementById(deckType).children.length === 0) {
+        const titleId = deckType.replace("-list", "-title");
+        const titleEl = document.getElementById(titleId);
+        if (titleEl) titleEl.hidden = true;
+      }
+
+      // Si el mazo queda vacío, mostramos el mensaje de mazo vacío
+      if (document.getElementById("main-deck-list").children.length === 0 &&
+          document.getElementById("side-deck-list").children.length === 0 &&
+          document.getElementById("maybe-deck-list").children.length === 0) {
+        document.getElementById("empty-deck-message").hidden = false;
+      } else {
+        document.getElementById("empty-deck-message").hidden = true;
+      }
+
+    }, 300); // Espera 300ms para que se vea la animación de desvanecimiento
   } else {
     cardListObject.setAttribute("data-quantity", quantity);
     const quantitySpan = cardListObject.querySelector(".number-copies");
@@ -138,16 +154,17 @@ function subCard(cardListObject){
       quantitySpan.textContent = quantity;
     }
   }
+  autoSaveDeck(); // Guardamos el mazo automáticamente al eliminar una carta
 }
 
 
-// Si la carta está repetida (está en varios mazos), como la encuentra?
-function findCard(cardID){
-  document.querySelectorAll('.card-in-list').forEach(function(card) {
-    if (card.id === cardID) {
-      subCard(card);
-    }
-  });
+// Elimina una carta del main. Pero se puede poner la opcion de agregar de otro mazo si se requiere
+function findCard(cardID, preferredDeck = "main-deck-list"){
+  const selector = `#${preferredDeck} .card-in-list[id="${cardID}"]`;
+  const card = document.querySelector(selector);
+  if (card) {
+    subCard(card);
+  }
 }
 
 // Elimina una carta del mazo al hacer click en ella en la lista (ver si poner algo un poco más especifico)
@@ -158,6 +175,7 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// TODO: Ahora mismo elimina una copia de cada mazo que este, arreglar luego
 document.querySelector('.available-cards').addEventListener('click', function(event) {
   if (event.target.matches('input.sub-card')) {
     const parentDiv = event.target.closest('div');

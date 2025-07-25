@@ -24,13 +24,6 @@ html, body {
     height: auto;
 }
 
-.img-on-hover img{
-    position: absolute;
-    transform: translate(-50%, -50%);
-    width: 250px;
-    height: auto;
-}
-
 .deck-title{
     color: azure;
 }
@@ -77,6 +70,38 @@ html, body {
     display: none;
 }
 
+/* Perteneciente a la imagen flotante */
+.img-on-hover {
+  position: absolute;
+  display: none;
+  z-index: 999;
+  width: 250px;
+  height: 350px;
+  background: repeating-linear-gradient(
+    45deg,
+    #ddd,
+    #ddd 10px,
+    #ccc 10px,
+    #ccc 20px
+  );
+  border: 2px solid #333;
+}
+
+.img-on-hover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/*
+.img-on-hover img{
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 250px;
+    height: 350px;
+}
+*/
 /* Perteneciente a card menu */
 #card-menu{
     display: block;

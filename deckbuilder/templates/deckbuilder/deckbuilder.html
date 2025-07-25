@@ -57,16 +57,24 @@
             </div>
           </div>
           <div class="column-right col-md-3">
-            <!-- Titulo del mazo (editable) -->
-            <h4 id="deck-name-title" class="text-center">Sin nombre</h4>
-            <input type="text" id="deck-name-input" class="form-control d-none text-center" />
-            <!-- Ver donde acomodar esta opcion -->
-            <select id="sort-cards" class="form-select w-auto mb-2">
-              <option value="cost">Coste</option>
-              <option value="faction">Facción</option>
-              <option value="name">Nombre</option>
-              <option value="type">Tipo</option>
-            </select>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="flex-grow-1">
+                <!-- Titulo del mazo (editable) -->
+                <h4 id="deck-name-title" class="text-left pt-2">Sin nombre</h4>
+                <input type="text" id="deck-name-input" class="form-control d-none text-center" />
+              </div>
+              <div class="ms-2 d-flex align-items-center">
+                <!-- Botón para modificar el orden del mazo -->
+                <button type="button" class="btn btn-link text-black" data-bs-toggle="modal" data-bs-target="#orderModal">
+                  <i class="bi bi-arrow-down-up"></i>
+                </button>
+                <!-- Botón para modificar los detalles del mazo (visibilidad, descripcion)-->
+                <button type="button" class="btn btn-link text-black" data-bs-toggle="modal" data-bs-target="#optionsModal">
+                  <i class="bi bi-gear"></i>
+                </button>
+              </div>
+            </div>
+            <!-- Lista del mazo -->
             <div class="text-center fs-5 p-1" id="main-deck-title" hidden>Mazo principal</div>
             <ul class="list-group" id="main-deck-list">
             </ul>
@@ -81,16 +89,6 @@
               <p class="text-center">Acá empieza la magia</p>
               <p class="text-center">Proba agregando algunas cartas al mazo.</p>
             </div>
-            <!-- TODO: Cambiar esto -->
-            <br><a href="#" class="save-button" id="save-button">Guardar Mazo</a>
-            <br><br><br>Descripción del mazo<br><textarea id="deck-description"></textarea>
-            <br><br>Visibilidad<br>
-            <select name="visibility" id="visibility"  class="pb-2">
-              <option value="P">Público</option>
-              <option value="U">No Listado</option>
-              <option value="R">Privado</option>
-            </select>
-            <script type="text/javascript" src="{% static "deckbuilder/saveDeck.js" %}"></script>
           </div>
       </div>
     </div>
@@ -101,6 +99,58 @@
     </div>
     <script src={% static "deckbuilder/showImageWhenHovering.js" %}></script>
 
+    <!-- Modal para editar el orden del mazo -->
+    <!-- TODO: Agregar para agrupar tambien -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="optionsModalLabel">Ordenar lista</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="sort-cards" class="form-label">Ordenar por</label>
+              <select id="sort-cards" class="form-select">
+                <option value="cost">Coste</option>
+                <option value="faction">Facción</option>
+                <option value="name">Nombre</option>
+                <option value="type">Tipo</option>
+              </select> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para editar las opciones del mazo -->
+    <div class="modal fade" id="optionsModal" tabindex="-1" aria-labelledby="optionsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="optionsModalLabel">Opciones del Mazo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="deck-description" class="form-label">Descripción del mazo</label>
+              <textarea id="deck-description" class="form-control"></textarea>
+              <div class="form-text text-black fst-italic">Límite 2000 carácteres.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="visibility" class="form-label">Visibilidad</label>
+              <select name="visibility" id="visibility" class="form-select">
+                <option value="P">Público</option>
+                <option value="U">No Listado</option>
+                <option value="R">Privado</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Menu para elegir donde van las cartas -->
     <div class="dropdown-menu card-menu" id="card-menu">
       <div id="menu-add-to-main"><a href='#'>Agregar al mazo principal</a></div>
@@ -110,4 +160,5 @@
     <script type="text/javascript" src={% static "deckbuilder/cardMenu.js" %}></script>
     <script type="text/javascript" src="{% static "deckbuilder/modifyCardList.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/editDeckName.js" %}"></script>
+    <script type="text/javascript" src="{% static "deckbuilder/saveDeck.js" %}"></script>
 {% endblock %}
