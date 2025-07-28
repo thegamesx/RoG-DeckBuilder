@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.addEventListener("mouseenter", (e) => {
+        if (!(e.target instanceof HTMLElement)) return;
+        
         const card = e.target.closest(".card-in-list");
         if (!card || !hoverImg || !hoverBox) return;
 
@@ -35,6 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }, true);   
 
     document.addEventListener("mouseleave", (e) => {
+        if (!(e.target instanceof HTMLElement)) return;
+
         const card = e.target.closest(".card-in-list");
         if (!card || !hoverBox) return;
 

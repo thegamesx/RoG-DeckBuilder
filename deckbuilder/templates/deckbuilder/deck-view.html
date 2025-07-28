@@ -19,58 +19,29 @@
     </div>
   </div>
   <div class="container p-3">
+    <!-- Controles de agrupación y orden -->
+    <div class="deck-controls mb-3 col-md-2 row">
+      <label for="groupBySelect" class="form-label">Agrupar cartas por:</label>
+      <select id="groupBySelect" class="form-select w-auto d-inline-block">
+        <option value="none">Sin agrupar</option>
+        <option value="cost">Coste</option>
+        <option value="faction">Facción</option>
+        <option value="type">Tipo</option>
+      </select>
+    </div>
     <div class="row">
       <!-- Columna izquierda: imagen -->
-      <div class="column-left col-md-4 text-center mb-4">
+      <div class="column-left col-md-3 text-center mb-4">
         <div class="card-image">
           <img src="/media/media/card_Art/RoG-cardback.jpeg" id="card-art-display" class="img-fluid">
         </div>
       </div>
 
-
       <!-- Columna derecha: listas -->
-      <div class="column-right col-md-8">
-        <h5>Mazo Principal</h5>
-        <ul class="list-group list-group-flush mb-4">
-          {% for card in loadedDeck.card_list.main %}
-            <li class="list-group-item bg-transparent text-light card-item">
-              <div class="card-item-in-list d-flex justify-content-between" id="{{card.id}}">
-                <div class="card-quantity">{{card.quantity}}</div>
-                <div class="card-name">{{card.card_id__card_name}}</div>
-              </div>
-            </li>
-          {% endfor %}
-        </ul>
-
-        {% if loadedDeck.card_list.side %}
-          <h5>Side</h5>
-          <ul class="list-group list-group-flush mb-4">
-            {% for card in loadedDeck.card_list.side %}
-              <li class="list-group-item bg-transparent text-light card-item">
-                <div class="card-item-in-list d-flex justify-content-between" id="{{card.id}}">
-                  <div class="card-quantity">{{card.quantity}}</div>
-                  <div class="card-name">{{card.card_id__card_name}}</div>
-                </div>
-              </li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-
-        {% if loadedDeck.card_list.maybe %}
-          <h5>Candidatos</h5>
-          <ul class="list-group list-group-flush mb-4">
-            {% for card in loadedDeck.card_list.maybe %}
-              <li class="list-group-item bg-transparent text-light card-item">
-                <div class="card-item-in-list d-flex justify-content-between" id="{{card.id}}">
-                  <div class="card-quantity">{{card.quantity}}</div>
-                  <div class="card-name">{{card.card_id__card_name}}</div>
-                </div>
-              </li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-      </div>
+      <!-- Contenedor vacío donde se van a inyectar las cartas -->
+      <div id="card-list-container" class="deck-columns-wrapper d-flex flex-wrap gap-3 mt-3 col-md-9"></div>
     </div>
   </div>
   <script text="text/javascript" src={% static "deckbuilder/updateCardImage.js" %}></script>
+  <script text="text/javascript" src={% static "deckbuilder/deckViewScripts.js" %}></script>
 {% endblock %}

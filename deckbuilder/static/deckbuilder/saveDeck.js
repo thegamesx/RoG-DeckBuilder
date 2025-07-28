@@ -20,7 +20,7 @@ async function saveDeck() {
     deck_id: current_deck_id,
     description: document.getElementById("deck-description").value,
     visibility: document.getElementById("visibility").value,
-    format: "Eterno", // Cambiar esto luego
+    format: "Eterno", // TODO: Cambiar esto luego
     faction: [],
     cards: {
       main: [],
@@ -83,9 +83,70 @@ function debounce(func, delay = 500) {
   };
 }
 
-// Si no se detecta actividad en el mazo, se guarda automáticamente cada 5 segundos
 const autoSaveDeck = debounce(saveDeck, 5000);
 
-document.getElementById("deck-description").addEventListener("input", autoSaveDeck);
-document.getElementById("visibility").addEventListener("change", autoSaveDeck);
-document.getElementById("deck-name-title").addEventListener("blur", autoSaveDeck);
+// Si no se detecta actividad en el mazo, se guarda automáticamente cada 5 segundos
+document.addEventListener("DOMContentLoaded", () => {
+  const loadedDeck = JSON.parse(document.getElementById('loaded-deck').textContent);
+  console.log(loadedDeck);
+    if (loadedDeck) {
+      console.log("Mazo cargado, se activará el guardado automático.");
+      document.getElementById("deck-description").addEventListener("input", autoSaveDeck);
+      document.getElementById("visibility").addEventListener("change", autoSaveDeck);
+      document.getElementById("deck-name-title").addEventListener("blur", autoSaveDeck);
+    } else {
+      console.log("No hay mazo cargado. Se espera a que se ingresen los datos para guardarlo.");
+
+      // Si se carga la página sin un mazo, se muestra el modal para crear uno nuevo
+      const loadedDeck = document.getElementById("loaded-deck");
+      const modalElement = document.getElementById("new-deck-modal");
+      const modal = new bootstrap.Modal(modalElement, {
+        backdrop: 'static',
+        keyboard: false
+      });
+      modal.show();
+
+      const deckNameInput = document.getElementById("new-deck-name");
+
+      document.getElementById("confirm-new-deck").addEventListener("click", () => {
+        const format = document.getElementById("new-deck-format").value;
+        
+        if (deckNameInput.value.trim().length === 0) {
+          deckNameInput.classList.add("is-invalid");
+          deckNameInput.focus();
+          return;
+        } else {
+          deckNameInput.classList.remove("is-invalid");
+        }
+
+        // Guardar el nombre del mazo en el DOM
+        document.getElementById("deck-name-title").textContent = deckNameInput.value.trim();
+
+        // TODO: Guardar el formato en algún lugar
+        // Por ejemplo: document.getElementById("deck-format").value = format;
+
+        modal.hide();
+        autoSaveDeck(); // Guardar el mazo automáticamente al crear uno nuevo
+        document.getElementById("deck-description").addEventListener("input", autoSaveDeck);
+        document.getElementById("visibility").addEventListener("change", autoSaveDeck);
+        document.getElementById("deck-name-title").addEventListener("blur", autoSaveDeck);
+      });
+
+      // Permitir que el usuario confirme el nombre del mazo con Enter
+      deckNameInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          confirmButton.click();
+        }
+      });
+
+      // Si hace click en cancelar, redirigir a sus mazos
+      document.getElementById("cancel-new-deck").addEventListener("click", () => {
+        console.log("Cancelando creación de mazo.");
+        window.location.href = "/decks/user/";
+      });
+    
+    }
+});
+
+

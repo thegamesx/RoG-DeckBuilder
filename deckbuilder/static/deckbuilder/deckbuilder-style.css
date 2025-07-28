@@ -196,3 +196,10 @@ html, body {
 .fade-in {
   animation: slideInRight 0.3s ease-out forwards;
 }
+
+/* Colores de fondo para las cartas, según su facción */
+.card-faction-N { background-color: rgba(97, 158, 228, 0.322); }  /* Nepturno: Celeste */
+.card-faction-P { background-color: rgba(131, 22, 199, 0.205); }   /* Plutón: Violeta */
+.card-faction-J { background-color: rgba(255, 255, 0, 0.15); }   /* Jupiter: Amarillo */
+.card-faction-S { background-color: rgba(0, 128, 0, 0.1); }      /* Saturno: Verde */
+.card-faction-M { background-color: rgba(255, 0, 0, 0.1); }      /* Marte: Rojo */

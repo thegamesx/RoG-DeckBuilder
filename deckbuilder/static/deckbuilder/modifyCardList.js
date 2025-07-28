@@ -85,6 +85,12 @@ function addCard(cardTitle, cardID, cardVersionID, cardFaction, cardArt, cardCos
     const newCard = document.createElement('li');
 
     newCard.className = "list-group-item d-flex justify-content-start align-items-center card-item card-in-list fade-in";
+    // Si la opción de colorear por facción está activada, le agregamos la clase correspondiente
+    if (document.getElementById("toggle-faction-color").checked) {
+      if (cardFaction) {
+        newCard.classList.add(`card-faction-${cardFaction}`);
+      }
+    }
     newCard.id = cardID;
     newCard.setAttribute("data-version", cardVersionID);
     newCard.setAttribute("data-card-name", cardTitle);
@@ -157,6 +163,32 @@ function subCard(cardListObject){
   autoSaveDeck(); // Guardamos el mazo automáticamente al eliminar una carta
 }
 
+// Opción para colorear el fondo de las cartas según su facción (ver si poner en otro lado)
+document.addEventListener("DOMContentLoaded", () => {
+  const factionColorToggle = document.getElementById("toggle-faction-color");
+
+  if (factionColorToggle) {
+    factionColorToggle.addEventListener("change", () => {
+      const cards = document.querySelectorAll(".card-in-list");
+
+      cards.forEach(card => {
+        // Limpiamos clases anteriores
+        card.classList.forEach(cls => {
+          if (cls.startsWith("card-faction-")) {
+            card.classList.remove(cls);
+          }
+        });
+
+        if (factionColorToggle.checked) {
+          const faction = card.dataset.faction;
+          if (faction) {
+            card.classList.add(`card-faction-${faction}`);
+          }
+        }
+      });
+    });
+  }
+});
 
 // Elimina una carta del main. Pero se puede poner la opcion de agregar de otro mazo si se requiere
 function findCard(cardID, preferredDeck = "main-deck-list"){
@@ -175,7 +207,6 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// TODO: Ahora mismo elimina una copia de cada mazo que este, arreglar luego
 document.querySelector('.available-cards').addEventListener('click', function(event) {
   if (event.target.matches('input.sub-card')) {
     const parentDiv = event.target.closest('div');

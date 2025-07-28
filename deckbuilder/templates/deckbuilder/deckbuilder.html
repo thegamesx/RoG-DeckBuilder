@@ -118,6 +118,12 @@
                 <option value="type">Tipo</option>
               </select> 
             </div>
+            <div class="form-check mt-3">
+              <input class="form-check-input" type="checkbox" id="toggle-faction-color">
+              <label class="form-check-label" for="toggle-faction-color">
+                Colorear cartas según su facción
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -147,6 +153,53 @@
               </select>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para crear nuevo mazo -->
+    <div id="new-deck-modal" class="modal fade" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h5 class="modal-title">Crear nuevo mazo</h5>
+          </div>
+
+          <div class="modal-body">
+            <form id="new-deck-form">
+              <div class="mb-3">
+                <label for="new-deck-name" class="form-label">Nombre del mazo</label>
+                <input type="text" class="form-control" id="new-deck-name" required>
+                <div class="invalid-feedback">
+                  El nombre del mazo no puede estar vacío.
+                </div>
+                <div class="form-text text-black fst-italic">Límite 100 carácteres.</div> <!--Enforzar-->
+              </div>
+              <div class="mb-3">
+                <label for="new-deck-format" class="form-label">Formato</label>
+                <!-- TODO: Armar la lista de formatos de forma automatica -->
+                <select class="form-select" id="new-deck-format">
+                  <option value="Eterno">Eterno</option>
+                  <option value="None">Ninguno</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="visibility" class="form-label">Visibilidad</label>
+                <select name="visibility" id="visibility" class="form-select">
+                  <option value="P">Público</option>
+                  <option value="U">No Listado</option>
+                  <option value="R">Privado</option>
+                </select>
+              </div>
+            </form>
+          </div>
+
+          <div class="modal-footer">
+            <button id="cancel-new-deck" class="btn btn-secondary">Cancelar</button>
+            <button id="confirm-new-deck" class="btn btn-primary">Confirmar</button>
+          </div>
+
         </div>
       </div>
     </div>

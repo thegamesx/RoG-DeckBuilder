@@ -137,6 +137,13 @@ def delete_deck(request, profile_name, deck_id):
     else:
         return JsonResponse({"error": "Petición invalida."}, status=400)
     
+# Redirect simple a los mazos del usuario
+def my_decks_redirect(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(f'/decks/user/{request.user.username}/')
+    else:
+        return HttpResponseRedirect('/decks/search/')
+    
 class DeckSearch(ListView):
     model = DeckModel
     paginate_by = 30

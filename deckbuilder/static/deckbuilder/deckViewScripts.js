@@ -1,0 +1,56 @@
+function renderCardGroups(groups, container) {
+    container.innerHTML = ''; // Limpiar el contenedor antes de agregar nuevos grupos
+
+    const grid = document.createElement('div');
+    grid.classList.add('card-columns-grid');
+
+    Object.entries(groups).forEach(([groupKey, cards]) => {
+        const col = document.createElement('div');
+        col.classList.add('col', 'card-group-wrapper');
+
+        const groupTitle = document.createElement('h5');
+        groupTitle.classList.add('card-group-title');
+        groupTitle.textContent = groupKey;
+        col.appendChild(groupTitle);
+
+        // Lista de cartas
+        const cardList = document.createElement('ul');
+        cardList.classList.add('list-group', 'list-group-flush'); // Ver si dejar el flush
+
+        cards.forEach(card => {
+            const cardItem = document.createElement('li');
+            cardItem.classList.add(
+                'list-group-item', 
+                'd-flex', 
+                'justify-content-between', 
+                'align-items-center', 
+                'card-item', 
+                'card-in-list');
+            cardItem.dataset.faction = card.card_id__faction.join("");
+
+            cardItem.innerHTML = `
+                <span class="me-2 fw-bold text-end number-copies">${card.quantity}</span>
+                <span class="rarity-dot me-1" rarity-value="${card.card_id__rarity}"></span>
+                <span class="card-name">${card.card_id__card_name}</span>
+                <span class="ms-auto text-end card-cost">${card.card_id__cost}</span>
+            `;
+            cardList.appendChild(cardItem);
+        });
+
+        col.appendChild(cardList);
+        grid.appendChild(col);
+    });
+
+    container.appendChild(grid);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const deckContainer = document.getElementById('card-list-container');
+    const loadedDeck = JSON.parse(document.getElementById('loaded-deck').textContent || '{}');
+
+    if (loadedDeck && loadedDeck.card_list) {
+        renderCardGroups(loadedDeck.card_list, deckContainer);
+    } else {
+        deckContainer.innerHTML = '<p>No hay cartas en este mazo.</p>';
+    }
+});
