@@ -32,7 +32,7 @@ async function saveDeck() {
   document.querySelectorAll(".card-in-list").forEach(cardElement => {
 
     const card = {
-      id: cardElement.getAttribute("id").replace("card-", ""),
+      id: cardElement.getAttribute("data-card-id"),
       quantity: cardElement.getAttribute("data-quantity"),
       version: cardElement.getAttribute("data-version"),
       name: cardElement.getAttribute("data-card-name"),

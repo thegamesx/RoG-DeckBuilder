@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="{% static "deckbuilder/deckbuilder-style.css" %}">
     <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
     {{loadedDeck|json_script:"loaded-deck"}}
+    <script>const SEAL_BASE_PATH = "{% static 'RoGDB/sellos/sello-' %}";</script>
     <div class="container-fluid">
       <div class="row deckbuilder text-black">
-          <div class="column-left col-md-9">
+          <div class="column-left">
             <!-- Este div contiene la barra de acciones para la lista de cartas -->
             <div class="row p-2">
               <div class="col-md-6">
@@ -32,18 +33,17 @@
               <div class="col-md-2">
                 <!-- TODO: Programar esto -->
                 <select class="form-select form-select-sm" aria-label="Selección de orden" id="attribute-order-select">
-                  <option selected value="card_id__card_name">Nombre</option>
-                  <option value="card_id__faction">Facciones</option>
-                  <option value="card_id__rarity">Rareza</option>
-                  <option value="card_id__converted_cost">Coste total</option>
-                  <option value="card_id__attack">Ataque</option>
-                  <option value="card_id__health">Salud</option>
+                  <option selected value="name">Nombre</option>
+                  <option value="faction">Facciones</option>
+                  <option value="rarity">Rareza</option>
+                  <option value="cost">Coste total</option>
+                  <option value="type">Tipo</option>
                 </select>
               </div>
               <div class="col-md-1">
-                <div class="dropdown">
-                  <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    Ordenar
+                <div class="dropdown" id="array-order">
+                  <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" data-value="asc" id="array-order-button">
+                    <i class="bi bi-arrow-up"></i>
                   </button>
                   <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="#" data-value="asc"><i class="bi bi-arrow-up"></i> Ascendente</a></li>
@@ -56,7 +56,8 @@
               <script type="text/javascript" src="{% static "deckbuilder/createArrayOfCards.js" %}"></script>
             </div>
           </div>
-          <div class="column-right col-md-3">
+          <div class="resizer" id="resizer"></div>
+          <div class="column-right">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <div class="flex-grow-1">
                 <!-- Titulo del mazo (editable) -->
@@ -75,13 +76,13 @@
               </div>
             </div>
             <!-- Lista del mazo -->
-            <div class="text-center fs-5 p-1" id="main-deck-title" hidden>Mazo principal</div>
+            <div class="text-center fs-5 p-2" id="main-deck-title" hidden>Mazo principal</div>
             <ul class="list-group" id="main-deck-list">
             </ul>
-            <div class="text-center fs-5 p-1" id="side-deck-title" hidden>Side</div>
+            <div class="text-center fs-5 p-2" id="side-deck-title" hidden>Side</div>
             <ul class="list-group" id="side-deck-list">
             </ul>
-            <div class="text-center fs-5 p-1" id="maybe-deck-title" hidden>Candidatos</div>
+            <div class="text-center fs-5 p-2" id="maybe-deck-title" hidden>Candidatos</div>
             <ul class="list-group" id="maybe-deck-list">
             </ul>
             <!-- Mensaje para mostrar que está vacío el mazo -->
@@ -117,11 +118,33 @@
                 <option value="name">Nombre</option>
                 <option value="type">Tipo</option>
               </select> 
+              <select id="sort-cards-order" class="form-select">
+                <option value="asc">Ascendente</option>
+                <option value="des">Descendente</option>
+              </select> 
+            </div>
+            <div class="form-check mt-3">
+              <input class="form-check-input" type="checkbox" id="toggle-rarity-pin" checked>
+              <label class="form-check-label" for="toggle-rarity-pin">
+                Mostrar la rareza de las cartas en la lista
+              </label>
             </div>
             <div class="form-check mt-3">
               <input class="form-check-input" type="checkbox" id="toggle-faction-color">
               <label class="form-check-label" for="toggle-faction-color">
                 Colorear cartas según su facción
+              </label>
+            </div>
+            <div class="form-check mt-3">
+              <input class="form-check-input" type="checkbox" id="toggle-card-costs" checked>
+              <label class="form-check-label" for="toggle-card-costs">
+                Mostrar costes en la lista de cartas
+              </label>
+            </div>
+            <div class="form-check mt-3">
+              <input class="form-check-input" type="checkbox" id="toggle-roman-cost">
+              <label class="form-check-label" for="toggle-roman-cost">
+                Mostrar costes en números romanos
               </label>
             </div>
           </div>
@@ -204,13 +227,17 @@
       </div>
     </div>
 
-    <!-- Menu para elegir donde van las cartas -->
+    <!-- Dropdown menu para elegir donde van las cartas -->
     <div class="dropdown-menu card-menu" id="card-menu">
       <div id="menu-add-to-main"><a href='#'>Agregar al mazo principal</a></div>
       <div id="menu-add-to-side"><a href='#'>Agregar al mazo secundario</a></div>
       <div id="menu-add-to-maybe"><a href='#'>Agregar a candidatos</a></div>
     </div>
-    <script type="text/javascript" src={% static "deckbuilder/cardMenu.js" %}></script>
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="{% static "deckbuilder/resizeColumns.js" %}"></script>
+    <script type="text/javascript" src="{% static "deckbuilder/orderAlgorithm.js" %}"></script>
+    <script type="text/javascript" src="{% static "deckbuilder/cardMenu.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/modifyCardList.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/editDeckName.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/saveDeck.js" %}"></script>

@@ -1,67 +1,74 @@
-// Función común para comparar dos cartas segun sortBy
-function compareCards(a, b, sortBy) {
-  let aValue, bValue;
-  switch (sortBy) {
-    case 'cost':
-      aValue = parseInt(a.getAttribute('data-converted-cost'));
-      bValue = parseInt(b.getAttribute('data-converted-cost'));
-      break;
-    case 'faction':
-      aValue = a.getAttribute('data-faction');
-      bValue = b.getAttribute('data-faction');
-      break;
-    case 'name':
-      aValue = a.getAttribute('data-card-name').toLowerCase();
-      bValue = b.getAttribute('data-card-name').toLowerCase();
-      break;
-    case 'type':
-      aValue = a.getAttribute('data-version');
-      bValue = b.getAttribute('data-version');
-      break;
-    default:
-      return 0;
+// Convierte un numero a romano
+function toRoman(num) {
+  if (isNaN(num) || num <= 0) return num;
+  const lookup = {
+    M:1000, CM:900, D:500, CD:400,
+    C:100, XC:90, L:50, XL:40,
+    X:10, IX:9, V:5, IV:4, I:1
+  };
+  let roman = '';
+  for (let i in lookup) {
+    while (num >= lookup[i]) {
+      roman += i;
+      num -= lookup[i];
+    }
+  }
+  return roman;
+}
+
+// Convierte el coste de una carta a iconos visuales
+function renderCardCost(costStr, useRoman = false) {
+  console.log(costStr, useRoman)
+  if (!costStr) return '';
+
+  // Extraemos número al principio (coste genérico)
+  const match = costStr.match(/^(\d*)([A-Z]*)$/);
+  if (!match) return costStr;
+
+  const [, numberPart, factionPart] = match;
+  let html = '';
+
+  if (numberPart) {
+    const displayNumber = useRoman ? toRoman(parseInt(numberPart)) : numberPart
+    html += `<span class="generic-cost">${displayNumber}</span>`;
   }
 
-  // Si son iguales, desempatar por nombre
-  if (aValue === bValue) {
-    const nameA = a.getAttribute('data-card-name').toLowerCase();
-    const nameB = b.getAttribute('data-card-name').toLowerCase();
-    return nameA.localeCompare(nameB);
+  for (const letter of factionPart) {
+    html += `<img src="${SEAL_BASE_PATH}${letter}.webp" alt="${letter}" class="faction-icon">`;
   }
 
-  // Comparación principal
-  if (typeof aValue === "number" && typeof bValue === "number") {
-    return aValue - bValue;
-  } else {
-    return aValue.localeCompare(bValue);
-  }
+  return html;
 }
 
 // Ordena toda la lista
-function sortDeckList(deckType, sortBy) {
+function sortDeckList(deckType) {
+  const sortBy = document.getElementById('sort-cards').value;
+  const sortOrder = document.getElementById('sort-cards-order').value;
   const deckList = document.getElementById(deckType + '-deck-list');
   if (!deckList) return;
 
   const cards = Array.from(deckList.querySelectorAll('li.card-in-list'));
   if (cards.length === 0) return;
 
-  cards.sort((a, b) => compareCards(a, b, sortBy));
+  cards.sort((a, b) => compareCards(a, b, sortBy, sortOrder));
 
   deckList.innerHTML = '';
   cards.forEach(card => deckList.appendChild(card));
 }
 
 // Obtiene índice donde insertar la carta nueva, manteniendo orden
-function getSortedInsertIndex(cards, newCard, sortBy) {
+function getSortedInsertIndex(cards, newCard) {
+  const sortBy = document.getElementById('sort-cards').value;
+  const sortOrder = document.getElementById('sort-cards-order').value;
   for (let i = 0; i < cards.length; i++) {
-    if (compareCards(newCard, cards[i], sortBy) < 0) {
+    if (compareCards(newCard, cards[i], sortBy, sortOrder) < 0) {
       return i;
     }
   }
   return cards.length;
 }
 
-function addCard(cardTitle, cardID, cardVersionID, cardFaction, cardArt, cardCost, cardConvertedCost, cardRarity, targetDeck, quantity=1){
+function addCard(cardTitle, cardID, cardVersionID, cardFaction, cardArt, cardCost, cardConvertedCost, cardRarity, cardType, targetDeck, quantity=1){
   let cardList = document.getElementById(targetDeck + '-deck-list');
 
   // Primero vemos si está el mensaje cuando el mazo está vacío, y lo ocultamos
@@ -73,9 +80,9 @@ function addCard(cardTitle, cardID, cardVersionID, cardFaction, cardArt, cardCos
   if (document.getElementById(targetDeck + "-deck-title").hidden){
     document.getElementById(targetDeck + "-deck-title").hidden = false;
   }
-  console.log(cardTitle, cardID, cardVersionID, cardFaction, cardArt, cardCost, cardConvertedCost, cardRarity, targetDeck, quantity);
-  if (cardList.querySelector(`#${cardID}`)) {
-    let cardElement = cardList.querySelector(`#${cardID}`)
+  console.log(cardTitle, cardID, cardVersionID, cardFaction, cardArt, cardCost, cardConvertedCost, cardRarity, cardType, targetDeck, quantity);
+  if (cardList.querySelector(`#${targetDeck}-${cardID}`)) {
+    const cardElement = cardList.querySelector(`#${targetDeck}-${cardID}`)
     const newQuantity = parseInt(cardElement.getAttribute("data-quantity") || "0") + 1;
     cardElement.setAttribute("data-quantity", newQuantity);
 
@@ -91,24 +98,35 @@ function addCard(cardTitle, cardID, cardVersionID, cardFaction, cardArt, cardCos
         newCard.classList.add(`card-faction-${cardFaction}`);
       }
     }
-    newCard.id = cardID;
+    newCard.id = `${targetDeck}-${cardID}`;
+    newCard.setAttribute("data-card-id", cardID);
     newCard.setAttribute("data-version", cardVersionID);
     newCard.setAttribute("data-card-name", cardTitle);
     newCard.setAttribute("data-faction", cardFaction);
     newCard.setAttribute("data-quantity", quantity);
+    newCard.setAttribute("data-cost", cardCost);
     newCard.setAttribute("data-converted-cost", cardConvertedCost);
     newCard.setAttribute("data-card-art", cardArt);
     newCard.setAttribute("data-rarity", cardRarity);
-    newCard.innerHTML = `
-      <span class="me-2 fw-bold text-end number-copies">${quantity}</span>
-      <span class="rarity-dot me-1" rarity-value="${cardRarity}"></span>
-      <span class="card-name">${cardTitle}</span>
-      <span class="ms-auto text-end card-cost">${cardCost}</span>
-    `;
+    newCard.setAttribute("data-type", cardType);
+    if (document.getElementById("toggle-rarity-pin").checked) {
+      newCard.innerHTML = `
+        <span class="me-2 fw-bold text-end number-copies">${quantity}</span>
+        <span class="rarity-dot me-1" rarity-value="${cardRarity}"></span>
+        <span class="card-name">${cardTitle}</span>
+        <span class="ms-auto text-end card-cost">${renderCardCost(cardCost)}</span>
+      `;
+    } else {
+      newCard.innerHTML = `
+        <span class="me-2 fw-bold text-end number-copies">${quantity}</span>
+        <span class="me-1" rarity-value="${cardRarity}"></span>
+        <span class="card-name">${cardTitle}</span>
+        <span class="ms-auto text-end card-cost">${renderCardCost(cardCost)}</span>
+      `;
+    }
 
-    const sortBy = document.getElementById('sort-cards').value;
     const cards = Array.from(cardList.querySelectorAll('li.card-in-list'));
-    const insertIndex = getSortedInsertIndex(cards, newCard, sortBy);
+    const insertIndex = getSortedInsertIndex(cards, newCard);
 
     if (insertIndex >= cards.length) {
       cardList.appendChild(newCard);
@@ -190,10 +208,65 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// Opción para mostrar la rareza de las cartas en la lista
+document.addEventListener("DOMContentLoaded", () => {
+  const rarityPinToggle = document.getElementById("toggle-rarity-pin");
+
+  if (rarityPinToggle) {
+    rarityPinToggle.addEventListener("change", () => {
+      const cards = document.querySelectorAll(".card-in-list");
+
+      cards.forEach(card => {
+        const raritySpan = card.querySelector("span[rarity-value]");
+        if (rarityPinToggle.checked) {
+          raritySpan.classList.add('rarity-dot');
+        } else {
+          raritySpan.classList.remove('rarity-dot');
+        }
+      });
+    });
+  }
+});
+
+// Opción para mostrar los costes de las cartas
+document.getElementById("toggle-card-costs").addEventListener("change", () => {
+  document.querySelectorAll(".card-in-list").forEach(card => {
+    const costSpan = card.querySelector(".card-cost");
+    if (document.getElementById("toggle-card-costs").checked){
+      const cardCost = card.getAttribute("data-cost");
+      costSpan.hidden = false;
+      costSpan.innerHTML = renderCardCost(cardCost, useRoman = document.getElementById("toggle-roman-cost")?.checked);
+    } else {
+      costSpan.hidden = true;
+    }
+  });
+});
+
+// Opción para mostrar números romanos en el coste
+document.getElementById("toggle-roman-cost").addEventListener("change", () => {
+  document.querySelectorAll(".card-in-list").forEach(card => {
+    const cardCost = card.getAttribute("data-cost");
+    const costSpan = card.querySelector(".card-cost");
+    costSpan.innerHTML = renderCardCost(cardCost, useRoman = document.getElementById("toggle-roman-cost")?.checked);
+  });
+});
+
+// Evento para ordenar las cartas del mazo, en caso de que se seleccione una opción
+document.getElementById('sort-cards').addEventListener('change', function() {
+  sortDeckList('main');
+  sortDeckList('side');
+  sortDeckList('maybe');
+});
+
+document.getElementById('sort-cards-order').addEventListener('change', function() {
+  sortDeckList('main');
+  sortDeckList('side');
+  sortDeckList('maybe');
+});
+
 // Elimina una carta del main. Pero se puede poner la opcion de agregar de otro mazo si se requiere
-function findCard(cardID, preferredDeck = "main-deck-list"){
-  const selector = `#${preferredDeck} .card-in-list[id="${cardID}"]`;
-  const card = document.querySelector(selector);
+function findCard(cardID, preferredDeck = "main"){
+  const card = document.querySelector(`#${preferredDeck}-${cardID}`);
   if (card) {
     subCard(card);
   }
@@ -210,7 +283,7 @@ document.addEventListener('click', function(e) {
 document.querySelector('.available-cards').addEventListener('click', function(event) {
   if (event.target.matches('input.sub-card')) {
     const parentDiv = event.target.closest('div');
-    findCard(parentDiv.id);
+    findCard(parentDiv.getAttribute("data-card-id"));
   }
 });
 
@@ -230,13 +303,14 @@ $(function(){
       $.each(deck, function(index, card){
         addCard(
           card.card_id__card_name,
-          "card-" + card.card_id,
+          card.card_id,
           card.id,
           card.card_id__faction,
           "/media/" + card.card_art,
           card.card_id__cost,
           card.card_id__converted_cost,
           card.card_id__rarity,
+          card.card_id__card_type,
           deckType,
           quantity=card.quantity,
         );
@@ -245,25 +319,18 @@ $(function(){
   };
 });
 
-// Evento para ordenar las cartas del mazo, en caso de que se seleccione una opción
-document.getElementById('sort-cards').addEventListener('change', function() {
-  const sortBy = this.value;
-  sortDeckList('main', sortBy);
-  sortDeckList('side', sortBy);
-  sortDeckList('maybe', sortBy);
-});
-
 // Comandos para agregar cartas al mazo (modificar luego para dejar de usar jQuery)
 $('.available-cards').on('click', 'input.add-card', function(){
   addCard(
-    $(this).closest("div").attr("title"),
-    $(this).closest("div").attr("id"),
+    $(this).closest("div").attr("data-card-name"),
+    $(this).closest("div").attr("data-card-id"),
     $(this).closest("div").attr("data-version"),
     $(this).closest("div").attr("data-faction"),
     $(this).siblings('img').attr("src"),
     $(this).closest("div").attr("data-cost"),
     $(this).closest("div").attr("data-converted-cost"),
     $(this).closest("div").attr("data-rarity"),
+    $(this).closest("div").attr("data-type"),
     "main"
   )
 });
@@ -272,14 +339,15 @@ $('.dropdown-menu').on("click", "#menu-add-to-main", function() {
   cardDiv = $(".card-to-add#"+$(this).closest("div[triggered-card-id]").attr("triggered-card-id"))
   console.log($(this).closest('img').attr("src"))
   addCard(
-    cardDiv.attr("title"),
-    cardDiv.attr("id"),
+    cardDiv.attr("data-card-name"),
+    cardDiv.attr("data-card-id"),
     cardDiv.attr("data-version"),
     cardDiv.attr("data-faction"),
     cardDiv.children('img').attr("src"),
     cardDiv.attr("data-cost"),
     cardDiv.attr("data-converted-cost"),
     cardDiv.attr("data-rarity"),
+    cardDiv.attr("data-type"),
     "main",
   )
 });
@@ -287,14 +355,15 @@ $('.dropdown-menu').on("click", "#menu-add-to-main", function() {
 $('.dropdown-menu').on("click", "#menu-add-to-side", function() {
   cardDiv = $(".card-to-add#"+$(this).closest("div[triggered-card-id]").attr("triggered-card-id"))
   addCard(
-    cardDiv.attr("title"),
-    cardDiv.attr("id"),
+    cardDiv.attr("data-card-name"),
+    cardDiv.attr("data-card-id"),
     cardDiv.attr("data-version"),
     cardDiv.attr("data-faction"),
     cardDiv.children('img').attr("src"),
     cardDiv.attr("data-cost"),
     cardDiv.attr("data-converted-cost"),
     cardDiv.attr("data-rarity"),
+    cardDiv.attr("data-type"),
     "side",
   )
 });
@@ -302,14 +371,15 @@ $('.dropdown-menu').on("click", "#menu-add-to-side", function() {
 $('.dropdown-menu').on("click", "#menu-add-to-maybe", function() {
   cardDiv = $(".card-to-add#"+$(this).closest("div[triggered-card-id]").attr("triggered-card-id"))
   addCard(
-    cardDiv.attr("title"),
-    cardDiv.attr("id"),
+    cardDiv.attr("data-card-name"),
+    cardDiv.attr("data-card-id"),
     cardDiv.attr("data-version"),
     cardDiv.attr("data-faction"),
     cardDiv.children('img').attr("src"),
     cardDiv.attr("data-cost"),
     cardDiv.attr("data-converted-cost"),
     cardDiv.attr("data-rarity"),
+    cardDiv.attr("data-type"),
     "maybe",
   )
 });

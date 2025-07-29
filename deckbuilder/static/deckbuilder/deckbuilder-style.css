@@ -8,15 +8,27 @@ html, body {
     height: 100%;
 }
 
+.deckbuilder {
+  display: flex;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+}
+
 .column-left {
-    flex: 70%;
+    flex: 1;
+    min-width: 600px;
     background-color: lightgray;
+    overflow: hidden;
 }
 
 .column-right {
-    float: right;
-    flex: 30%;
+    flex: 0 0 400px;
+    min-width: 300px;
     background-color: beige;
+    overflow-y: auto;
+    max-height: 100%;
+    padding-right: 8px;
+    padding-bottom: 15px;
 }
 
 .card-image img{
@@ -28,20 +40,36 @@ html, body {
     color: azure;
 }
 
-.available-cards{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1.5fr));
+.available-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px;
+    justify-content: flex-start;
 }
 
 .card-to-add{
     display: flex;
-    width: 190px;
+    max-width: 190px;
     position: relative;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-radius: 6px;
+    padding-bottom: 6px;
+    transition: transform 0.2s ease;
+}
+
+.card-to-add:hover {
+    transform: translateY(-4px);
 }
 
 .available-cards img{
-    width: 190px;
+    width: 100%;
     height: auto;
+    display: block;
+    border-radius: 4px;
 }
 
 .card-to-add:hover input {
@@ -94,22 +122,18 @@ html, body {
   display: block;
 }
 
-/*
-.img-on-hover img{
-    position: absolute;
-    transform: translate(-50%, -50%);
-    width: 250px;
-    height: 350px;
-}
-*/
 /* Perteneciente a card menu */
-#card-menu{
-    display: block;
-    position: absolute;
-    background-color: darkgray;
-    border-style: solid;
-    border-color: black;
-    padding: 8px;
+#card-menu {
+  position: absolute;
+  display: block;
+  background-color: darkgray;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  padding: 8px;
+  max-height: 300px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 #card-menu a{
@@ -146,8 +170,24 @@ html, body {
 }
 
 .card-item .card-cost {
-    width: 2em;
-    text-align: end;
+  display: inline-flex;
+  justify-content: flex-end;
+  text-align: right;
+  align-items: end;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.faction-icon {
+  height: 18px;
+  width: auto;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.generic-cost {
+  font-weight: bold;
+  margin-right: 4px;
 }
 
 /* Perteneciente al punto que representa la rareza */
@@ -203,3 +243,20 @@ html, body {
 .card-faction-J { background-color: rgba(255, 255, 0, 0.15); }   /* Jupiter: Amarillo */
 .card-faction-S { background-color: rgba(0, 128, 0, 0.1); }      /* Saturno: Verde */
 .card-faction-M { background-color: rgba(255, 0, 0, 0.1); }      /* Marte: Rojo */
+
+/* Ajustes para el resizer de las columnas */
+.resizer {
+  width: 4px;
+  background: #888;
+  cursor: col-resize;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  /* Evitamos que el row de Bootstrap haga a la barra más ancha */
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.resizer:hover {
+  background: #555;
+}

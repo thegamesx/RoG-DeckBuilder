@@ -1,6 +1,7 @@
 from django.db import models
 from multiselectfield import MultiSelectField
 import re
+import copy
 
 # Pensar bien que va a pasar al borrar con las FK !!!
 
@@ -55,16 +56,18 @@ class Format(models.Model):
         main_deck_size = 0
         side_deck_size = 0
 
+        full_deck_copy = copy.deepcopy(deck_list["main"])
+
         for side_card in deck_list["side"]:
             found = False
-            for main_card in deck_list["main"]:
+            for main_card in full_deck_copy:
                 if main_card["id"] == side_card["id"]:
                     main_quantity = int(main_card["quantity"])
                     main_card["quantity"] = str(main_quantity + int(side_card["quantity"]))
                     found = True
             if not found:
-                deck_list["main"].append(side_card)
-        for card in deck_list["main"]:
+                full_deck_copy.append(copy.deepcopy(side_card))
+        for card in full_deck_copy:
             # Ver de poner una excepción para los sigilos
             full_info_card = Card.get_card_by_id(card["id"])
             match full_info_card.rarity:
@@ -82,6 +85,7 @@ class Format(models.Model):
                         return False
             if Card.check_if_banned(format, card["id"]):
                 return False
+        for card in deck_list["main"]:
             main_deck_size += int(card["quantity"])
         for card in deck_list["side"]:
             side_deck_size += int(card["quantity"])
