@@ -50,7 +50,10 @@ function sortDeckList(deckType) {
   const cards = Array.from(deckList.querySelectorAll('li.card-in-list'));
   if (cards.length === 0) return;
 
-  cards.sort((a, b) => compareCards(a, b, sortBy, sortOrder));
+  cards.sort((a, b) => compareCards(
+    getAttributeCardList(a, sortBy), getAttributeCardList(a, "name"),
+    getAttributeCardList(b, sortBy), getAttributeCardList(b, "name"),
+    sortOrder));
 
   deckList.innerHTML = '';
   cards.forEach(card => deckList.appendChild(card));
@@ -61,7 +64,10 @@ function getSortedInsertIndex(cards, newCard) {
   const sortBy = document.getElementById('sort-cards').value;
   const sortOrder = document.getElementById('sort-cards-order').value;
   for (let i = 0; i < cards.length; i++) {
-    if (compareCards(newCard, cards[i], sortBy, sortOrder) < 0) {
+    if (compareCards(
+      getAttributeCardList(newCard, sortBy), getAttributeCardList(newCard, "name"),
+      getAttributeCardList(cards[i], sortBy), getAttributeCardList(cards[i], "name"),
+      sortOrder) < 0) {
       return i;
     }
   }

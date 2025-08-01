@@ -1,4 +1,5 @@
 // Arma el JSON para guardar el mazo en la base de datos.
+let deck_id = null;
 
 async function saveDeck() {
   deckname = document.getElementById("deck-name-title").textContent;
@@ -8,7 +9,7 @@ async function saveDeck() {
     return;
   }
   const loadedDeck = JSON.parse(document.getElementById('loaded-deck').textContent || null);
-  const current_deck_id = loadedDeck ? loadedDeck.deck_id : null;
+  const current_deck_id = loadedDeck ? loadedDeck.deck_id : deck_id;
 
   // Revisar la construcción del mazo para determinar si está armado correctamente:
   // Esto incluye la proporción y cant de cartas como también que no contenga cartas prohibidas
@@ -68,6 +69,10 @@ async function saveDeck() {
     }
     const data = await response.json();
     console.log("Mazo guardado con éxito:", data);
+    if (deck_id === null && !loadedDeck){
+      deck_id = data.deck_id;
+      history.pushState({},"",`/decks/builder/${deck_id}`)
+    }
     // Mostrar un mensaje no intrusivo de que se guardó el mazo de forma automatica
   } catch (error) {
     console.error("Error al guardar el mazo:", error);

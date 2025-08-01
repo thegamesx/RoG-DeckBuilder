@@ -39,7 +39,7 @@ html, body {
 .deck-title{
     color: azure;
 }
-
+/*
 .available-cards {
     display: flex;
     flex-wrap: wrap;
@@ -47,10 +47,24 @@ html, body {
     padding: 10px;
     justify-content: flex-start;
 }
+*/
+
+.available-cards {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-width, 180px), 1fr));
+    gap: 12px;
+    padding: 10px;
+    width: 100%;
+    min-width: 400px;
+    justify-items: start;
+    justify-content: start;
+}
 
 .card-to-add{
     display: flex;
-    max-width: 190px;
+    max-width: auto;
     position: relative;
     flex-direction: column;
     align-items: center;
@@ -66,8 +80,9 @@ html, body {
 }
 
 .available-cards img{
-    width: 100%;
-    height: auto;
+    /* La altura de la carta va a cambiar dinamicamente, segun el tamaño de la pantalla */
+    width: auto;
+    height: var(--card-height, 220px);
     display: block;
     border-radius: 4px;
 }
@@ -188,6 +203,8 @@ html, body {
 .generic-cost {
   font-weight: bold;
   margin-right: 4px;
+  display: inline-flex;
+  vertical-align: middle;
 }
 
 /* Perteneciente al punto que representa la rareza */

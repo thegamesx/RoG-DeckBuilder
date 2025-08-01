@@ -59,10 +59,10 @@ def save_deck(request):
             legal = DeckModel.check_deck_list_legality("Eterno", deck_data["cards"])
             if request.user.is_authenticated:
                 if deck_data["deck_id"]:
-                    DeckModel.update_deck(request.user, deck_data, legal)
+                    saved_deck = DeckModel.update_deck(request.user, deck_data, legal)
                 else:
-                    DeckModel.save_deck(request.user, deck_data, legal)
-                return JsonResponse({"message": "Mazo guardado con éxito."}, status=200)
+                    saved_deck = DeckModel.save_deck(request.user, deck_data, legal)
+                return JsonResponse({"message": "Mazo guardado con éxito.", "deck_id": saved_deck.id}, status=200)
             else:
                 return JsonResponse({"error": "Debe iniciar sesión para guardar un mazo."}, status=403)
         except json.JSONDecodeError as error:

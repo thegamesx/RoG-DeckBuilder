@@ -7,12 +7,11 @@
     <link rel="stylesheet" href="{% static "deckbuilder/deckbuilder-style.css" %}">
     <script text="text/javascript" src={% static "deckbuilder/csrftoken.js" %}></script>
     {{loadedDeck|json_script:"loaded-deck"}}
-    <script>const SEAL_BASE_PATH = "{% static 'RoGDB/sellos/sello-' %}";</script>
     <div class="container-fluid">
       <div class="row deckbuilder text-black">
           <div class="column-left">
             <!-- Este div contiene la barra de acciones para la lista de cartas -->
-            <div class="row p-2">
+            <div class="row p-2" id="card-search-bar">
               <div class="col-md-6">
                 <div class="input-group input-group-sm mb-3">
                     <input type="text" id="user-query" id="filter_search" class='form-control search-input' placeholder="Buscar cartas">
@@ -31,7 +30,6 @@
                 </select>
               </div>
               <div class="col-md-2">
-                <!-- TODO: Programar esto -->
                 <select class="form-select form-select-sm" aria-label="Selección de orden" id="attribute-order-select">
                   <option selected value="name">Nombre</option>
                   <option value="faction">Facciones</option>
@@ -52,9 +50,12 @@
                 </div>
               </div>
             </div>
-            <div class="available-cards" id="available-cards">
-              <script type="text/javascript" src="{% static "deckbuilder/createArrayOfCards.js" %}"></script>
+            <div class="card-pagination-controls d-flex justify-content-between align-items-center mb-2">
+              <button id="card-page-prev" class="btn btn-secondary btn-sm">&lt;</button>
+              <span id="card-page-indicator"></span>
+              <button id="card-page-next" class="btn btn-secondary btn-sm">&gt;</button>
             </div>
+            <div class="available-cards" id="available-cards"></div>
           </div>
           <div class="resizer" id="resizer"></div>
           <div class="column-right">
@@ -200,6 +201,11 @@
                 <div class="form-text text-black fst-italic">Límite 100 carácteres.</div> <!--Enforzar-->
               </div>
               <div class="mb-3">
+              <label for="deck-description" class="form-label">Descripción del mazo</label>
+              <textarea id="deck-description" class="form-control"></textarea>
+              <div class="form-text text-black fst-italic">Límite 2000 carácteres.</div>
+            </div>
+              <div class="mb-3">
                 <label for="new-deck-format" class="form-label">Formato</label>
                 <!-- TODO: Armar la lista de formatos de forma automatica -->
                 <select class="form-select" id="new-deck-format">
@@ -235,6 +241,7 @@
     </div>
 
     <!-- Scripts -->
+    <script type="text/javascript" src="{% static "deckbuilder/createArrayOfCards.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/resizeColumns.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/orderAlgorithm.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/cardMenu.js" %}"></script>

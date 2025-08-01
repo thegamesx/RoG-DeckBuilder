@@ -1,36 +1,8 @@
 // Función común para comparar dos cartas segun sortBy
-function compareCards(a, b, sortBy, order = "asc") {
-  let aValue, bValue;
-  switch (sortBy) {
-    case 'cost':
-      aValue = parseInt(a.getAttribute('data-converted-cost'));
-      bValue = parseInt(b.getAttribute('data-converted-cost'));
-      break;
-    case 'faction':
-      aValue = a.getAttribute('data-faction');
-      bValue = b.getAttribute('data-faction');
-      break;
-    case 'name':
-      aValue = a.getAttribute('data-card-name').toLowerCase();
-      bValue = b.getAttribute('data-card-name').toLowerCase();
-      break;
-    case 'type':
-      aValue = a.getAttribute('data-type');
-      bValue = b.getAttribute('data-type');
-      break;
-    case 'rarity':
-      aValue = parseInt(a.getAttribute('data-rarity'));
-      bValue = parseInt(b.getAttribute('data-rarity'));
-      break;
-    default:
-      return 0;
-  }
-
+function compareCards(aValue, aName, bValue, bName, sortBy, order = "asc") {
   // Si son iguales, desempatar por nombre
   if (aValue === bValue) {
-    const nameA = a.getAttribute('data-card-name').toLowerCase();
-    const nameB = b.getAttribute('data-card-name').toLowerCase();
-    return (order === "des" ? -1 : 1) * nameA.localeCompare(nameB);
+    return (order === "des" ? -1 : 1) * aName.localeCompare(bName);
   }
 
   // Comparación principal
@@ -38,5 +10,40 @@ function compareCards(a, b, sortBy, order = "asc") {
     return (order === "des" ? -1 : 1) * (aValue - bValue);
   } else {
     return (order === "des" ? -1 : 1) * aValue.localeCompare(bValue);
+  }
+}
+
+// Extrae el atributo relevante
+function getAttributeCardList(card, sortBy) {
+  switch (sortBy) {
+    case 'cost':
+      return parseInt(card.getAttribute('data-converted-cost'));
+    case 'faction':
+      return card.getAttribute('data-faction');
+    case 'name':
+      return card.getAttribute('data-card-name').toLowerCase();
+    case 'type':
+      return card.getAttribute('data-type');
+    case 'rarity':
+      return parseInt(card.getAttribute('data-rarity'));
+    default:
+      return null;
+  }
+}
+
+function getAttributeCardArray(card, sortBy) {
+  switch (sortBy) {
+    case 'cost':
+      return parseInt(card.card_id__converted_cost);
+    case 'faction':
+      return card.card_id__faction[0];
+    case 'name':
+      return card.card_id__card_name.toLowerCase();
+    case 'type':
+      return card.card_id__card_type;
+    case 'rarity':
+      return parseInt(card.card_id__rarity);
+    default:
+      return null;
   }
 }

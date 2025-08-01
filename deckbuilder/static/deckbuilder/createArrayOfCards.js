@@ -1,3 +1,93 @@
+let currentCardPage = 0;
+const rowsPerPage = 2;
+
+// Guardamos el resultado de la query para poder paginar las cartas correctamente
+let searchResult = null;
+
+function createFrame(card){
+  return `<div class='card-to-add'
+          id="card-${card.card_id}"
+          data-card-id="${card.card_id}"
+          data-card-name="${card.card_id__card_name}" 
+          data-version="${card.id}" 
+          data-faction="${card.card_id__faction}"
+          data-cost="${card.card_id__cost}"
+          data-converted-cost="${card.card_id__converted_cost}"
+          data-rarity="${card.card_id__rarity}"
+          data-type="${card.card_id__card_type}">
+          <img src='${"/media/" + card.card_art}' alt="${card.card_id__card_name}" />
+          <input class='card-menu' type='button' value='Menú'>
+          <input class='sub-card' type='button' value='-'>
+          <input class='add-card' type='button' value='+'>
+          </input></div>`;
+}
+
+// Calculamos el espacio vertical que tenemos para mostrar las cartas
+function getAvailableCardsHeight() {
+  const parent = document.querySelector('.column-left');
+  if (!parent) return 400;
+
+  const controls = parent.querySelector('.card-pagination-controls');
+  const actionBar = document.getElementById("card-search-bar");
+  let usedHeight = 0;
+  if (controls) usedHeight += controls.offsetHeight;
+  if (actionBar) usedHeight += actionBar.offsetHeight;
+
+  const parentHeight = parent.offsetHeight || window.innerHeight;
+  const availableHeight = parentHeight - usedHeight - 32; //padding
+
+  return Math.max(availableHeight, 200);
+}
+
+function getCardsPerRow() {
+  const container = document.getElementById("available-cards");
+  const containerWidth = container.offsetWidth || 800;
+  const containerHeight = getAvailableCardsHeight();
+  const maxCardHeight = Math.floor((containerHeight - 12) / rowsPerPage)
+  const minCardWidth = maxCardHeight * 0.7158 + 12; // Ancho de la carta (calculado con relación de aspecto) más gap
+  console.log("Altura maxima:",maxCardHeight, "Cartas por fila:", Math.max(1, Math.floor(containerWidth / minCardWidth)));
+
+  //Cambiamos las dimensiones de la carta en el css
+  container.style.setProperty('--card-height', maxCardHeight + 'px');
+  container.style.setProperty('--card-width', minCardWidth + 'px');
+
+  return Math.max(1, Math.floor(containerWidth / minCardWidth))
+}
+
+function getCardsPerPage() {
+  return getCardsPerRow() * rowsPerPage;
+}
+
+function renderCardPage(cards) {
+  const cardsArray = document.getElementById("available-cards");
+  cardsArray.innerHTML = "";
+  const cardsPerPage = getCardsPerPage();
+  console.log("Cartas por fila:", cardsPerPage)
+  const start = currentCardPage * cardsPerPage;
+  const end = start + cardsPerPage;
+  cards.slice(start,end).forEach(card => cardsArray.innerHTML += createFrame(card));
+  updateCardPageIndicator(searchResult.length, cardsPerPage);
+}
+
+function orderArrayOfCards(){
+  const cards = searchResult;
+  const order = document.getElementById("array-order-button").getAttribute("data-value") || "asc";
+  const sortBy = document.getElementById("attribute-order-select").value;
+  cards.sort((a, b) => compareCards(
+    getAttributeCardArray(a, sortBy), getAttributeCardArray(a, "name"),
+    getAttributeCardArray(b, sortBy), getAttributeCardArray(b, "name"),
+    order));
+  renderCardPage(cards);
+}
+
+function updateCardPageIndicator(totalCards, cardsPerPage){
+  const indicator = document.getElementById("card-page-indicator");
+  const totalPages = Math.ceil(totalCards / cardsPerPage);
+  indicator.textContent = `Página ${currentCardPage + 1} de ${totalPages}`;
+  document.getElementById("card-page-prev").disabled = currentCardPage === 0;
+  document.getElementById("card-page-next").disabled = currentCardPage >= totalPages - 1;
+}
+
 function createArrayOfCards(query){
   searchQuery = query;
   if (searchQuery == ""){
@@ -12,44 +102,17 @@ function createArrayOfCards(query){
     dataType: "json",
     data:{ user_query: searchQuery },
     success: (data) => {
-      function createFrame(versionID, art, name, id, faction, cost, convertedCost, rarity, type){
-        return `<div class='card-to-add'
-                id="card-${id}"
-                data-card-id="${id}"
-                data-card-name="${name}" 
-                data-version="${versionID}" 
-                data-faction="${faction}"
-                data-cost="${cost}"
-                data-converted-cost="${convertedCost}"
-                data-rarity="${rarity}"
-                data-type="${type}">
-                <img src='${art}' alt="${name}" />
-                <input class='card-menu' type='button' value='Menú'>
-                <input class='sub-card' type='button' value='-'>
-                <input class='add-card' type='button' value='+'>
-                </input></div>`;
-      }
+      
       console.log(data);
       const cardsArray = document.getElementById("available-cards")
+      searchResult = data;
       if (data.context === null) {
         cardsArray.innerHTML = 
         "<div class='text-center align-middle'>No se encontraron cartas</div>"; // Ver despues si hace falta cambiarlo
         return;
       }
       cardsArray.innerHTML = ""
-      $.each(data, function(i, card){
-        cardsArray.innerHTML += createFrame(
-          card.id, 
-          "/media/" + card.card_art,
-          card.card_id__card_name, 
-          card.card_id,
-          card.card_id__faction,
-          card.card_id__cost,
-          card.card_id__converted_cost,
-          card.card_id__rarity,
-          card.card_id__card_type,
-        )
-      })
+      currentCardPage = 0;
       orderArrayOfCards();
     },
     error: (error) => {
@@ -58,17 +121,29 @@ function createArrayOfCards(query){
   })
 }
 
-function orderArrayOfCards(){
-  const cardsArray = document.getElementById("available-cards")
-  const cards = Array.from(cardsArray.querySelectorAll('.card-to-add'));
-  const order = document.getElementById("array-order-button").getAttribute("data-value") || "asc";
-  const sortBy = document.getElementById("attribute-order-select").value;
-  cards.sort((a, b) => compareCards(a, b, sortBy, order));
-  cardsArray.innerHTML = ""
-  cards.forEach(card => cardsArray.appendChild(card));
-}
+// Modificamos la página de cartas si se avanza o retrocede
+document.getElementById("card-page-prev").addEventListener("click", () => {
+  if (currentCardPage > 0) {
+    currentCardPage--;
+    orderArrayOfCards();
+  }
+});
+document.getElementById("card-page-next").addEventListener("click", () => {
+  const totalPages = Math.ceil(searchResult.length / getCardsPerPage());
+  console.log(currentCardPage, totalPages)
+  if (currentCardPage < totalPages - 1) {
+    currentCardPage++;
+    orderArrayOfCards();
+  }
+});
+
+// Modificamos la lista si se cambia el tamaño de la ventana
+document.addEventListener("resize", () => {
+  orderArrayOfCards();
+})
 
 document.getElementById("attribute-order-select").addEventListener("change", () => {
+  currentCardPage = 0;
   orderArrayOfCards();
 });
 
@@ -84,6 +159,7 @@ document.querySelectorAll('#array-order .dropdown-menu .dropdown-item').forEach(
     btn.innerHTML = icon;
     btn.setAttribute('data-value', value);
 
+    currentCardPage = 0;
     orderArrayOfCards();
   });
 });

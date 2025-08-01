@@ -289,3 +289,48 @@
     padding-top: 0;
   }
 }
+
+/* Perteneciente al punto que representa la rareza */
+.rarity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.rarity-dot[rarity-value="0"] {
+  background-color: black;
+}
+
+.rarity-dot[rarity-value="1"] {
+  background-color: lightgray;
+}
+
+.rarity-dot[rarity-value="2"] {
+  background-color: lightskyblue;
+}
+
+.rarity-dot[rarity-value="3"] {
+  background-color: rgb(243, 143, 243);
+}
+
+.rarity-dot[rarity-value="4"] {
+  background-color: gold;
+}
+
+/* Perteneciente al costo de una carta */
+
+.faction-icon {
+  height: 18px;
+  width: auto;
+  display: inline-flex;
+  vertical-align: middle;
+  margin-right: 1px;
+}
+
+.generic-cost {
+  font-family: "Times New Roman", Times, serif;
+  vertical-align: middle;
+  font-size: 18px;
+  margin-right: 4px;
+}

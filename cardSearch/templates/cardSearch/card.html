@@ -15,12 +15,17 @@
       <!-- Info de la carta -->
       <div class="card-info pe-2">
         <ul class="list-group list-group-flush bg-transparent border border-light-subtle text-white">
-          <li class="list-group-item bg-transparent"><h1><b>{{ requestedcard.card_id.card_name }}</b></h1></li>
-          <li class="list-group-item bg-transparent"><p>Rareza: {{ requestedcard.card_id.get_rarity_display }}</p></li>
-          <li class="list-group-item bg-transparent"><p>Tipo: {{requestedcard.card_id.card_type}}</p></li>
-          <li class="list-group-item bg-transparent"><p>{{requestedcard.card_id.text_box}}</p></li>
+          <li class="list-group-item bg-transparent">
+            <div class="d-flex align-items-center">
+              <h5 class="mb-0 me-2"><b>{{ requestedcard.card_id.card_name }}</b></h5>
+              <div id="card-cost">{{requestedcard.card_id.cost}}</div>
+            </div>
+          </li>
+          <li class="list-group-item bg-transparent"><span class="rarity-dot" rarity-value={{requestedcard.card_id.rarity}}></span> {{ requestedcard.card_id.get_rarity_display }}</li>
+          <li class="list-group-item bg-transparent">{{requestedcard.card_id.card_type}}</li>
+          <li class="list-group-item bg-transparent">{{requestedcard.card_id.text_box}}</li>
           {% if requestedcard.card_id.attack > 0 %} <!-- Revisar esto, si la carta no tiene ataque no va a aparecer este dato -->
-            <li class="list-group-item bg-transparent"><p>{{requestedcard.card_id.attack}}/{{requestedcard.card_id.health}}</p></li>
+            <li class="list-group-item bg-transparent">{{requestedcard.card_id.attack}}/{{requestedcard.card_id.health}}</li>
           {% endif %}
           <li class="list-group-item bg-transparent"><em>Ilustrado por: <a href="/cards/search/artist={{requestedcard.artist}}" class="link-body-emphasis link-underline-opacity-0 link-underline-opacity-75-hover">{{requestedcard.artist}}</a></em></li>
         </ul>
@@ -62,4 +67,5 @@
     <img src="#" class="img-hover"></img>
   </div>
   <script src={% static "cardSearch/showImageWhenHovering.js" %}></script>
+  <script src={% static "cardSearch/convertCardCost.js" %}></script>
 {% endblock %}
