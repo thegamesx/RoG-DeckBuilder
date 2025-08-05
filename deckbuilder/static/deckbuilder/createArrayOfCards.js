@@ -59,14 +59,26 @@ function getCardsPerPage() {
 }
 
 function renderCardPage(cards) {
-  const cardsArray = document.getElementById("available-cards");
-  cardsArray.innerHTML = "";
-  const cardsPerPage = getCardsPerPage();
-  console.log("Cartas por fila:", cardsPerPage)
-  const start = currentCardPage * cardsPerPage;
-  const end = start + cardsPerPage;
-  cards.slice(start,end).forEach(card => cardsArray.innerHTML += createFrame(card));
-  updateCardPageIndicator(searchResult.length, cardsPerPage);
+  if (window.screen.width >= 992){
+    const cardsArray = document.getElementById("available-cards");
+    cardsArray.innerHTML = "";
+    const cardsPerPage = getCardsPerPage();
+    console.log("Cartas por fila:", cardsPerPage)
+    const start = currentCardPage * cardsPerPage;
+    const end = start + cardsPerPage;
+    cards.slice(start,end).forEach(card => cardsArray.innerHTML += createFrame(card));
+    updateCardPageIndicator(searchResult.length, cardsPerPage);
+  } else {
+    const cardsArray = document.getElementById("available-cards-modal");
+    cardsArray.innerHTML = "";
+    const start = currentCardPage * 10;
+    const end = start + 10;
+    cards.slice(start,end).forEach(card => cardsArray.innerHTML += createFrame(card));
+
+    const cardsModalElement = document.getElementById("search-results-modal");
+    const cardsModal = new bootstrap.Modal(cardsModalElement);
+    cardsModal.show();
+  }
 }
 
 function orderArrayOfCards(){
@@ -107,11 +119,18 @@ function createArrayOfCards(query){
       const cardsArray = document.getElementById("available-cards")
       searchResult = data;
       if (data.context === null) {
-        cardsArray.innerHTML = 
-        "<div class='text-center align-middle'>No se encontraron cartas</div>"; // Ver despues si hace falta cambiarlo
+        if (window.screen.width >= 992){
+          cardsArray.innerHTML = 
+            "<div class='text-center align-middle'>No se encontraron cartas</div>"; // Ver despues si hace falta cambiarlo
+        } else {
+          // Muestra un pop up si no se encontraron cartas en mobile
+          $(".no-cards-alert").show();
+            setTimeout(function(){
+              $(".no-cards-alert").hide(); 
+          }, 2000);
+        }
         return;
       }
-      cardsArray.innerHTML = ""
       currentCardPage = 0;
       orderArrayOfCards();
     },

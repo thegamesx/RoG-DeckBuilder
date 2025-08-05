@@ -39,15 +39,6 @@ html, body {
 .deck-title{
     color: azure;
 }
-/*
-.available-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 10px;
-    justify-content: flex-start;
-}
-*/
 
 .available-cards {
     display: grid;
@@ -276,4 +267,85 @@ html, body {
 
 .resizer:hover {
   background: #555;
+}
+
+.pagination-button {
+  width: 80px;
+}
+
+/*                    */
+/*  Vista para mobile */
+/*                    */
+
+@media (max-width: 992px) {
+  .deckbuilder{
+    display: block;
+  }
+
+  .available-cards {
+    display: none;
+  }
+
+  .resizer{
+    display: none;
+  }
+
+  .column-left {
+    min-width: auto;
+  }
+
+  .column-right {
+    flex: auto;
+    width: 100vw;
+    height: 100%;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+    padding: 0 4px 15px 4px;
+    box-sizing: border-box;
+  }
+
+  .available-cards-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 100vw;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  .available-cards-modal .card-to-add {
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    margin: 0 auto;
+  }
+
+  .available-cards-modal .card-to-add img {
+    width: 75%;
+    height: auto;
+    max-width: 100vw;
+    display: block;
+    object-fit: contain;
+  }
+
+  #search-results-modal .modal-dialog {
+    max-width: 100vw;
+    margin: 0;
+  }
+  #search-results-modal .modal-content {
+    border-radius: 0;
+    width: 100vw;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+}
+
+.no-cards-alert {
+  display: none;
+  position: fixed;
+  top: 5px; 
+  left: 2%;
+  width: 96%;
 }

@@ -21,7 +21,7 @@
                 </div>
               </div>
               <div class="col-md-2">
-                <!-- Me parece mejor si usamos iconos visuales -->
+                <!-- TODO: Me parece mejor si usamos iconos visuales -->
                 <select class="form-select form-select-sm" aria-label="Selección de facción" id="faction-select">
                   <option selected value="">Todas las facciones</option>
                   {% for faction in factions %}
@@ -50,12 +50,15 @@
                 </div>
               </div>
             </div>
-            <div class="card-pagination-controls d-flex justify-content-between align-items-center mb-2">
-              <button id="card-page-prev" class="btn btn-secondary btn-sm">&lt;</button>
-              <span id="card-page-indicator"></span>
-              <button id="card-page-next" class="btn btn-secondary btn-sm">&gt;</button>
+            <!-- Se oculta en pantallas chicas -->
+            <div class="d-none d-lg-block">
+              <div class="card-pagination-controls d-flex justify-content-between align-items-center mb-2">
+                <button id="card-page-prev" class="btn btn-secondary btn-sm pagination-button">&lt;</button>
+                <span id="card-page-indicator"></span>
+                <button id="card-page-next" class="btn btn-secondary btn-sm pagination-button">&gt;</button>
+              </div>
+              <div class="available-cards" id="available-cards"></div>
             </div>
-            <div class="available-cards" id="available-cards"></div>
           </div>
           <div class="resizer" id="resizer"></div>
           <div class="column-right">
@@ -223,12 +226,28 @@
               </div>
             </form>
           </div>
-
           <div class="modal-footer">
             <button id="cancel-new-deck" class="btn btn-secondary">Cancelar</button>
             <button id="confirm-new-deck" class="btn btn-primary">Confirmar</button>
           </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- Modal para mostrar los resultados de una busqueda en mobile -->
+    <div class="modal fade" id="search-results-modal" tabindex="-1" aria-labelledby="search-results-modal-label" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="search-results-modal-label">Resultados de búsqueda</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <div class="available-cards-modal" id="available-cards-modal"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
         </div>
       </div>
     </div>
@@ -238,6 +257,12 @@
       <div id="menu-add-to-main"><a href='#'>Agregar al mazo principal</a></div>
       <div id="menu-add-to-side"><a href='#'>Agregar al mazo secundario</a></div>
       <div id="menu-add-to-maybe"><a href='#'>Agregar a candidatos</a></div>
+    </div>
+
+    <!-- Popup para cuando no se encuentran cartas en mobile -->
+    <div class="no-cards-alert alert alert-info">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      No se encontraron cartas.
     </div>
 
     <!-- Scripts -->
