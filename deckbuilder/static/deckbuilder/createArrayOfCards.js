@@ -15,11 +15,14 @@ function createFrame(card){
           data-converted-cost="${card.card_id__converted_cost}"
           data-rarity="${card.card_id__rarity}"
           data-type="${card.card_id__card_type}">
-          <img src='${"/media/" + card.card_art}' alt="${card.card_id__card_name}" />
-          <input class='card-menu' type='button' value='Menú'>
-          <input class='sub-card' type='button' value='-'>
-          <input class='add-card' type='button' value='+'>
-          </input></div>`;
+            <div class="card-actions">
+              <input class='add-card' type='button' value='+'>
+              <input class='sub-card' type='button' value='-'>
+              <input class='card-menu' type='button' value=''>
+              <i class="bi bi-three-dots-vertical card-menu-icon"></i>
+            </div>
+            <img src='${"/media/" + card.card_art}' alt="${card.card_id__card_name}" />
+          </div>`;
 }
 
 // Calculamos el espacio vertical que tenemos para mostrar las cartas
