@@ -28,6 +28,8 @@ document.addEventListener('mousemove', function (e) {
 
     right.style.flex = 'none';
     right.style.width = `${totalWidth - offsetLeft - resizerWidth / 2}px`;
+
+    orderArrayOfCards();
 });
 
 document.addEventListener('mouseup', function () {

@@ -55,7 +55,6 @@ html, body {
 
 .card-to-add{
     display: flex;
-    max-width: auto;
     position: relative;
     flex-direction: column;
     align-items: center;
@@ -331,6 +330,22 @@ html, body {
 
 .pagination-button {
   width: 80px;
+}
+
+/* Perteneciente a los iconos para filtrar facciones */
+.faction-icon-filter {
+  height: 30px;
+  width: auto;
+  cursor: pointer;
+  transition: opacity 0.15s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.faction-icon-filter:hover {
+  transform: scale(110%);
+}
+
+.faction-icon-filter[data-disabled="true"] {
+  opacity: 0.4;
 }
 
 /*                    */

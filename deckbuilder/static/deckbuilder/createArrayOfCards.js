@@ -44,17 +44,19 @@ function getAvailableCardsHeight() {
 
 function getCardsPerRow() {
   const container = document.getElementById("available-cards");
-  const containerWidth = container.offsetWidth || 800;
+  const containerWidth = container.offsetWidth - 20 || 800;
   const containerHeight = getAvailableCardsHeight();
-  const maxCardHeight = Math.floor((containerHeight - 12) / rowsPerPage)
-  const minCardWidth = maxCardHeight * 0.7158 + 12; // Ancho de la carta (calculado con relación de aspecto) más gap
-  console.log("Altura maxima:",maxCardHeight, "Cartas por fila:", Math.max(1, Math.floor(containerWidth / minCardWidth)));
+  const gap = 12;
+  const maxCardHeight = Math.floor((containerHeight - gap) / rowsPerPage)
+  const minCardWidth = maxCardHeight * 0.7158; // Ancho de la carta calculado con relación de aspecto
+
+  let cardsPerRow = Math.floor((containerWidth + gap) / (minCardWidth + gap));
 
   //Cambiamos las dimensiones de la carta en el css
   container.style.setProperty('--card-height', maxCardHeight + 'px');
   container.style.setProperty('--card-width', minCardWidth + 'px');
 
-  return Math.max(1, Math.floor(containerWidth / minCardWidth))
+  return Math.max(1, cardsPerRow)
 }
 
 function getCardsPerPage() {
@@ -62,16 +64,17 @@ function getCardsPerPage() {
 }
 
 function renderCardPage(cards) {
+  // Funcion para desktop
   if (window.screen.width >= 992){
     const cardsArray = document.getElementById("available-cards");
     cardsArray.innerHTML = "";
     const cardsPerPage = getCardsPerPage();
-    console.log("Cartas por fila:", cardsPerPage)
+    updateCardPageIndicator(searchResult.length, cardsPerPage);
     const start = currentCardPage * cardsPerPage;
     const end = start + cardsPerPage;
     cards.slice(start,end).forEach(card => cardsArray.innerHTML += createFrame(card));
-    updateCardPageIndicator(searchResult.length, cardsPerPage);
   } else {
+  // Funcion para mobile
     const cardsArray = document.getElementById("available-cards-modal");
     cardsArray.innerHTML = "";
     const start = currentCardPage * 10;
@@ -98,6 +101,9 @@ function orderArrayOfCards(){
 function updateCardPageIndicator(totalCards, cardsPerPage){
   const indicator = document.getElementById("card-page-indicator");
   const totalPages = Math.ceil(totalCards / cardsPerPage);
+  if (currentCardPage >= totalPages) {
+    currentCardPage = totalPages - 1
+  }
   indicator.textContent = `Página ${currentCardPage + 1} de ${totalPages}`;
   document.getElementById("card-page-prev").disabled = currentCardPage === 0;
   document.getElementById("card-page-next").disabled = currentCardPage >= totalPages - 1;
@@ -143,6 +149,37 @@ function createArrayOfCards(query){
   })
 }
 
+function getAvailableFactions(){
+  const factionIcons = document.querySelectorAll(".faction-icon-filter");
+  let factionList = [];
+
+  factionIcons.forEach(function(icon) {
+      if (icon.getAttribute("data-disabled") === "false") {
+        factionList.push(icon.getAttribute("data-faction"));
+      }
+  });
+  return factionList;
+}
+
+// Tomamos el valor del input de búsqueda y el select de facciones para crear la query
+function createQueryString(){
+  let query = document.getElementById('user-query').value;
+  let factionAvailable = getAvailableFactions();
+  if (factionAvailable.length > 0){
+    // TODO: Agregar una opcion en la API para buscar multiples facciones a la vez
+    let factionQuery = "f:(";
+    factionAvailable.forEach(function(faction) {
+      factionQuery += `${faction},`
+    })
+    // Le quitamos la ultima coma y cerramos parentesis
+    factionQuery = factionQuery.slice(0, -1) + ")"
+    console.log(`${query} ${factionQuery}`);
+    return `${query} ${factionQuery}`;
+  } else {
+    return query;
+  }
+}
+
 // Modificamos la página de cartas si se avanza o retrocede
 document.getElementById("card-page-prev").addEventListener("click", () => {
   if (currentCardPage > 0) {
@@ -160,9 +197,15 @@ document.getElementById("card-page-next").addEventListener("click", () => {
 });
 
 // Modificamos la lista si se cambia el tamaño de la ventana
-document.addEventListener("resize", () => {
-  orderArrayOfCards();
-})
+window.onresize = () => {
+  if (window.innerWidth > 992) {
+    if (searchResult){
+      orderArrayOfCards();
+    } else {
+      createArrayOfCards(" ");
+    }
+  }
+}
 
 document.getElementById("attribute-order-select").addEventListener("change", () => {
   currentCardPage = 0;
@@ -186,31 +229,30 @@ document.querySelectorAll('#array-order .dropdown-menu .dropdown-item').forEach(
   });
 });
 
-// Tomamos el valor del input de búsqueda y el select de facciones para crear la query
-function createQueryString(){
-  var query = document.getElementById('user-query').value;
-  var factionSelect = document.querySelector("#faction-select");
-  if (factionSelect.value === ""){
-    return query;
-  } else {
-    return `${query} f:${factionSelect.value}`;
-  }
-}
-
 // Este código se ejecuta al cargar la página y cuando se clickea en buscar
-$(function() {
-  createArrayOfCards(" ")
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.innerWidth > 992) createArrayOfCards(" ");
 });
-$('#submit-button').click(function(){
+document.getElementById("submit-button").addEventListener("click", () => {
   createArrayOfCards(createQueryString());
 });
+
 // Esta parte es para que se ejecute la busqueda cuando se apreta enter
-$('#user-query').on('keypress', function (e) {
-  if(e.which === 13){
+document.getElementById("user-query").addEventListener("keyup", ({key}) => {
+  if(key === "Enter"){
      createArrayOfCards(createQueryString());
   }
 });
-// Esta parte es para que se ejecute la busqueda cuando se cambia el select de facciones
-$("#faction-select").on('change', function(){
-  createArrayOfCards(createQueryString());
+
+// Gestiona los iconos para filtrar facciones
+document.addEventListener("DOMContentLoaded", () => {
+  const factionIcons = document.querySelectorAll(".faction-icon-filter");
+
+  factionIcons.forEach(function(icon){
+    icon.addEventListener("click", () => {
+      // Invierte el estado de habilitado
+      icon.setAttribute("data-disabled", (icon.getAttribute("data-disabled")) === "true" ? "false" : "true");
+      createArrayOfCards(createQueryString());
+    });
+  });
 });

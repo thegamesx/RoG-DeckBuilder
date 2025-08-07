@@ -1,8 +1,10 @@
 // Función común para comparar dos cartas segun sortBy
-function compareCards(aValue, aName, bValue, bName, sortBy, order = "asc") {
+function compareCards(aValue, aName, bValue, bName, order = "asc") {
   // Si son iguales, desempatar por nombre
   if (aValue === bValue) {
-    return (order === "des" ? -1 : 1) * aName.localeCompare(bName);
+    return order === "des"
+    ? bName.localeCompare(aName)
+    : aName.localeCompare(bName);
   }
 
   // Comparación principal

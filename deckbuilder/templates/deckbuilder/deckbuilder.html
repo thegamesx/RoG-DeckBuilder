@@ -21,13 +21,18 @@
                 </div>
               </div>
               <div class="col-md-2">
-                <!-- TODO: Me parece mejor si usamos iconos visuales -->
-                <select class="form-select form-select-sm" aria-label="Selección de facción" id="faction-select">
-                  <option selected value="">Todas las facciones</option>
+                <div class="faction-icons-control">
                   {% for faction in factions %}
-                    <option value="{{ faction.0 }}">{{ faction.1 }}</option>
+                    <img 
+                      src="{% static 'RoGDB/sellos/sello-'|add:faction.0|add:'.webp' %}" 
+                      alt="{{ faction.1 }}" 
+                      class="faction-icon-filter" 
+                      id="faction-icon-{{faction.0}}"
+                      data-faction="{{faction.0}}" 
+                      data-disabled="false"
+                      />
                   {% endfor %}
-                </select>
+                </div>
               </div>
               <div class="col-md-2">
                 <select class="form-select form-select-sm" aria-label="Selección de orden" id="attribute-order-select">
