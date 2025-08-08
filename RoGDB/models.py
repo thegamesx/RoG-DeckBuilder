@@ -365,33 +365,69 @@ class CardVersion(models.Model):
                                     query_set = query_set.filter(card_id__rarity__lte=rarity_value)
                                 case "!=":
                                     query_set = query_set.exclude(card_id__rarity__exact=rarity_value)
-                        # TODO: Implementar luego soporte para multiples facciones
                         case "faction" | "f":
-                            if len(search_query["query"])>1:
-                                match search_query["query"]:
-                                    case "jupiter":
-                                        faction_letter = "J"
-                                    case "marte":
-                                        faction_letter = "M"
-                                    case "neptuno":
-                                        faction_letter = "N"
-                                    case "pluton"|"plutón":
-                                        faction_letter = "P"
-                                    case "saturno":
-                                        faction_letter = "S"
-                                    case _:
-                                        faction_letter = None
+                            # Primero vemos si es una facción o un set, y eliminamos parentesis si los hay
+                            factions = re.sub(r"[()]", "", search_query["query"])
+                            if "," in factions:
+                                factions = factions.split(",")
+                                faction_letters = []
+                                for faction in factions:
+                                    faction = faction.strip().lower()
+                                    if len(faction)>1:
+                                        match faction:
+                                            case "jupiter":
+                                                faction_letter = "J"
+                                            case "marte":
+                                                faction_letter = "M"
+                                            case "neptuno":
+                                                faction_letter = "N"
+                                            case "pluton"|"plutón":
+                                                faction_letter = "P"
+                                            case "saturno":
+                                                faction_letter = "S"
+                                            case "tierra":
+                                                faction_letter = "T"
+                                            case _:
+                                                faction_letter = None
+                                    else:
+                                        faction_letter = faction.upper()
+                                    if faction_letter:
+                                        faction_letters.append(faction_letter)
+                                if faction_letters:
+                                    if search_query['operator'] == "!=":
+                                        query_set = query_set.exclude(card_id__faction__in=faction_letters)
+                                    elif search_query['operator'] in [":","="]:
+                                        query_set = query_set.filter(card_id__faction__in=faction_letters)
+                                    else:
+                                        query_set = query_set.filter(set_id__set_code__icontains=query)
                             else:
-                                faction_letter = search_query["query"]
-                            if faction_letter:
-                                if search_query['operator'] == "!=":
-                                    query_set = query_set.exclude(card_id__faction__icontains=faction_letter)
-                                elif search_query['operator'] in [":","="]:
-                                    query_set = query_set.filter(card_id__faction__icontains=faction_letter)
+                                if len(factions)>1:
+                                    match search_query["query"]:
+                                        case "jupiter":
+                                            faction_letter = "J"
+                                        case "marte":
+                                            faction_letter = "M"
+                                        case "neptuno":
+                                            faction_letter = "N"
+                                        case "pluton"|"plutón":
+                                            faction_letter = "P"
+                                        case "saturno":
+                                            faction_letter = "S"
+                                        case "tierra":
+                                            faction_letter = "T"
+                                        case _:
+                                            faction_letter = None
+                                else:
+                                    faction_letter = factions.upper()
+                                if faction_letter:
+                                    if search_query['operator'] == "!=":
+                                        query_set = query_set.exclude(card_id__faction__iexact=faction_letter)
+                                    elif search_query['operator'] in [":","="]:
+                                        query_set = query_set.filter(card_id__faction__iexact=faction_letter)
+                                    else:
+                                        query_set = query_set.filter(set_id__set_code__icontains=query)
                                 else:
                                     query_set = query_set.filter(set_id__set_code__icontains=query)
-                            else:
-                                query_set = query_set.filter(set_id__set_code__icontains=query)
                         case "attack":
                             match search_query["operator"]:
                                 case "="|":":

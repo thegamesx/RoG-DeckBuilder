@@ -36,10 +36,6 @@ html, body {
     height: auto;
 }
 
-.deck-title{
-    color: azure;
-}
-
 .available-cards {
     display: grid;
     grid-auto-flow: row;
@@ -346,6 +342,12 @@ html, body {
 
 .faction-icon-filter[data-disabled="true"] {
   opacity: 0.4;
+}
+
+.card-menu-button {
+  width: 4px;
+  color: black;
+  font-weight: bold;
 }
 
 /*                    */

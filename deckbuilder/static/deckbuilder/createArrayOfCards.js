@@ -19,7 +19,16 @@ function createFrame(card){
               <input class='add-card' type='button' value='+'>
               <input class='sub-card' type='button' value='-'>
               <input class='card-menu' type='button' value=''>
-              <i class="bi bi-three-dots-vertical card-menu-icon"></i>
+              <div class="dropdown">
+                <a class="card-in-list-button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical card-menu-icon"></i>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item menu-add-to-main" href="#">Agregar al mazo principal</a></li>
+                  <li><a class="dropdown-item menu-add-to-side" href="#">Agregar al mazo secundario</a></li>
+                  <li><a class="dropdown-item menu-add-to-maybe" href="#">Agregar a la sección de tal vez</a></li>
+                </ul>
+              </div>
             </div>
             <img src='${"/media/" + card.card_art}' alt="${card.card_id__card_name}" />
           </div>`;
@@ -207,6 +216,7 @@ window.onresize = () => {
   }
 }
 
+// Esta parte gestiona el orden de las cartas
 document.getElementById("attribute-order-select").addEventListener("change", () => {
   currentCardPage = 0;
   orderArrayOfCards();

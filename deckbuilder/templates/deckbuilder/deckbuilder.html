@@ -85,15 +85,18 @@
               </div>
             </div>
             <!-- Lista del mazo -->
-            <div class="text-center fs-5 p-2" id="main-deck-title" hidden>Mazo principal</div>
-            <ul class="list-group" id="main-deck-list">
-            </ul>
-            <div class="text-center fs-5 p-2" id="side-deck-title" hidden>Side</div>
-            <ul class="list-group" id="side-deck-list">
-            </ul>
-            <div class="text-center fs-5 p-2" id="maybe-deck-title" hidden>Candidatos</div>
-            <ul class="list-group" id="maybe-deck-list">
-            </ul>
+            <div class="p-2 deck-title text-center" id="main-deck-title" data-deck="main" hidden>
+              <span class="fs-5">Mazo principal</span>
+              <ul class="list-group" id="main-deck-list"></ul>
+            </div>
+            <div class="p-2 deck-title text-center" id="side-deck-title" data-deck="side" hidden>
+              <span class="fs-5">Side</span>
+              <ul class="list-group" id="side-deck-list"></ul>
+            </div>
+            <div class="p-2 deck-title text-center" id="maybe-deck-title" data-deck="maybe" hidden>
+              <span class="fs-5">Candidatos</span>
+              <ul class="list-group" id="maybe-deck-list"></ul>
+            </div>
             <!-- Mensaje para mostrar que está vacío el mazo -->
             <div id="empty-deck-message">
               <p class="text-center">Acá empieza la magia</p>
@@ -257,6 +260,28 @@
       </div>
     </div>
 
+    <!-- Modal para especificar la cantidad de cartas a mover si se elijen multiples -->
+    <div class="modal fade" id="card-add-move-modal" tabindex="-1" aria-labelledby="search-results-modal-label" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="card-add-move-modal-label">¿Cuantas copias desea mover?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="card-add-move-modal-input" class="form-label" id="card-add-move-input-label">Number Input</label>
+              <input type="number" class="form-control" id="card-add-move-modal-input" min="0" max="100" step="1" value="1">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="card-add-move-modal-confirm">Aceptar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Dropdown menu para elegir donde van las cartas -->
     <div class="dropdown-menu card-menu" id="card-menu">
       <div id="menu-add-to-main"><a href='#'>Agregar al mazo principal</a></div>
@@ -274,7 +299,7 @@
     <script type="text/javascript" src="{% static "deckbuilder/createArrayOfCards.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/resizeColumns.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/orderAlgorithm.js" %}"></script>
-    <script type="text/javascript" src="{% static "deckbuilder/cardMenu.js" %}"></script>
+    {% comment %} <script type="text/javascript" src="{% static "deckbuilder/cardMenu.js" %}"></script> {% endcomment %}
     <script type="text/javascript" src="{% static "deckbuilder/modifyCardList.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/editDeckName.js" %}"></script>
     <script type="text/javascript" src="{% static "deckbuilder/saveDeck.js" %}"></script>
