@@ -34,7 +34,7 @@ function renderCardCost(costStr, useRoman = false) {
   }
 
   for (const letter of factionPart) {
-    html += `<img src="${SEAL_BASE_PATH}${letter}.webp" alt="${letter}" class="faction-icon">`;
+    html += `<img src="${SEAL_BASE_PATH}${letter}.png" alt="${letter}" class="faction-icon">`;
   }
 
   return html;
@@ -86,6 +86,7 @@ function addExistingCard(cardID, targetDeck, ammount=1){
   quantitySpan.textContent = newQuantity;
 }
 
+// TODO: Simplificar los parametros de esta función
 function addCard(cardTitle, cardID, cardVersionID, cardFaction, cardArt, cardCost, cardConvertedCost, cardRarity, cardType, targetDeck, quantity=1){
   let cardList = document.getElementById(targetDeck + '-deck-list');
 
@@ -300,61 +301,138 @@ document.getElementById('sort-cards-order').addEventListener('change', function(
 });
 
 // Comando del menu de cartas
+// TODO: No funciona el menu del array de cartas. Arreglar
 document.addEventListener('click', function(event) {
+  const cardItem = event.target.closest('.card-in-list, .card-to-add');
+  if (!cardItem) return;
+
   const menuItem = event.target.closest('.dropdown-item');
   if (!menuItem) return;
 
-  const cardID = menuItem.closest(".card-in-list").getAttribute("data-card-id");
-  const cardDeck = menuItem.closest('div').getAttribute('data-deck');
-  const cardsModal = new bootstrap.Modal(document.getElementById("card-add-move-modal"));
+  // Prevenir el cierre inmediato del menú
+  event.preventDefault();
 
-  let targetDeck = null;
-  let sourceDeck = null;
-  if (event.target.classList.contains("menu-move-main")) {
-    targetDeck = "main";
-  } else if (event.target.classList.contains("menu-move-side")) {
-    targetDeck = "side";
-  } else if (event.target.classList.contains("menu-move-maybe")) {
-    targetDeck = "maybe";
-  } else if (event.target.classList.contains("menu-add-one")) {
-    addExistingCard(cardID, cardDeck);
-  } else if (event.target.classList.contains("menu-add-mult")) {
-    document.getElementById("card-add-move-modal-label").innerHTML = "Agregar copias";
-    document.getElementById("card-add-move-input-label").innerHTML = "¿Cuantas copias desea agregar?";
-    cardsModal.show();
-    document.getElementById("card-add-move-modal-input").focus();
-    document.getElementById("card-add-move-modal-confirm").addEventListener('click', () => {
-      const quantity = parseInt(document.getElementById("card-add-move-modal-input").value) || 0;
-      addExistingCard(cardID, cardDeck, quantity);
-    });
-  } else if (event.target.classList.contains("menu-remove-one")) {
-    findCard(cardID, cardDeck);
-  } else if (event.target.classList.contains("menu-remove-all")) {
-    findCard(cardID, cardDeck, removeAll = true);
+  // --- Cartas en la lista (mazo) ---
+  const cardInList = menuItem.closest('.card-in-list');
+  if (cardInList) {
+    const cardID = cardInList.getAttribute("data-card-id");
+    const sourceDeck = cardInList.closest('ul').id.replace('-deck-list', '');
+    const cardsModal = new bootstrap.Modal(document.getElementById("card-add-move-modal"));
+
+    let targetDeck = null;
+    if (menuItem.classList.contains("menu-move-main")) {
+      targetDeck = "main";
+    } else if (menuItem.classList.contains("menu-move-side")) {
+      targetDeck = "side";
+    } else if (menuItem.classList.contains("menu-move-maybe")) {
+      targetDeck = "maybe";
+    } else if (menuItem.classList.contains("menu-add-one")) {
+      addExistingCard(cardID, sourceDeck);
+    } else if (menuItem.classList.contains("menu-add-mult")) {
+      document.getElementById("card-add-move-modal-label").innerHTML = "Agregar copias";
+      document.getElementById("card-add-move-input-label").innerHTML = "¿Cuantas copias desea agregar?";
+      cardsModal.show();
+      document.getElementById("card-add-move-modal-input").focus();
+      document.getElementById("card-add-move-modal-confirm").onclick = () => {
+        const quantity = parseInt(document.getElementById("card-add-move-modal-input").value) || 0;
+        addExistingCard(cardID, sourceDeck, quantity);
+      };
+    } else if (menuItem.classList.contains("menu-remove-one")) {
+      findAndRemoveCard(cardID, sourceDeck);
+    } else if (menuItem.classList.contains("menu-remove-all")) {
+      findAndRemoveCard(cardID, sourceDeck, true);
+    }
+    if (targetDeck && targetDeck !== sourceDeck) {
+      moveCard(cardID, sourceDeck, targetDeck);
+    }
+    return;
+  }
+
+  // --- Cartas del array de búsqueda ---
+  const cardToAdd = menuItem.closest('.card-to-add');
+  if (cardToAdd) {
+    let targetDeck = null;
+    if (menuItem.classList.contains("menu-add-to-main")) {
+      targetDeck = "main";
+    } else if (menuItem.classList.contains("menu-add-to-side")) {
+      targetDeck = "side";
+    } else if (menuItem.classList.contains("menu-add-to-maybe")) {
+      targetDeck = "maybe";
+    }
+    if (targetDeck) {
+      const img = cardToAdd.querySelector('img');
+      addCard(
+        cardToAdd.getAttribute("data-card-name"),
+        cardToAdd.getAttribute("data-card-id"),
+        cardToAdd.getAttribute("data-version"),
+        cardToAdd.getAttribute("data-faction"),
+        img ? img.getAttribute("src") : "",
+        cardToAdd.getAttribute("data-cost"),
+        cardToAdd.getAttribute("data-converted-cost"),
+        cardToAdd.getAttribute("data-rarity"),
+        cardToAdd.getAttribute("data-type"),
+        targetDeck
+      );
+    }
+    return;
   }
 });
 
+function moveCard(cardID, sourceDeck, targetDeck, quantity=1) {
+  const cardElement = document.getElementById(`${sourceDeck}-${cardID}`);
+  if (!cardElement) return;
+
+  const currentQuantity = parseInt(cardElement.getAttribute("data-quantity") || "0");
+  if (currentQuantity <= 0) return;
+
+  const moveQuantity = Math.min(quantity, currentQuantity);
+  
+  addCard(
+    cardElement.getAttribute("data-card-name"),
+    cardElement.getAttribute("data-card-id"),
+    cardElement.getAttribute("data-version"),
+    cardElement.getAttribute("data-faction"),
+    cardElement.getAttribute("data-card-art"),
+    cardElement.getAttribute("data-cost"),
+    cardElement.getAttribute("data-converted-cost"),
+    cardElement.getAttribute("data-rarity"),
+    cardElement.getAttribute("data-type"),
+    targetDeck,
+    moveQuantity
+  );
+  subCard(cardElement);
+}
+  
+
 
 // Elimina una carta del main. Pero se puede poner la opcion de agregar de otro mazo si se requiere
-function findCard(cardID, preferredDeck = "main", removeAll = false) {
-  const card = document.querySelector(`#${preferredDeck}-${cardID}`);
+function findAndRemoveCard(cardID, targetDeck = "main", removeAll = false, quantity = 1) {
+  const card = document.querySelector(`#${targetDeck}-${cardID}`);
   if (card) {
-    if (removeAll) {
-      const cardAmmount = card.getAttribute("data-quantity", 0);
+    if (removeAll || quantity > 1) {
+      let cardAmmount = 0
+      if (removeAll) {
+        cardAmmount = card.getAttribute("data-quantity", 0);
+      } else {
+        cardAmmount = quantity;
+      }
       for (let i = 0; i < cardAmmount; i++) {
         subCard(card);
       }
     } else {
-      subCard(card);
+      if (quantity === 1) {
+        subCard(card);
+      }
     }
   }
 }
 
 // Se fija si se apreta el + o - de las cartas, y hace lo que corresponde
+/*
 document.querySelector('.available-cards').addEventListener('click', function(event) {
   if (event.target.matches('input.sub-card')) {
     const cardDiv = event.target.closest('div.card-to-add');
-    findCard(cardDiv.getAttribute("data-card-id"));
+    findAndRemoveCard(cardDiv.getAttribute("data-card-id"));
   }
   if (event.target.matches('input.add-card')) {
     const cardDiv = event.target.closest('div.card-to-add');
@@ -404,7 +482,7 @@ document.querySelector('.dropdown-menu').addEventListener('click', function(even
     );
   }
 });
-
+*/
 // Carga el mazo guardado al cargar la página
 $(function(){
   const loadedDeck = JSON.parse(document.getElementById('loaded-deck').textContent);

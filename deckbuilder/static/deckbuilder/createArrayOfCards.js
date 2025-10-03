@@ -18,7 +18,6 @@ function createFrame(card){
             <div class="card-actions">
               <input class='add-card' type='button' value='+'>
               <input class='sub-card' type='button' value='-'>
-              <input class='card-menu' type='button' value=''>
               <div class="dropdown">
                 <a class="card-in-list-button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-three-dots-vertical card-menu-icon"></i>

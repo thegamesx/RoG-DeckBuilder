@@ -51,7 +51,7 @@
               <h4 class="card-title">{{ deck.deck_name }}</h4>
               <div class="factions text-center">
                 {% for faction in deck.deck_factions %}
-                  <img class="faction-icon" src="{% static 'RoGDB/sellos/sello-'|add:faction|add:'.webp' %}"></img>
+                  <img class="faction-icon" src="{% static 'RoGDB/sellos/sello-'|add:faction|add:'.png' %}"></img>
                 {% endfor %}
               </div>
               <a class="card-text" href="/decks/user/{{ deck.deck_owner }}">Por {{ deck.deck_owner }}</a>

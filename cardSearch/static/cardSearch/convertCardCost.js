@@ -34,7 +34,7 @@ function renderCardCost(costStr, useRoman = false) {
   }
 
   for (const letter of factionPart) {
-    html += `<img src="${SEAL_BASE_PATH}${letter}.webp" alt="${letter}" class="faction-icon">`;
+    html += `<img src="${SEAL_BASE_PATH}${letter}.png" alt="${letter}" class="faction-icon">`;
   }
 
   return html;

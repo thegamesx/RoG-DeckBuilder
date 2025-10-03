@@ -32,7 +32,7 @@
                         <td><a href="/decks/view/{{ deck.pk }}">{{ deck.deck_name }}</a></td>
                         <td>
                             {% for faction in deck.deck_factions %}
-                                <img class="faction-icon" src="{% static 'RoGDB/sellos/sello-'|add:faction|add:'.webp' %}"></img>
+                                <img class="faction-icon" src="{% static 'RoGDB/sellos/sello-'|add:faction|add:'.png' %}"></img>
                             {% endfor %}
                         </td>
                         <td>{{ deck.format }}</td>

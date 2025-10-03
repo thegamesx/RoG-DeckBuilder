@@ -6,14 +6,16 @@ import copy
 # Pensar bien que va a pasar al borrar con las FK !!!
 
 class CardSet(models.Model):
-    set_name = models.CharField(max_length=200)
-    set_code = models.CharField(max_length=200, unique=True)
-    set_type = models.CharField(max_length=200, default="")
-    released_date = models.DateField()
-    total_cards = models.IntegerField(default=0)
+    set_name = models.CharField("Nombre", max_length=200)
+    set_code = models.CharField("Código", max_length=200, unique=True)
+    set_type = models.CharField("Tipo", max_length=200, default="")
+    released_date = models.DateField("Fecha de lanzamiento")
+    total_cards = models.IntegerField("Cantidad de cartas", default=0)
 
     class Meta:
         ordering = ['-released_date']
+        verbose_name = "Set"
+        verbose_name_plural = "Expansiones"
 
     def __str__(self):
         return self.set_name
@@ -27,9 +29,13 @@ class CardSet(models.Model):
 
 
 class Format(models.Model):
-    format_name = models.CharField(max_length=200)
-    format_desc = models.TextField(default="")
-    card_id = models.ManyToManyField("Card", through="FormatFollows" ,verbose_name="Card")
+    format_name = models.CharField("Nombre", max_length=200)
+    format_desc = models.TextField("Descripción", default="")
+    card_id = models.ManyToManyField("Card", through="FormatFollows" ,verbose_name="Carta")
+
+    class Meta:
+        verbose_name = "Formato"
+        verbose_name_plural = "Formatos"
 
     def __str__(self):
         return self.format_name
@@ -112,24 +118,27 @@ class Card(models.Model):
         ("M", "Marte"),
         ("N", "Neptuno"),
         ("P", "Pluton"),
-        ("S", "Saturno")
+        ("S", "Saturno"),
+        ("T", "Tierra"),
     ]
 
-    card_name = models.CharField(max_length=200)
-    faction = MultiSelectField(choices=FACTIONS, blank=True)
-    card_type = models.CharField(max_length=200)
-    cost = models.CharField(default="", max_length=30)
-    converted_cost = models.IntegerField(default=0)
-    rarity = models.IntegerField(choices=RARITY)
-    attack = models.IntegerField(blank=True, null=True)
-    health = models.IntegerField(blank=True, null=True)
-    text_box = models.TextField(blank=True, default="")
-    rules_explanation = models.TextField(blank=True, default="")
-    related_cards = models.ManyToManyField('self', blank=True)
-    card_legality = models.ManyToManyField(Format, through='FormatFollows', blank=True)
+    card_name = models.CharField("Nombre", max_length=200)
+    faction = MultiSelectField("Facción", choices=FACTIONS, blank=True)
+    card_type = models.CharField("Tipo", max_length=200)
+    cost = models.CharField("Coste", default="", max_length=30)
+    converted_cost = models.IntegerField("Coste convertido", default=0)
+    rarity = models.IntegerField("Rareza", choices=RARITY)
+    attack = models.IntegerField("Ataque", blank=True, null=True)
+    health = models.IntegerField("Vida", blank=True, null=True)
+    text_box = models.TextField("Habilidad", blank=True, default="")
+    rules_explanation = models.TextField("Explicación de reglas", blank=True, default="")
+    related_cards = models.ManyToManyField('self', blank=True, verbose_name="Cartas relacionadas")
+    card_legality = models.ManyToManyField(Format, through='FormatFollows', blank=True, verbose_name="Legalidad")
 
     class Meta:
         ordering = ['card_name']
+        verbose_name = "Carta"
+        verbose_name_plural = "Cartas"
 
     def __str__(self):
         return self.card_name
@@ -146,6 +155,34 @@ class Card(models.Model):
                 return False
         else:
             return None # TODO: Ver si programar un código de error
+    
+    
+    def save(self, *args, **kwargs):
+        # Calculamos el coste convertido en base al coste antes de guardar
+        if not self.cost:
+            cost = 0
+        else:
+            cost = 0
+            # Separar el número inicial si existe
+            match = re.match(r'^(\d+)', self.cost)
+            if match:
+                cost += int(match.group(1))
+                cost_str = self.cost[match.end():]  # quitar el número inicial
+            else:
+                cost_str = self.cost
+            # Sumar 1 por cada letra (P, M, etc.)
+            for char in cost_str:
+                if char.isalpha():
+                    cost += 1
+        self.converted_cost = cost
+
+        # Cambiamos el ataque y vida a -1 si es una carta sin ataque/vida
+        if not self.attack:
+            self.attack = -1
+        if not self.health:
+            self.health = -1
+        
+        super().save(*args, **kwargs)
 
     @staticmethod
     def get_list_of_factions():
@@ -159,27 +196,33 @@ class FormatFollows (models.Model):
         ("N", "No legal"),
     ]
 
-    card_id = models.ForeignKey(Card, on_delete=models.DO_NOTHING)
-    format_id = models.ForeignKey(Format, on_delete=models.CASCADE)
-    legality = models.CharField(max_length=3, choices=LEGALITY, default="L")
+    card_id = models.ForeignKey(Card, on_delete=models.DO_NOTHING, verbose_name="Carta")
+    format_id = models.ForeignKey(Format, on_delete=models.CASCADE, verbose_name="Formato")
+    legality = models.CharField(max_length=3, choices=LEGALITY, default="L", verbose_name="Legalidad")
+
+    class Meta:
+        verbose_name = "Legalidad de carta"
+        verbose_name_plural = "Legalidades de cartas"
 
     def __str__(self):
         return self.format_id.format_name + " - " + self.get_legality_display() + " (" + self.card_id.card_name + ")"
 
 
 class CardVersion(models.Model):
-    card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
-    set_id = models.ForeignKey(CardSet, on_delete=models.RESTRICT)
-    serial_number = models.IntegerField()
-    is_skin = models.BooleanField(default=False)
-    card_art = models.ImageField(blank=True, upload_to="media/card_art")
-    artist = models.CharField(max_length=200)
-    flavor_text = models.TextField(blank=True, default="")
-    label = models.CharField(blank=True, max_length=200, default="")
-    last_print = models.BooleanField(default=True)
+    card_id = models.ForeignKey(Card, on_delete=models.CASCADE, verbose_name="Carta")
+    set_id = models.ForeignKey(CardSet, on_delete=models.RESTRICT, verbose_name="Set")
+    serial_number = models.IntegerField("Código de carta")
+    is_skin = models.BooleanField(default=False, verbose_name="¿Es una skin?")
+    card_art = models.ImageField("Arte", blank=True, upload_to="media/card_art")
+    artist = models.CharField("Artista", max_length=200)
+    flavor_text = models.TextField("Texto de ambientación (Flavor)", blank=True, default="")
+    label = models.CharField("Etiqueta", blank=True, max_length=200, default="")
+    last_print = models.BooleanField("Última impresión", default=True)
 
     class Meta:
         get_latest_by = "-pk"
+        verbose_name = "Versión de carta"
+        verbose_name_plural = "Versiones de cartas"
 
     # Esto revisa si la carta que se está subiendo es más actual que el resto.
     # De ser así, pone esa carta como la reprensentativa de la carta. En caso contrario deja la que estaba antes.

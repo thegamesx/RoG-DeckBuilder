@@ -10,6 +10,7 @@ resizer.addEventListener('mousedown', function (e) {
     document.body.style.cursor = 'col-resize';
 });
 
+// TODO: Evitar que el ancho supere la mitad de la pantalla
 document.addEventListener('mousemove', function (e) {
     if (!isResizing) return;
 
