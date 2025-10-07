@@ -16,13 +16,15 @@ function createFrame(card){
           data-rarity="${card.card_id__rarity}"
           data-type="${card.card_id__card_type}">
             <div class="card-actions">
-              <input class='add-card' type='button' value='+'>
-              <input class='sub-card' type='button' value='-'>
+              <div class="card-buttons">
+                <button class='add-card' type='button'>+</button>
+                <button class='sub-card' type='button'>-</button>
+              </div>
               <div class="dropdown">
-                <a class="card-in-list-button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn card-menu-button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-three-dots-vertical card-menu-icon"></i>
-                </a>
-                <ul class="dropdown-menu">
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
                   <li><a class="dropdown-item menu-add-to-main" href="#">Agregar al mazo principal</a></li>
                   <li><a class="dropdown-item menu-add-to-side" href="#">Agregar al mazo secundario</a></li>
                   <li><a class="dropdown-item menu-add-to-maybe" href="#">Agregar a la sección de tal vez</a></li>

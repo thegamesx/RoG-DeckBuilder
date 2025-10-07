@@ -31,7 +31,7 @@
     </div>
     <div class="row">
       <!-- Columna izquierda: imagen -->
-      <div class="column-left col-md-3 text-center mb-4">
+      <div class="column-left col-md-3 text-center mb-4 position-md-sticky">
         <div class="card-image">
           <img src="/media/media/card_Art/RoG-cardback.jpeg" id="card-art-display" class="img-fluid">
         </div>
@@ -39,7 +39,9 @@
 
       <!-- Columna derecha: listas -->
       <!-- Contenedor vacío donde se van a inyectar las cartas -->
-      <div id="card-list-container" class="deck-columns-wrapper d-flex flex-wrap gap-3 mt-3 col-md-9"></div>
+      <div class="column-right col-md-9">
+        <div id="card-list-container" class="row g-3"></div>
+      </div>
     </div>
   </div>
   <script text="text/javascript" src={% static "deckbuilder/updateCardImage.js" %}></script>

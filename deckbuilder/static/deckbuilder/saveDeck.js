@@ -2,6 +2,11 @@
 let deck_id = null;
 
 async function saveDeck() {
+  // Ponemos una animación para indicar que se está guardando
+  document.getElementById("saving-deck-icon").style.display = "inline-block";
+  document.getElementById("deck-saved-icon").style.display = "none";
+
+
   deckname = document.getElementById("deck-name-title").textContent;
   
   if (deckname.trim().length === 0) {
@@ -69,6 +74,11 @@ async function saveDeck() {
     }
     const data = await response.json();
     console.log("Mazo guardado con éxito:", data);
+
+    // Cambiamos la animación para indicar que se guardó correctamente
+    document.getElementById("saving-deck-icon").style.display = "none";
+    document.getElementById("deck-saved-icon").style.display = "inline-block";
+
     if (deck_id === null && !loadedDeck){
       deck_id = data.deck_id;
       history.pushState({},"",`/decks/builder/${deck_id}`)
@@ -84,6 +94,8 @@ function debounce(func, delay = 500) {
   let timeout;
   return function(...args) {
     clearTimeout(timeout);
+    document.getElementById("saving-deck-icon").style.display = "inline-block";
+    document.getElementById("deck-saved-icon").style.display = "none";
     timeout = setTimeout(() => func.apply(this, args), delay);
   };
 }
@@ -99,6 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("deck-description").addEventListener("input", autoSaveDeck);
       document.getElementById("visibility").addEventListener("change", autoSaveDeck);
       document.getElementById("deck-name-title").addEventListener("blur", autoSaveDeck);
+      // Indicamos que el mazo se cargó correctamente
+      document.getElementById("saving-deck-icon").style.display = "none";
+      document.getElementById("deck-saved-icon").style.display = "inline-block";
     } else {
       console.log("No hay mazo cargado. Se espera a que se ingresen los datos para guardarlo.");
 

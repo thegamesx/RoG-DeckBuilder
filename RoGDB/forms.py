@@ -22,6 +22,7 @@ class AdvancerSearchForm(forms.Form):
         ("Jupiter","Jupiter"),
         ("Saturno","Saturno"),
         ("Marte","Marte"),
+        ("Tierra","Tierra"),
     ]
 
     RARITY = [

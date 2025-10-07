@@ -54,7 +54,7 @@ html, body {
     position: relative;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
     box-sizing: border-box;
     border-radius: 6px;
     padding-bottom: 6px;
@@ -74,88 +74,89 @@ html, body {
 }
 
 /* Perteneciente a los botones de las cartas para agregar al mazo */
-.card-to-add input,
-.card-menu-icon{
-  display: none;
-}
-
 .card-actions {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
   pointer-events: none;
 }
 
-.card-to-add input,
-.card-menu-icon {
-  display: none;
+.card-buttons {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   pointer-events: auto;
-  position: absolute;
-  z-index: 2;
-  opacity: 0.95;
 }
 
-.card-to-add:hover input.add-card {
-  display: block;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  font-size: 8em;
-  background: rgba(255, 255, 255, 0.1);
+.card-buttons button {
+  flex: 1;
+  background: transparent;
   border: none;
-  border-radius: 6px 6px 0 0;
-  -webkit-text-stroke: 3px #ffffff;
-  transition: color .15s ease-in-out, background-color .15s ease-in-out;
-}
-
-.card-to-add:hover input.sub-card {
-  display: block;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 50%;
+  color: transparent;
   font-size: 8em;
-  background: rgba(255,255,255,0.1);
-  border: none;
-  border-radius: 0 0 6px 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.card-buttons button:hover {
   -webkit-text-stroke: 3px #ffffff;
-  transition: color .15s ease-in-out, background-color .15s ease-in-out;
+  color: black;
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
-.card-to-add input.add-card:hover,
-.card-to-add input.sub-card:hover{
-  background: rgba(255, 255, 255, 0.3);
+/* Perteneciente al dropdown de menú de cada carta */
+
+.card-to-add .dropdown {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    pointer-events: auto;
+    z-index: 1050;
 }
 
-
-.card-to-add:hover .card-menu-icon {
-  display: block;
-  top: 8px;
-  right: 12px;
-  font-size: 1.5em;
-  background: #6c757d;
-  color: #ffffff;
-  border-radius: 2px;
-  padding: 2px;
-  transition: color .15s ease-in-out, background-color .15s ease-in-out;
+.card-to-add .card-menu-button {
+    display: none;
+    background: #6c757d;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 4px;
+    width: auto;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    transition: background-color 0.15s ease-in-out;
 }
 
-.card-to-add .card-menu-icon:hover {
-  background: #565e64;
-  cursor: pointer;
+.card-to-add:hover .card-menu-button {
+    display: block !important;
 }
 
-.card-to-add:hover input.card-menu {
-  display: block;
-  top: 8px;
-  right: 12px;
-  width: 32px;
-  height: 32px;
-  opacity: 0;
-  cursor: pointer;
+.card-to-add .card-menu-button:hover {
+    background: #79848b;
+}
+
+.card-to-add .dropdown-menu {
+  position: fixed;
+    background-color: rgba(33, 37, 41, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 2px;
+    z-index: 1051;
+    transform: none !important;
+}
+
+.card-to-add .dropdown-item {
+    color: white;
+    transition: background-color 0.2s;
+}
+
+.card-to-add .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
 }
 
 /* Perteneciente a la imagen flotante */
@@ -425,4 +426,11 @@ html, body {
   top: 5px; 
   left: 2%;
   width: 96%;
+}
+
+/* Escondemos los iconos de guardado del mazo al iniciar */
+#saving-deck-icon, #deck-saved-icon {
+  display: none;
+  margin-left: 8px;
+  vertical-align: middle;
 }

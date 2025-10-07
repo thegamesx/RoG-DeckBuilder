@@ -301,7 +301,6 @@ document.getElementById('sort-cards-order').addEventListener('change', function(
 });
 
 // Comando del menu de cartas
-// TODO: No funciona el menu del array de cartas. Arreglar
 document.addEventListener('click', function(event) {
   const cardItem = event.target.closest('.card-in-list, .card-to-add');
   if (!cardItem) return;
@@ -428,13 +427,12 @@ function findAndRemoveCard(cardID, targetDeck = "main", removeAll = false, quant
 }
 
 // Se fija si se apreta el + o - de las cartas, y hace lo que corresponde
-/*
 document.querySelector('.available-cards').addEventListener('click', function(event) {
-  if (event.target.matches('input.sub-card')) {
+  if (event.target.matches('button.sub-card')) {
     const cardDiv = event.target.closest('div.card-to-add');
     findAndRemoveCard(cardDiv.getAttribute("data-card-id"));
   }
-  if (event.target.matches('input.add-card')) {
+  if (event.target.matches('button.add-card')) {
     const cardDiv = event.target.closest('div.card-to-add');
     addCard(
       cardDiv.getAttribute("data-card-name"),
@@ -451,38 +449,6 @@ document.querySelector('.available-cards').addEventListener('click', function(ev
   }
 });
 
-// Comandos para agregar cartas al mazo con el menu de las cartas
-document.querySelector('.dropdown-menu').addEventListener('click', function(event) {
-  let targetDeck = null;
-  if (event.target.id === "menu-add-to-main") {
-    targetDeck = "main";
-  } else if (event.target.id === "menu-add-to-side") {
-    targetDeck = "side";
-  } else if (event.target.id === "menu-add-to-maybe") {
-    targetDeck = "maybe";
-  }
-  if (targetDeck) {
-    const triggeredDiv = event.target.closest('div[triggered-card-id]');
-    if (!triggeredDiv) return;
-    const cardId = triggeredDiv.getAttribute('triggered-card-id');
-    const cardDiv = document.querySelector(`.card-to-add#${cardId}`);
-    if (!cardDiv) return;
-    const img = cardDiv.querySelector('img');
-    addCard(
-      cardDiv.getAttribute("data-card-name"),
-      cardDiv.getAttribute("data-card-id"),
-      cardDiv.getAttribute("data-version"),
-      cardDiv.getAttribute("data-faction"),
-      img ? img.getAttribute("src") : "",
-      cardDiv.getAttribute("data-cost"),
-      cardDiv.getAttribute("data-converted-cost"),
-      cardDiv.getAttribute("data-rarity"),
-      cardDiv.getAttribute("data-type"),
-      targetDeck
-    );
-  }
-});
-*/
 // Carga el mazo guardado al cargar la página
 $(function(){
   const loadedDeck = JSON.parse(document.getElementById('loaded-deck').textContent);

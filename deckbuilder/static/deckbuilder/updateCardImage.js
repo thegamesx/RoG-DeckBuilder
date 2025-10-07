@@ -1,18 +1,18 @@
-$(".card-item-in-list").hover(function () {
-    // Poner como una variable global
-    const loadedDeck = JSON.parse(document.getElementById('loaded-deck').textContent);
+document.addEventListener("DOMContentLoaded", () => {
+    const cardImage = document.getElementById("card-art-display");
 
-    var cardID = $(this).attr("id");
-    console.log(cardID)
+    document.addEventListener("mouseenter", (e) => {
+        if (!(e.target instanceof HTMLElement)) return;
+        
+        const card = e.target.closest(".card-in-list");
+        const art = card.getAttribute("data-art");
+        if (art) {
 
-    $.each(loadedDeck.card_list, function (index, deck) { 
-        $.each(deck, function(index2, card){
-            if (card.id == cardID){
-                artLink = card.card_art;
-             }
-        });  
-    });    
+            cardImage.onload = () => {
+                cardImage.style.display = "block"; // Mostrar la imagen solo si cargó
+            };
 
-    $("#card-art-display").attr("src", "/media/" + artLink);
-    }
-);
+            cardImage.setAttribute("src", "/media/" + art);
+        }
+    }, true);   
+});
