@@ -3,7 +3,7 @@ from multiselectfield import MultiSelectField
 import re
 import copy
 
-# Pensar bien que va a pasar al borrar con las FK !!!
+# TODO: Pensar bien que va a pasar al borrar con las FK !!!
 
 class CardSet(models.Model):
     set_name = models.CharField("Nombre", max_length=200)
@@ -11,6 +11,7 @@ class CardSet(models.Model):
     set_type = models.CharField("Tipo", max_length=200, default="")
     released_date = models.DateField("Fecha de lanzamiento")
     total_cards = models.IntegerField("Cantidad de cartas", default=0)
+    is_visible = models.BooleanField("¿Es visible?", default=False)
 
     class Meta:
         ordering = ['-released_date']
@@ -22,6 +23,7 @@ class CardSet(models.Model):
     
     def get_list_of_sets():
         set_list = CardSet.objects.all().order_by('-released_date')
+        set_list = set_list.exclude(is_visible=False)
         return_list = [("","---")]
         for card_set in set_list:
             return_list.append((card_set.set_code,card_set.set_name))
@@ -250,10 +252,10 @@ class CardVersion(models.Model):
             pass
     
     def get_all_cards_from_set_code(user_query):
-        return CardVersion.objects.filter(set_id__set_code=user_query)
+        return CardVersion.objects.filter(set_id__set_code=user_query, set_id__is_visible=True)
     
     def get_all_versions_of_a_card(user_query):
-        return CardVersion.objects.filter(card_id=user_query)
+        return CardVersion.objects.filter(card_id=user_query, set_id__is_visible=True).order_by('-set_id__released_date')
     
     def get_card_by_name(user_query, get=True):
         if get:
@@ -263,13 +265,13 @@ class CardVersion(models.Model):
 
     
     def get_specific_card(user_query_card, user_query_set, get=True):
-        return CardVersion.objects.get(serial_number=user_query_card, set_id_id__set_code=user_query_set)
+        return CardVersion.objects.get(serial_number=user_query_card, set_id_id__set_code=user_query_set, set_id__is_visible=True)
     
     def get_all_cards():
-        return CardVersion.objects.filter(last_print=True)
+        return CardVersion.objects.filter(last_print=True, set_id__is_visible=True)
     
     def get_group_of_cards(array_of_ids):
-        queryset = CardVersion.objects.filter(pk__in=array_of_ids)
+        queryset = CardVersion.objects.filter(pk__in=array_of_ids, set_id__is_visible=True)
         return list(queryset.values(
                 "id",
                 "card_id__card_name", 
@@ -326,6 +328,8 @@ class CardVersion(models.Model):
     def evaluate_string(user_query, only_last_print=True, include_tokens=False):
         splited_query = user_query.split()
         query_set = CardVersion.objects.all()
+        # Excluir sets no visibles
+        query_set = query_set.filter(set_id__is_visible=True)
         if not include_tokens:
             query_set = query_set.exclude(card_id__rarity=0)
         specific_set = False

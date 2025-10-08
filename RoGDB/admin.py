@@ -90,7 +90,7 @@ class CardVersionAdmin(admin.ModelAdmin):
 
 @admin.register(CardSet)
 class CardSetAdmin(admin.ModelAdmin):
-    list_display = ('set_code', 'set_name', 'set_type', 'released_date', 'total_cards')
+    list_display = ('set_code', 'set_name', 'set_type', 'released_date', 'total_cards', 'is_visible')
     list_filter = ('set_type',)
     search_fields = ('set_name', 'set_type', 'set_code')
 

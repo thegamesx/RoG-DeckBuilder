@@ -83,7 +83,7 @@ class SearchResult(ListView):
             queryset = CardVersion.evaluate_string(user_query)
         except KeyError:
             # TODO: Programar un aviso de que no se encontró ningun resultado
-            queryset = CardVersion.objects.filter(last_print=True)
+            queryset = CardVersion.get_all_cards()
         
         # Ordenamos según el campo y dirección de ordenación seleccionados. Por defecto, ordena por nombre de carta de forma ascendente
         sort_by = self.request.GET.get('sort_by', 'card_id__card_name')
