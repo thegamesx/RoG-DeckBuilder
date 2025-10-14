@@ -1,5 +1,6 @@
 from django import forms
 from .models import CardSet, Format
+from django.db.utils import OperationalError, ProgrammingError
 
 class AdvancerSearchForm(forms.Form):
 
@@ -59,6 +60,20 @@ class AdvancerSearchForm(forms.Form):
     h_operator = forms.ChoiceField(choices=OPERATORS, required=False, widget=forms.Select(attrs={'class': 'form-select'}))
     health = forms.IntegerField(label="Vida", required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'step': 1}))
     rarity = forms.ChoiceField(label="Rareza", choices=RARITY, required=False, widget=forms.Select(attrs={'class': 'form-select'}))
-    set_dropdown = forms.ChoiceField(label="Expansion", choices=CardSet.get_list_of_sets(), required=False, widget=forms.Select(attrs={'class': 'form-select'}))
+    set_dropdown = forms.ChoiceField(label="Expansion", required=False, widget=forms.Select(attrs={'class': 'form-select'}))
     legality = forms.ChoiceField(label="Legal", choices=LEGALITY, required=False, widget=forms.Select(attrs={'class': 'form-select'}))
-    format = forms.ChoiceField(label="Formato", choices=Format.get_list_of_formats(), required=False, widget=forms.Select(attrs={'class': 'form-select'}))
+    format = forms.ChoiceField(label="Formato", required=False, widget=forms.Select(attrs={'class': 'form-select'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+        try:
+            self.fields['set_dropdown'].choices = CardSet.get_list_of_sets()
+        except (OperationalError, ProgrammingError):
+            self.fields['set_dropdown'].choices = [("", "---")]
+
+        try:
+            self.fields['format'].choices = Format.get_list_of_formats()
+        except (OperationalError, ProgrammingError):
+            self.fields['format'].choices = [("", "---")]
