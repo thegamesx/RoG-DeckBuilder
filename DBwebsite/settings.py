@@ -27,9 +27,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
-
-ALLOWED_HOSTS = []
+if os.getenv('DEBUG') == 'True':
+    DEBUG = True
 
 
 # Application definition
@@ -152,3 +151,35 @@ REGISTRATION_OPEN = os.getenv('REGISTRATION_ENABLED')
 ACCOUNT_FORMS = {
     'signup': 'users.forms.CustomRegistrationForm',
 }
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": "debug.log",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}
+
+# Deployment settings
+if os.getenv('PRODUCTION') == 'True':
+    ALLOWED_HOSTS = ['rogdb.ddns.net']
+
+    # Security settings
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # Static and media files settings for production
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
